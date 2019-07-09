@@ -7,4 +7,4 @@ Thực tập PHP CakePHP - Quản lý bán hàng - Nguyen Quang Huy - 201907
 
 PHP 7.1.30<br />
 CakePHP 3.8<br />
-MyAdmin 4.9.0.1
+MySql 4.9.0.1
