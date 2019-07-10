@@ -64,7 +64,33 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
     public function add()
-    {
+    {   
+        $product = $this->Products->newEntity();
+        if ($this->request->is('post')) {
+
+            $request = $this->request->getData();
+            $validation = $this->Products->newEntity($request);
+            $product   =   $this->Products->patchEntity($product, $request);
+            if($validation->getErrors()){
+                foreach ($validation->getErrors() as $errors) {
+                    foreach ($errors as $error) {
+                        $this->Flash->success($error);
+                    }
+                }
+            }else{
+                $request['user_id'] = $this->Auth->user('id');
+                $product = $this->Products->patchEntity($product, $request);
+                if ($this->Products->save($product)) {
+                    $this->Flash->success(__('The product has been saved.'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+            }
+            
+            $this->Flash->error(__('The product could not be saved. Please, try again.'));
+        }
+        $this->set(compact('product'));
+        
         $user = $this->Users->newEntity();
         if ($this->request->is('post')) {
             $user = $this->Users->patchEntity($user, $this->request->getData());

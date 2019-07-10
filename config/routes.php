@@ -102,3 +102,15 @@ Router::scope('/', function (RouteBuilder $routes) {
  * });
  * ```
  */
+
+Router::prefix('admin', function ($routes) {
+    $routes->resources('Users');
+        $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+        $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+        $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
+    $routes->resources('Products');
+    $routes->extensions(['json', 'xml']);
+    // All routes here will be prefixed with `/admin`
+    // And have the prefix => admin route element added.
+    $routes->fallbacks('DashedRoute');
+});

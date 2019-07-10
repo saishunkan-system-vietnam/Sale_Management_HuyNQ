@@ -27,45 +27,11 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 
     <?= $this->Html->css('base.css') ?>
     <?= $this->Html->css('style.css') ?>
+    <?= $this->Html->css('profile.css') ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
-    <style>
-        .user-row {
-            margin-bottom: 14px;
-        }
-
-        .user-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .dropdown-user {
-            margin: 13px 0;
-            padding: 5px;
-            height: 100%;
-        }
-
-        .dropdown-user:hover {
-            cursor: pointer;
-        }
-
-        .table-user-information > tbody > tr {
-            border-top: 1px solid rgb(221, 221, 221);
-        }
-
-        .table-user-information > tbody > tr:first-child {
-            border-top: 0;
-        }
-
-
-        .table-user-information > tbody > tr > td {
-            border-top: 0;
-        }
-        .toppad
-        {margin-top:20px;
-        }
-    </style>
 </head>
 <body>  
     <nav class="top-bar expanded" data-topbar role="navigation">
@@ -91,40 +57,5 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <footer>
 </footer>
 </body>
-<script>
-    $(document).ready(function() {
-        var panels = $('.user-infos');
-        var panelsButton = $('.dropdown-user');
-        panels.hide();
-
-    //Click dropdown
-    panelsButton.click(function() {
-        //get data-for attribute
-        var dataFor = $(this).attr('data-for');
-        var idFor = $(dataFor);
-
-        //current button
-        var currentButton = $(this);
-        idFor.slideToggle(400, function() {
-            //Completed slidetoggle
-            if(idFor.is(':visible'))
-            {
-                currentButton.html('<i class="glyphicon glyphicon-chevron-up text-muted"></i>');
-            }
-            else
-            {
-                currentButton.html('<i class="glyphicon glyphicon-chevron-down text-muted"></i>');
-            }
-        })
-    });
-
-
-    $('[data-toggle="tooltip"]').tooltip();
-
-    $('button').click(function(e) {
-        e.preventDefault();
-        alert("This is a demo.\n :-)");
-    });
-});
-</script>
+    <?= $this->Html->script('profile.js') ?>
 </html>
