@@ -59,14 +59,14 @@ class UsersTable extends Table
 
         $validator
             ->email('email')
-            ->requirePresence('email', 'create')
-            ->notEmptyString('email');
+            ->requirePresence('email', 'create',"Field is not isset")
+            ->notEmptyString('email',"Email cannot be empty");
 
         $validator
             ->scalar('password')
             ->maxLength('password', 255)
-            ->requirePresence('password', 'create')
-            ->notEmptyString('password');
+            ->requirePresence('password', 'create',"Field is not isset")
+            ->notEmptyString('password',"Password cannot be empty");
 
         return $validator;
     }
