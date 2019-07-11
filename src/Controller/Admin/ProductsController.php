@@ -16,18 +16,22 @@ use DateTime;
 class ProductsController extends AppController
 {
     private $Products;
+    private $Attributes;
     private $connection;
+    private $ProductAttributes;
     public function initialize()
     {
         parent::initialize();  
-        $this->Products = TableRegistry::getTableLocator()->get('Products');   
-        $this->connection = ConnectionManager::get('default');
+        $this->Products = TableRegistry::getTableLocator()->get('Products');
+        $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
+        $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
     }
 
     public function index()
     {
         $products = $this->paginate($this->Products);
-
+        $attributes = $this->Attributes->find('all')->toArray();
+ 
         $this->set(compact('products'));
     }
 
@@ -40,6 +44,17 @@ class ProductsController extends AppController
 
     public function add()
     {   
+        $attributes = $this->Attributes->find('all')->toArray();
+        $attribute = $this->Attributes->find('all')->where(['parent_id'=> 0])->toArray();
+  
+        foreach ($attributes as $value) {
+            foreach ($attribute as $attr) {
+                if($attr['id'] == $value['parent_id']){
+                    $attr['options'] = $value['name'];
+                }
+            }
+        }
+
         if ($this->request->is('post')) {
             $request = $this->request->getData();
             $validation = $this->Products->newEntity($request);
@@ -63,6 +78,11 @@ class ProductsController extends AppController
             
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
+        // echo "<pre>";
+        // print_r($attribute);
+        // echo "</pre>";
+        // die('a');
+        $this->set(compact('attributes'));
     }
 
     public function edit($id = null)

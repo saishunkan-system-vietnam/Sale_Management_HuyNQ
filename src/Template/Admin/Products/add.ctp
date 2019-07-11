@@ -19,8 +19,7 @@
             echo $this->Form->control('name');
             echo $this->Form->control('price');
             echo $this->Form->control('quantity');
-            echo $this->Form->input('upload', ['type' => 'file']);
-            echo $this->Form->control('body');
+            echo $this->Form->control('description');
         ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
