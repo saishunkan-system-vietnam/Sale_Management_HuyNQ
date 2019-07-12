@@ -37,6 +37,16 @@
             <th scope="row"><?= __('Quantity') ?></th>
             <td><?= $this->Number->format($product->quantity) ?></td>
         </tr>
+        <?php
+            foreach ($product['options'] as $option) {
+        ?>
+            <tr>
+                <th scope="row"><?= $option->parent_name ?></th>
+                <td><?= h($option->name) ?></td>
+            </tr>
+        <?php
+            }  
+        ?>
         <tr>
             <th scope="row"><?= __('Created') ?></th>
             <td><?= h($product->created) ?></td>
@@ -47,7 +57,7 @@
         </tr>
     </table>
     <div class="row">
-        <h4><?= __('Body') ?></h4>
-        <?= $this->Text->autoParagraph(h($product->body)); ?>
+        <h4><?= __('Description') ?></h4>
+        <?= $this->Text->autoParagraph(h($product->description)); ?>
     </div>
 </div>

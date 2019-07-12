@@ -62,7 +62,7 @@ class ProductsTable extends Table
             ->requirePresence('name','create',"Field is not isset")
             ->requirePresence('price','create',"Field is not isset")
             ->requirePresence('quantity','create',"Field is not isset")
-            ->requirePresence('body','create',"Field is not isset")
+            ->requirePresence('description','create',"Field is not isset")
             ->allowEmptyString('name', false, "Name cannot be empty")
             ->integer('price')
             ->allowEmptyString('price', false, "Price cannot be empty")

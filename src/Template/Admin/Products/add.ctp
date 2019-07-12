@@ -21,6 +21,28 @@
             echo $this->Form->control('quantity');
             echo $this->Form->control('description');
         ?>
+        <div class="row" style="border: 1px solid black;">
+            <div>
+                <?php
+                foreach ($attributes as $attribute) {
+                ?>
+                    <div class="form-group" style="width: 45%; float: left; margin: 5px;">
+                        <label><?= $attribute['name'] ?></label>
+                        <select class="form-control" name="<?= $attribute['id'].'_'.str_replace(' ','',$attribute['name']) ?>">
+                        <?php 
+                        foreach ($attribute['options'] as $attr) {                            
+                        ?>
+                            <option value=<?= $attr['id'] ?>><?= $attr['name'] ?></option>
+                        <?php
+                        }
+                        ?>         
+                      </select>
+                    </div>
+                <?php
+                }
+                ?>  
+           </div>
+        </div>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>

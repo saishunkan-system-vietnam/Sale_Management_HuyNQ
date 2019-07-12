@@ -26,8 +26,26 @@
             echo $this->Form->control('name');
             echo $this->Form->control('price');
             echo $this->Form->control('quantity');
-            echo $this->Form->control('body');
+            echo $this->Form->control('description');
         ?>
+        <?php
+            foreach ($product['options'] as $option) {
+        ?>
+                <div class="form-group" style="width: 45%; float: left; margin: 5px;">
+                    <label><?= $option['parent_name'] ?></label>
+                    <select class="form-control" name="<?= $option['id'].'_'.str_replace(' ','',$option['name']) ?>">
+                        <?php 
+                        foreach ($attribute['options'] as $attr) {                            
+                        ?>
+                        <option value=<?= $attr['id'] ?>><?= $attr['name'] ?></option>
+                        <?php
+                        }
+                        ?>         
+                    </select>
+                </div>
+            <?php
+            }
+            ?> 
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
