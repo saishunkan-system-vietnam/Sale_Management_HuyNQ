@@ -10,8 +10,6 @@
         <li><?= $this->Html->link(__('Add'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?> </li>  
-        <li><?= $this->Html->link(__('Return'), ['action' => 'index']) ?> </li>
-        <li class="heading"><?= $this->Html->link(__('Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
     </ul>
 </nav>
 <div class="products view large-9 medium-8 columns content">

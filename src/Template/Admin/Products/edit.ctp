@@ -33,12 +33,18 @@
         ?>
                 <div class="form-group" style="width: 45%; float: left; margin: 5px;">
                     <label><?= $option['parent_name'] ?></label>
-                    <select class="form-control" name="<?= $option['id'].'_'.str_replace(' ','',$option['name']) ?>">
+                    <select class="form-control" name="<?= $option['id'].'_'.str_replace(' ','',$option['parent_name']) ?>">
                         <?php 
-                        foreach ($attribute['options'] as $attr) {                            
+                        foreach ($option['options'] as $opt) { 
+                            if($opt['id'] != $option['id']){                           
                         ?>
-                        <option value=<?= $attr['id'] ?>><?= $attr['name'] ?></option>
+                                <option value=<?= $opt['id'] ?>><?= $opt['name'] ?></option>
                         <?php
+                            }else{
+                        ?>
+                                <option selected="selected" value=<?= $option['id'] ?>><?= $option['name'] ?></option>
+                        <?php        
+                            }
                         }
                         ?>         
                     </select>

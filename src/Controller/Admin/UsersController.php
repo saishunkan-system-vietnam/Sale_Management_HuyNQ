@@ -28,6 +28,7 @@ class UsersController extends AppController
         $this->Auth->allow(['logout', 'signup']);
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->connection = ConnectionManager::get('default');
+        $this->viewBuilder()->layout("admin");
     }
 
     public function index()
@@ -140,7 +141,7 @@ class UsersController extends AppController
     public function login()
     {   
         $user = $this->Users->newEntity();
-        $this->viewBuilder()->layout("admin");
+        $this->viewBuilder()->layout("login");
         if($this->Auth->user('id')){
             $this->Flash->error(_('You are already logged in !'));
             return $this->redirect(['action' => 'index']);
