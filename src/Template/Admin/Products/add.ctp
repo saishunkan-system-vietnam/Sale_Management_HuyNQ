@@ -33,14 +33,6 @@
                 </div>
             </fieldset>
         </div>
-        <div class="form-group">
-            <label for="">Category</label>
-            <select class="form-control" style="width: 50%;" name="category">
-                <?php foreach ($categories as $category) { ?>
-                    <option><?= $category['name'] ?></option>
-                <?php } ?>
-            </select>
-        </div>  
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
