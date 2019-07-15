@@ -14,7 +14,7 @@
 		<div class="card-body">
 <!-- 			<h5 class="card-title">Card title</h5>
 			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-			<?= $this->Form->postLink(__('Delete'), ['action' => 'deleteImage', $image->image_id], ['confirm' => __('Are you sure you want to delete # {0}?', $image->image_id)], ['class' => 'btn btn-primary']) ?>
+			<?= $this->Form->postLink(__('Delete'), ['action' => 'deleteImage', $image->id], ['confirm' => __('Are you sure you want to delete # {0}?', $image->id)], ['class' => 'btn btn-primary']) ?>
 		</div>
 	</div>
 	<?php

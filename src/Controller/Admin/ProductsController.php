@@ -18,11 +18,9 @@ class ProductsController extends AppController
     private $Products;
     private $Attributes;
     private $Images;
-    private $connection;
     private $ProductAttributes;
-    private $ProductImages;
-    private $ProductCategories;
     private $Categories;
+
     public function initialize()
     {
         parent::initialize();  
@@ -30,15 +28,15 @@ class ProductsController extends AppController
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
         $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->Images=TableRegistry::getTableLocator()->get('Images');
-        $this->ProductImages=TableRegistry::getTableLocator()->get('ProductImages');
-        $this->ProductCategories=TableRegistry::getTableLocator()->get('ProductCategories');
         $this->Categories=TableRegistry::getTableLocator()->get('Categories');
+        $this->loadComponent('products');
+        $this->loadComponent('attributes');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
     }
 
     public function index()
-    {
+    {      
         $products = $this->paginate($this->Products);
         $attributes = $this->Attributes->find('all')->toArray();
 
@@ -68,16 +66,14 @@ class ProductsController extends AppController
 
     public function add()
     {   
-        $attributes = $this->Attributes->find('all')->where(['parent_id'=> 0])->toArray();
-
-        foreach ($attributes as $attribute) {
-            $attr = $this->Attributes->find('all')->where(['parent_id'=> $attribute['id']])->toArray();
-            $attribute['options'] = $attr;
-        }
+        $attributes = $this->attributes->selectAll();
         
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            
+            // echo "<pre>";
+            // print_r($request);
+            // echo "</pre>";
+            // die('a');
             $validation = $this->Products->newEntity($request);
             if($validation->getErrors()){
                 foreach ($validation->getErrors() as $errors) {
@@ -88,9 +84,8 @@ class ProductsController extends AppController
             }else{
                 $request['user_id'] = $this->Auth->user('id');
                 $this->connection->begin();
-                $this->connection->execute('INSERT INTO products (user_id,name,price,quantity,description,created,modified) VALUES (?,?,?,?,?,?,?)', 
-                    [$request['user_id'], $request['name'],$request['price'],$request['quantity'],$request['description'],new DateTime('now'),new DateTime('now')],
-                    ['integer','string','integer','integer','string','date','date']);
+                $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
+                $this->products->add($reqProduct);
 
                 $product = $this->Products->find()->where(['name'=> $request['name']])->first();
 
@@ -101,9 +96,12 @@ class ProductsController extends AppController
                 }
 
                 foreach ($request as $req) {
-                    $this->connection->execute('INSERT INTO product_attributes (attribute_id,product_id) VALUES (?,?)', 
-                        [$req, $product->id],
-                        ['integer','integer']);
+                    $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
+                    ->values([
+                        'attribute_id' => $req,
+                        'product_id' => $product->id
+                    ])
+                    ->execute();
                 }
                 $result = $this->connection->commit();
 
@@ -143,11 +141,11 @@ class ProductsController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
+            $request['user_id'] = $this->Auth->user('id');
 
             $this->connection->begin();
-            $this->connection->execute('UPDATE products SET name=?,price=?,quantity=?,description=?,modified=? WHERE id=?', 
-                [$request['name'],$request['price'],$request['quantity'],$request['description'],new DateTime('now'),$id],
-                ['string','integer','integer','string','date','integer']);
+            $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
+            $this->products->update($reqProduct, $id);
 
             $removeAttrs = array("user_id","name","quantity","price","description");
 
@@ -155,12 +153,15 @@ class ProductsController extends AppController
                 unset($request[$key]);
             }
 
-            $this->connection->execute('DELETE FROM product_attributes WHERE product_id = ?',[$id],['integer']);
+            $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
 
             foreach ($request as $req) {
-                $this->connection->execute('INSERT INTO product_attributes (attribute_id,product_id) VALUES (?,?)', 
-                    [$req, $id],
-                    ['integer','integer']);
+                $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
+                    ->values([
+                        'attribute_id' => $req,
+                        'product_id' => $product->id
+                    ])
+                    ->execute();
             }
 
             $result = $this->connection->commit();
@@ -180,8 +181,8 @@ class ProductsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $this->connection->begin();
-        $this->connection->execute('DELETE FROM products WHERE id = ?',[$id],['integer']);
-        $this->connection->execute('DELETE FROM product_attributes WHERE product_id = ?',[$id],['integer']);
+            $this->Products->query()->delete()->where(['id' => $id])->execute();
+            $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
         $result = $this->connection->commit();
         if ($result) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -193,15 +194,8 @@ class ProductsController extends AppController
     }
 
     public function image($id = null){
-        $images = $this->ProductImages->find('all')->where(['product_id'=>$id])->toArray();
-        foreach ($images as $image) {
-            $nameImage = $this->Images->find('all')->where(['id'=>$image['image_id']])->first()->name;
-            $image['name'] = $nameImage;
-        }
-        // echo "<pre>";
-        // print_r($images);
-        // echo "</pre>";
-        // die('a');
+        $images = $this->Images->find('all')->where(['product_id'=>$id])->toArray();
+
         if(isset($_POST["Submit"]))
         {
             if($_FILES["file"]["error"] == UPLOAD_ERR_NO_FILE){
@@ -210,12 +204,11 @@ class ProductsController extends AppController
             else{
                 $name = explode('.', $_FILES["file"]["name"]);
                 $newName = $name[0].'_'.rand(000000, 999999).'.'.$name[1];
-                $this->connection->begin();
-                    $this->connection->execute('INSERT INTO images (name) VALUES (?)', [$newName],['string']);
-                    $img_id = $this->Images->find('all')->where(['name'=> $newName])->first()->id;
-                    $this->connection->execute('INSERT INTO product_images (image_id,product_id) VALUES (?,?)', [$img_id, $id],['integer', 'integer']);
-                    move_uploaded_file($_FILES["file"]["tmp_name"], "img/".$newName);
-                $result = $this->connection->commit();
+
+                $reqImage = array('name'=>$newName,'product_id'=>$id);
+                $result = $this->products->addImage($reqImage);
+                move_uploaded_file($_FILES["file"]["tmp_name"], "img/".$newName);
+
                 if($result){
                     $this->Flash->success("File uploaded successfully!!!");
                     return $this->redirect(['action' => 'image', $id]);
@@ -228,11 +221,14 @@ class ProductsController extends AppController
     }
 
     public function deleteImage($id = null){
-        $product_id = $this->ProductImages->find('all')->where(['image_id'=>$id])->first()->product_id;
+        $product_id = $this->Images->find('all')->where(['id'=>$id])->first()->product_id;
         $this->request->allowMethod(['post', 'delete']);
-        $this->connection->execute('DELETE FROM product_images WHERE image_id = ?',[$id],['integer']);
-        $this->connection->execute('DELETE FROM images WHERE id = ?',[$id],['integer']);
-        $this->Flash->success("Image deleted !!!");
+        $result = $this->Images->query()->delete()->where(['id' => $id])->execute();
+        if($result){
+            $this->Flash->success("Image deleted successfully!!!");
+        }else{
+            $this->Flash->success("Image deleted fail !!!");
+        }
 
         return $this->redirect(['action' => 'image', $product_id]);
     }

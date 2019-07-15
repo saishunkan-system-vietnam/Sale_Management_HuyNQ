@@ -18,7 +18,7 @@ class AttributesComponent extends Component {
         $this->connection = ConnectionManager::get('default');
     }
 
-    public function getData(){
+    public function selectAll(){
     	$attributes = $this->Attributes->find('all')->where(['parent_id'=> 0])->toArray();
         foreach ($attributes as $attribute) {
             $attr = $this->Attributes->find('all')->where(['parent_id'=> $attribute['id']])->toArray();

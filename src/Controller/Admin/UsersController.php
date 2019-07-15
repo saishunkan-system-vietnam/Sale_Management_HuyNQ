@@ -80,9 +80,15 @@ class UsersController extends AppController
                     }
                 }
             }else{
-                $result = $this->connection->execute('INSERT INTO users (email,password,created,modified) VALUES (?,?,?,?)', 
-                            [$request['email'], $request['password'],new DateTime('now'),new DateTime('now')],
-                            ['string','string','date','date']);
+                $result = $this->Users->query()->insert(['email', 'password','created','modified'])
+                    ->values([
+                        'email' => $request['email'],
+                        'password' => $request['password'],
+                        'created' => new DateTime('now'),
+                        'modified' => new DateTime('now')
+                    ])
+                    ->execute();
+
                 if ($result) {
                     $this->Flash->success(__('The user has been saved.'));
 

@@ -1,3 +1,4 @@
+
 <div class="">
     <?= $this->Form->create() ?>
     <fieldset>
@@ -6,8 +7,9 @@
         echo $this->Form->control('name');
         echo $this->Form->control('price');
         echo $this->Form->control('quantity');
-        echo $this->Form->control('description');
         ?>
+        <label>Description</label>
+        <textarea name="description" class="ckeditor" id="editor"></textarea>
         <div class="row">
             <fieldset>
                 <legend><?= __('Options') ?></legend>

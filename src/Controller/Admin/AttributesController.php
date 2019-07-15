@@ -47,7 +47,12 @@ class AttributesController extends AppController
             foreach ($request as $key => $req) {
                 $nameParent = explode('_', $key);
                 $idParent = $nameParent[0];
-                $this->connection->execute('INSERT INTO attributes(name, parent_id) VALUES (?,?)',[$req,$idParent],['string','integer']);
+                $this->Attributes->query()->insert(['name', 'parent_id'])
+                    ->values([
+                        'name' => $req,
+                        'parent_id' => $idParent
+                    ])
+                    ->execute();
             }
             $result = $this->connection->commit();
             if($result){

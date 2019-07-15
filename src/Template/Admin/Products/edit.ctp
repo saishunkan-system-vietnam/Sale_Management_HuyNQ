@@ -26,8 +26,8 @@
             echo $this->Form->control('name');
             echo $this->Form->control('price');
             echo $this->Form->control('quantity');
-            echo $this->Form->control('description');
         ?>
+        <textarea name="description" class="ckeditor" id="editor"><?= h($product->description) ?></textarea>
         <?php
             foreach ($product['options'] as $option) {
         ?>

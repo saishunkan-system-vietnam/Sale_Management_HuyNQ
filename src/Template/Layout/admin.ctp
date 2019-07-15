@@ -208,12 +208,14 @@
 <script src="/Admin/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/Admin/dist/js/demo.js"></script>
-
+<script src="/ckeditor/ckeditor.js"></script>
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()
   })
 </script>
-
+<script>
+    CKEditor.replace('description');
+</script>
 </body>
 </html>

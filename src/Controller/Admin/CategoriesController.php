@@ -3,6 +3,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\AppController;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 
 /**
  * Attributes Controller
@@ -18,20 +19,19 @@ class CategoriesController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
+    private $Categories;
     public function initialize()
     {
         parent::initialize();  
-        $this->loadComponent('Categories');
-        $this->loadModel('Categories');
-        $this->loadModel('Products');
-        $this->loadModel('ProductCategories'); 
+        $this->loadComponent('categories');
+        $this->Categories = TableRegistry::getTableLocator()->get('Categories');
         $this->viewBuilder()->layout("admin");    
         $this->connection = ConnectionManager::get('default');
     }
 
     public function index()
     {
-        $categories = $this->Categories->getData();
+        $categories = $this->categories->selectAll();
         // echo "<pre>";
         // print_r($attributes);
         // echo "</pre>";
@@ -47,7 +47,12 @@ class CategoriesController extends AppController
             foreach ($request as $key => $req) {
                 $nameParent = explode('_', $key);
                 $idParent = $nameParent[0];
-                $this->connection->execute('INSERT INTO categories(name, parent_id) VALUES (?,?)',[$req,$idParent],['string','integer']);
+                $this->Categories->query()->insert(['name', 'parent_id'])
+                    ->values([
+                        'name' => $req,
+                        'parent_id' => $idParent
+                    ])
+                    ->execute();
             }
             $result = $this->connection->commit();
             if($result){
