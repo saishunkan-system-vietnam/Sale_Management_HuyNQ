@@ -4,7 +4,7 @@
  * @var \App\Model\Entity\Product $product
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
+<nav class="large-2 medium-2 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('Add'), ['action' => 'add']) ?> </li>
@@ -12,7 +12,7 @@
         <li><?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?> </li>  
     </ul>
 </nav>
-<div class="products view large-9 medium-8 columns content">
+<div class="products view large-10 medium-10 columns content">
     <h3><?= h($product->name) ?></h3>
     <table class="vertical-table">
         <tr>
@@ -55,7 +55,9 @@
         </tr>
     </table>
     <div class="row">
-        <h4><?= __('Description') ?></h4>
-        <?= $this->Text->autoParagraph(h($product->description)); ?>
+        <fieldset>
+            <legend><?= __('Description') ?></legend> 
+            <?= $this->Text->autoParagraph(htmlspecialchars_decode($product->description)); ?>
+        </fieldset>
     </div>
 </div>

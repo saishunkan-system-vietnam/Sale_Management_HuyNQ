@@ -25,5 +25,45 @@ class CategoriesComponent extends Component {
 
         return $categories;
     }
+
+    public function find($category_id){
+        $category = $this->Categories->find()->where(['id'=>$category_id])->first();
+        $nameParent = $this->Categories->find()->where(['id'=>$category->parent_id])->first();
+        $category['nameParent'] = $nameParent->name;
+
+        return $category;
+    }
+
+    public function selectChild(){
+        $cateChilds = $this->Categories->find()->where(['parent_id !=' => 0])->toArray();
+        $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
+        foreach ($cateChilds as $cateChild) {
+            foreach ($cateParents as $cateParent) {
+                if($cateChild->parent_id == $cateParent->id){
+                    $cateChild['parent_name'] = $cateParent->name;
+                }
+            }
+        }
+        return $cateChilds;
+    }
+
+    public function checkParent($id = null){
+        $parent_id = $this->Categories->find()->where(['id' => $id])->first()->parent_id;
+        if($parent_id == 0){
+            return 1;
+        }else{
+            return 0;
+        }
+    }
+
+    public function update($reqCategory){
+        $result = $this->Categories->query()->update()
+        ->set(['name' => $reqCategory['name'],
+               'parent_id' => $reqCategory['category']
+              ])
+        ->where(['id' => $reqCategory['id']])
+        ->execute();
+        return $result;
+    }
 }
 ?>

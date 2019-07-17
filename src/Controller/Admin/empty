@@ -12,33 +12,33 @@ use Cake\ORM\TableRegistry;
  *
  * @method \App\Model\Entity\Attribute[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
-class AttributesController extends AppController
+class CategoriesController extends AppController
 {
     /**
      * Index method
      *
      * @return \Cake\Http\Response|null
      */
-    private $Attributes;
+    private $Categories;
     public function initialize()
     {
         parent::initialize();  
-        $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
-        $this->loadComponent('attributes');
+        $this->loadComponent('categories');
+        $this->Categories = TableRegistry::getTableLocator()->get('Categories');
         $this->viewBuilder()->layout("admin");    
         $this->connection = ConnectionManager::get('default');
     }
 
     public function index()
     {
-        $attributes = $this->attributes->selectAll();
+        $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
+        $cateChilds = $this->Categories->find()->where(['parent_id !=' => 0])->toArray();
         // echo "<pre>";
-        // print_r($attributes);
+        // print_r($cateChilds);
         // echo "</pre>";
         // die('a');
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-
             foreach ($request as $key => $req) {
                 if($req == null){
                     unset($request[$key]);
@@ -48,7 +48,7 @@ class AttributesController extends AppController
             foreach ($request as $key => $req) {
                 $nameParent = explode('_', $key);
                 $idParent = $nameParent[0];
-                $this->Attributes->query()->insert(['name', 'parent_id'])
+                $this->Categories->query()->insert(['name', 'parent_id'])
                     ->values([
                         'name' => $req,
                         'parent_id' => $idParent
@@ -57,28 +57,12 @@ class AttributesController extends AppController
             }
             $result = $this->connection->commit();
             if($result){
-                $this->Flash->success(__('The attributes has been saved.'));
+                $this->Flash->success(__('The categories has been saved.'));
                 return $this->redirect(['action' => 'index']);
             }else{
                 $this->Flash->success(__('Save faild.'));
             }
         }
-        $this->set(compact('attributes'));
-    }
-
-    /**
-     * View method
-     *
-     * @param string|null $id Attribute id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function view($id = null)
-    {
-        $attribute = $this->Attributes->get($id, [
-            'contain' => ['ParentAttributes', 'ChildAttributes', 'ProductAttributes']
-        ]);
-
-        $this->set('attribute', $attribute);
+        $this->set(compact('cateParents','cateChilds'));
     }
 }

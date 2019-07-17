@@ -31,6 +31,7 @@ class ProductsController extends AppController
         $this->Categories=TableRegistry::getTableLocator()->get('Categories');
         $this->loadComponent('products');
         $this->loadComponent('attributes');
+        $this->loadComponent('categories');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
     }
@@ -67,13 +68,11 @@ class ProductsController extends AppController
     public function add()
     {   
         $attributes = $this->attributes->selectAll();
+        $categories = $this->categories->selectAll();
         
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            // echo "<pre>";
-            // print_r($request);
-            // echo "</pre>";
-            // die('a');
+ 
             $validation = $this->Products->newEntity($request);
             if($validation->getErrors()){
                 foreach ($validation->getErrors() as $errors) {
@@ -84,12 +83,12 @@ class ProductsController extends AppController
             }else{
                 $request['user_id'] = $this->Auth->user('id');
                 $this->connection->begin();
-                $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
+                $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'category_id'=>$request['category'],'status'=>$request['status'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
                 $this->products->add($reqProduct);
 
                 $product = $this->Products->find()->where(['name'=> $request['name']])->first();
 
-                $removeAttrs = array("user_id","name","quantity","price","description");
+                $removeAttrs = array("user_id","name","quantity","price","description","category",'status');
 
                 foreach($removeAttrs as $key) {
                     unset($request[$key]);
@@ -114,9 +113,10 @@ class ProductsController extends AppController
             
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-
-        $categories = $this->Categories->find()->where(['parent_id'=>1])->toArray();
-
+        // echo "<pre>";
+        // print_r($categories);
+        // echo "</pre>";
+        // die('a');
 
         $this->set(compact('attributes','categories'));
     }
@@ -125,6 +125,7 @@ class ProductsController extends AppController
     {
         $product = $this->Products->get($id);
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
+        $categories = $this->categories->selectAll();
 
         $product['options'] = array();
 
@@ -141,13 +142,15 @@ class ProductsController extends AppController
 
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
+
             $request['user_id'] = $this->Auth->user('id');
-
+            $request['id'] = $id;
+ 
             $this->connection->begin();
-            $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
-            $this->products->update($reqProduct, $id);
+  
+            $this->products->update($request);
 
-            $removeAttrs = array("user_id","name","quantity","price","description");
+            $removeAttrs = array("id","user_id","name","quantity","price","description");
 
             foreach($removeAttrs as $key) {
                 unset($request[$key]);
@@ -173,8 +176,12 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
+        // echo "<pre>";
+        // print_r($categories);
+        // echo "</pre>";
+        // die('a');
 
-        $this->set(compact('product', 'attributes'));
+        $this->set(compact('product', 'attributes','categories'));
     }
 
     public function delete($id = null)
@@ -231,5 +238,13 @@ class ProductsController extends AppController
         }
 
         return $this->redirect(['action' => 'image', $product_id]);
+    }
+
+    public function getcateChild($id = null){
+        $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
+
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($cateChilds));
     }
 }

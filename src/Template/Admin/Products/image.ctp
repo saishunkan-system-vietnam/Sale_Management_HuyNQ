@@ -9,8 +9,8 @@
 </div>
 <?php foreach ($images as $image) {
 	?>
-	<div class="card col-md-3" style="width: 18rem;">
-		<img class="card-img-top" src="/img/<?= $image['name'] ?>" alt="Card image cap">
+	<div class="card col-md-3" style="width: 18rem; height: 282px;">
+		<img class="card-img-top" src="/img/<?= $image['name'] ?>" style="height: 258px;" alt="Card image cap">
 		<div class="card-body">
 <!-- 			<h5 class="card-title">Card title</h5>
 			<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->

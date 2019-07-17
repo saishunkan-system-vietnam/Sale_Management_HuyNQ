@@ -5,7 +5,7 @@ use Cake\Controller\Component;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
 
-class AttributesComponent extends Component {
+class attributesComponent extends Component {
 	private $Attributes;
 	private $Products;
 	private $ProductAttributes;

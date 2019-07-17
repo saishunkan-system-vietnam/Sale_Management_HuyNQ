@@ -1,7 +1,7 @@
 <div class="">
     <fieldset>
         <legend><?= __('List Product') ?></legend>
-        <table cellpadding="0" cellspacing="0">
+        <table cellpadding="0" cellspacing="0" style="width: 100%;">
             <thead>
                 <tr>
                     <th scope="col"><?= $this->Paginator->sort('id') ?></th>
@@ -23,10 +23,10 @@
                         <td><?= h($product->created) ?></td>
                         <td><?= h($product->modified) ?></td>
                         <td class="actions">
-                            <?= $this->Html->link(__('View'), ['action' => 'view', $product->id]) ?>
-                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id]) ?>
-                            <?= $this->Html->link(__('Edit Image'), ['action' => 'image', $product->id]) ?>
-                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
+                            <?= $this->Html->link(__('View'), ['action' => 'view', $product->id],['class'=>'btn btn-primary']) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id],['class'=>'btn btn-warning']) ?>
+                            <?= $this->Html->link(__('Edit Image'), ['action' => 'image', $product->id],['class'=>'btn btn-success']) ?>
+                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id],['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

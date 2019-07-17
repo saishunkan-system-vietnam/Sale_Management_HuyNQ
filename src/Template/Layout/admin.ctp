@@ -17,6 +17,7 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/Admin/dist/css/skins/_all-skins.min.css">
+    <?= $this->Html->script('jquery-3.4.1.min.js') ?>
 
     <?= $this->Html->css('base.css') ?>
     <?= $this->Html->css('profile.css') ?>
@@ -34,6 +35,7 @@
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+  <script src="/ckeditor/ckeditor.js"></script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
 <!-- Site wrapper -->
@@ -179,7 +181,7 @@
 
             <strong><?= $this->Flash->render() ?></strong>
             
-            <div class="container clearfix">
+            <div class="clearfix">
                 <?= $this->fetch('content') ?>
             </div>
       </div>
@@ -208,14 +210,10 @@
 <script src="/Admin/dist/js/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="/Admin/dist/js/demo.js"></script>
-<script src="/ckeditor/ckeditor.js"></script>
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()
   })
-</script>
-<script>
-    CKEditor.replace('description');
 </script>
 </body>
 </html>
