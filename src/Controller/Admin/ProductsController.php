@@ -53,13 +53,17 @@ class ProductsController extends AppController
         $product['options'] = array();
 
         foreach ($attributes as $attribute) {
-            $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
-            array_push($product['options'], $attr);
+            if($attribute->attribute_id !== null){
+                $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
+                array_push($product['options'], $attr);
+            }
         }
 
         foreach ($product['options'] as $option) {
-            $attrParent = $this->Attributes->find('all')->where(['id'=> $option->parent_id])->first()->name;
-            $option['parent_name'] = $attrParent;
+            if($option !== null){
+                $attrParent = $this->Attributes->find('all')->where(['id'=> $option->parent_id])->first()->name;
+                $option['parent_name'] = $attrParent;
+            }
         }
 
         $this->set(compact('product'));
@@ -95,12 +99,22 @@ class ProductsController extends AppController
                 }
 
                 foreach ($request as $req) {
-                    $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
-                    ->values([
-                        'attribute_id' => $req,
-                        'product_id' => $product->id
-                    ])
-                    ->execute();
+                    if($req == "null"){
+                        $req = null;
+                        $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
+                        ->values([
+                            'attribute_id' => $req,
+                            'product_id' => $product->id
+                        ])
+                        ->execute();
+                    }else{
+                        $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
+                        ->values([
+                            'attribute_id' => $req,
+                            'product_id' => $product->id
+                        ])
+                        ->execute();
+                    }
                 }
                 $result = $this->connection->commit();
 
@@ -113,10 +127,6 @@ class ProductsController extends AppController
             
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-        // echo "<pre>";
-        // print_r($categories);
-        // echo "</pre>";
-        // die('a');
 
         $this->set(compact('attributes','categories'));
     }
@@ -130,8 +140,10 @@ class ProductsController extends AppController
         $product['options'] = array();
 
         foreach ($attributes as $attribute) {
-            $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
-            array_push($product['options'], $attr);
+            if($attribute->attribute_id !== null){
+                $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
+                array_push($product['options'], $attr);
+            }
         }
 
         foreach ($product['options'] as $option) {
@@ -176,10 +188,10 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-        // echo "<pre>";
-        // print_r($categories);
-        // echo "</pre>";
-        // die('a');
+        echo "<pre>";
+        print_r($categories);
+        echo "</pre>";
+        die('a');
 
         $this->set(compact('product', 'attributes','categories'));
     }
@@ -188,8 +200,13 @@ class ProductsController extends AppController
     {
         $this->request->allowMethod(['post', 'delete']);
         $this->connection->begin();
-            $this->Products->query()->delete()->where(['id' => $id])->execute();
+            $images = $this->Images->find()->where(['product_id'=>$id])->toArray();
+            foreach ($images as $image) {
+                unlink('img/'.$image['name']);
+            }
+            $this->Images->query()->delete()->where(['product_id' => $id])->execute();
             $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
+            $this->Products->query()->delete()->where(['id' => $id])->execute();
         $result = $this->connection->commit();
         if ($result) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -228,8 +245,9 @@ class ProductsController extends AppController
     }
 
     public function deleteImage($id = null){
-        $product_id = $this->Images->find('all')->where(['id'=>$id])->first()->product_id;
+        $product = $this->Images->find('all')->where(['id'=>$id])->first();
         $this->request->allowMethod(['post', 'delete']);
+        unlink('img/'.$product->name);
         $result = $this->Images->query()->delete()->where(['id' => $id])->execute();
         if($result){
             $this->Flash->success("Image deleted successfully!!!");
@@ -237,7 +255,7 @@ class ProductsController extends AppController
             $this->Flash->success("Image deleted fail !!!");
         }
 
-        return $this->redirect(['action' => 'image', $product_id]);
+        return $this->redirect(['action' => 'image', $product['product_id']]);
     }
 
     public function getcateChild($id = null){

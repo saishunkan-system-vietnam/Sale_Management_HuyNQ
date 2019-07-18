@@ -18,6 +18,17 @@
         <?php
             echo $this->Form->control('name');
         ?>
+ 
+        <div class="row">
+            <?php if($category['status'] == 1) { ?>
+                <label class="radio-inline"><input type="radio" name="status" value="1" checked>Public</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0">Private</label>
+            <?php }else{ ?>
+                <label class="radio-inline"><input type="radio" name="status" value="1">Public</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0" checked>Private</label>
+            <?php } ?>
+        </div>
+    
         <?php if (isset($cateParents)): ?>
             <label>Category</label>
             <select name="category">

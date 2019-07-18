@@ -20,10 +20,12 @@ class AttributesController extends AppController
      * @return \Cake\Http\Response|null
      */
     private $Attributes;
+    private $ProductAttributes;
     public function initialize()
     {
         parent::initialize();  
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
+        $this->ProductAttributes = TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->loadComponent('attributes');
         $this->viewBuilder()->layout("admin");    
         $this->connection = ConnectionManager::get('default');
@@ -31,39 +33,10 @@ class AttributesController extends AppController
 
     public function index()
     {
-        $attributes = $this->attributes->selectAll();
-        // echo "<pre>";
-        // print_r($attributes);
-        // echo "</pre>";
-        // die('a');
-        if ($this->request->is('post')) {
-            $request = $this->request->getData();
+        $attrParents = $this->Attributes->find()->where(['parent_id' => 0])->toArray();
+        $attrChilds = $this->attributes->selectChild();
 
-            foreach ($request as $key => $req) {
-                if($req == null){
-                    unset($request[$key]);
-                }
-            }
-            $this->connection->begin();
-            foreach ($request as $key => $req) {
-                $nameParent = explode('_', $key);
-                $idParent = $nameParent[0];
-                $this->Attributes->query()->insert(['name', 'parent_id'])
-                    ->values([
-                        'name' => $req,
-                        'parent_id' => $idParent
-                    ])
-                    ->execute();
-            }
-            $result = $this->connection->commit();
-            if($result){
-                $this->Flash->success(__('The attributes has been saved.'));
-                return $this->redirect(['action' => 'index']);
-            }else{
-                $this->Flash->success(__('Save faild.'));
-            }
-        }
-        $this->set(compact('attributes'));
+        $this->set(compact('attrParents','attrChilds'));
     }
 
     /**
@@ -73,12 +46,109 @@ class AttributesController extends AppController
      * @return \Cake\Http\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
+    public function add()
     {
-        $attribute = $this->Attributes->get($id, [
-            'contain' => ['ParentAttributes', 'ChildAttributes', 'ProductAttributes']
-        ]);
+        $attrParents = $this->Attributes->find()->where(['parent_id' => 0])->toArray();
+        if ($this->request->is('post')) {
+            $request = $this->request->getData();
+            // echo "<pre>";
+            // print_r($request);
+            // echo "</pre>";
+            // die('a');
+            if(!isset($request['attribute'])){
+                $this->Attributes->query()->insert(['name', 'parent_id'])
+                ->values([
+                    'name' => $request['name'],
+                    'parent_id' => 0
+                ])
+                ->execute();
+                return $this->redirect(['action' => 'index']);
+            }else{
+                $this->Attributes->query()->insert(['name', 'parent_id'])
+                ->values([
+                    'name' => $request['name'],
+                    'parent_id' => $request['attribute']
+                ])
+                ->execute();
+                return $this->redirect(['action' => 'index']);
+            }
 
-        $this->set('attribute', $attribute);
+            $this->Flash->error(__('The Attribute could not be saved. Please, try again.'));
+        }
+        $this->set(compact('attrParents'));
+    }
+
+    public function edit($id = null)
+    {
+        $check = $this->attributes->checkParent($id);
+        if($check == 1){
+            $attribute = $this->Attributes->find()->where(['id'=>$id])->first();
+
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $request = $this->request->getData();
+                $this->connection->begin();
+                $request['id'] = $id;
+                $request['attribute'] = 0;
+                $this->attributes->update($request);
+                
+                $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
+                foreach ($attrChilds as $attrChild) {
+                    $request['id'] = $attrChild['id'];
+                    $request['name'] = $attrChild['name'];
+                    $request['attribute'] = $id;
+                    $this->attributes->update($request);
+                }
+                $result = $this->connection->commit();
+                if($result){
+                    $this->Flash->success(__('The attribute updated.'));
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The attribute could not be saved. Please, try again.'));
+            }
+
+            $this->set(compact('attribute'));
+        }else{
+            $attribute = $this->Attributes->find()->where(['id'=>$id])->first();
+            $attrParents = $this->Attributes->find()->where(['parent_id'=>0])->toArray();
+
+            if ($this->request->is(['patch', 'post', 'put'])) {
+                $request = $this->request->getData();
+                $request['id'] = $id;
+                $result = $this->attributes->update($request);
+                if($result){
+                    $this->Flash->success(__('The category updated.'));
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The category could not be saved. Please, try again.'));
+            }
+
+            $this->set(compact('attribute', 'attrParents'));
+        }
+    }
+
+    public function delete($id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        $check = $this->attributes->checkParent($id);
+        $this->connection->begin();
+        if($check == 1){ 
+            $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
+            foreach ($attrChilds as $attrChild) {
+                $this->ProductAttributes->query()->delete()->where(['attribute_id' => $attrChild['id']])->execute();
+                $this->Attributes->query()->delete()->where(['id' => $attrChild['id']])->execute();
+            }
+            $this->Attributes->query()->delete()->where(['id' => $id])->execute();
+        }else{
+            $this->ProductAttributes->query()->delete()->where(['attribute_id' => $id])->execute();
+            $this->Attributes->query()->delete()->where(['id' => $id])->execute();
+        }
+        $result = $this->connection->commit();
+        if ($result) {
+            $this->Flash->success(__('The attribute has been deleted.'));
+        } else {
+            $this->Flash->error(__('The attribute could not be deleted. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
     }
 }

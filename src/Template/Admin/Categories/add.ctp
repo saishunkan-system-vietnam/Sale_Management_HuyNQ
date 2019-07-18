@@ -18,6 +18,11 @@
             echo $this->Form->control('name');
         ?>
     </fieldset>
+    <div class="row">
+        <label class="radio-inline"><input type="radio" name="status" value="1" checked>Public</label>
+        <label class="radio-inline"><input type="radio" name="status" value="0">Private</label>
+    </div>
+    <br>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
@@ -35,6 +40,11 @@
                 <option value=<?= $cateParent['id'] ?>><?= $cateParent['name'] ?></option>
             <?php endforeach ?>       
         </select>
+
+        <div class="row">
+            <label class="radio-inline"><input type="radio" name="status" value="1" checked>Public</label>
+            <label class="radio-inline"><input type="radio" name="status" value="0">Private</label>
+        </div>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>

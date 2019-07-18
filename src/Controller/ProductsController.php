@@ -14,20 +14,23 @@ use Cake\ORM\TableRegistry;
 class ProductsController extends AppController
 {
     private $Products;
+    private $Images;
     public function initialize()
     {
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
+        $this->Images = TableRegistry::getTableLocator()->get('Images');
         $this->viewBuilder()->layout("home");   
     }
 
     public function index()
     {
-        $products = $this->paginate($this->Products);
-        // echo "<pre>";
-        // print_r($products);
-        // echo "</pre>";
-        // die('a');
+        $products = $this->Products->find()->toArray();
+
+        foreach ($products as $product) {
+            $product['images'] = $this->Images->find()->where(['product_id'=>$product->id])->first()['name'];
+        }
+
         $this->set(compact('products'));
     }
 

@@ -8,11 +8,15 @@ use Cake\Datasource\ConnectionManager;
 class CategoriesComponent extends Component {
     private $Categories;
     private $Products;
+    private $Images;
+    private $ProductAttributes;
     public function initialize(array $config)
     {
         parent::initialize($config);  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->Categories = TableRegistry::getTableLocator()->get('Categories');
+        $this->Images=TableRegistry::getTableLocator()->get('Images');
+        $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->connection = ConnectionManager::get('default');
     }
 
@@ -21,6 +25,10 @@ class CategoriesComponent extends Component {
         foreach ($categories as $category) {
             $cate = $this->Categories->find('all')->where(['parent_id'=> $category['id']])->toArray();
             $category['options'] = $cate;
+        }
+
+        foreach ($category['options'] as $category) {
+            $category['parent_name'] = $this->Categories->find()->where(['id'=>$category['parent_id']])->first()->name;
         }
 
         return $categories;
@@ -59,10 +67,29 @@ class CategoriesComponent extends Component {
     public function update($reqCategory){
         $result = $this->Categories->query()->update()
         ->set(['name' => $reqCategory['name'],
-               'parent_id' => $reqCategory['category']
+               'parent_id' => $reqCategory['category'],
+               'status' => $reqCategory['status']
               ])
         ->where(['id' => $reqCategory['id']])
         ->execute();
+        return $result;
+    }
+
+    public function deleteProduct($id = null){
+        $this->connection->begin();
+            $products = $this->Products->find()->where(['category_id'=>$id])->toArray();
+
+            foreach ($products as $product) {
+                $images = $this->Images->find()->where(['product_id'=>$product['id']])->toArray();
+                foreach ($images as $image) {
+                    unlink('img/'.$image['name']);
+                }
+                $this->Images->query()->delete()->where(['product_id'=>$product['id']])->execute();
+                $this->ProductAttributes->query()->delete()->where(['product_id'=>$product['id']])->execute();
+                $this->Products->query()->delete()->where(['category_id' => $id])->execute();  
+            }
+
+        $result = $this->connection->commit();
         return $result;
     }
 }

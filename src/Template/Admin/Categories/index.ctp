@@ -17,6 +17,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -25,6 +26,7 @@
             <tr>
                 <td><?= $this->Number->format($category->id) ?></td>
                 <td><?= h($category->name) ?></td>
+                <td><?= $this->Number->format($category->status) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $category->id], ['class'=>'btn btn-warning']) ?>
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $category->id], ['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $category->id)]) ?>
@@ -42,6 +44,7 @@
                 <th scope="col">Name</th>
                 <th scope="col">Category_Parent</th>
                 <th scope="col">ID_Parent</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -52,6 +55,7 @@
                 <td><?= h($category->name) ?></td>
                 <td><?= h($category->parent_name) ?></td>
                 <td><?= $this->Number->format($category->parent_id) ?></td>
+                <td><?= $this->Number->format($category->status) ?></td>
                 <td class="actions">
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $category->id], ['class'=>'btn btn-warning']) ?>
                     <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $category->id], ['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $category->id)]) ?>

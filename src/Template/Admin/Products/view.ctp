@@ -25,15 +25,15 @@
         </tr>
         <tr>
             <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($product->id) ?></td>
+            <td><?= $product->id ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Price') ?></th>
-            <td><?= $this->Number->format($product->price) ?></td>
+            <td><?= $product->price ?></td>
         </tr>
         <tr>
             <th scope="row"><?= __('Quantity') ?></th>
-            <td><?= $this->Number->format($product->quantity) ?></td>
+            <td><?= $product->quantity ?></td>
         </tr>
         <?php
             foreach ($product['options'] as $option) {

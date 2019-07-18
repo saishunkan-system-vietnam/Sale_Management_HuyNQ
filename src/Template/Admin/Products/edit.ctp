@@ -31,6 +31,44 @@
             <label>Description</label>
             <textarea name="description" class="ckeditor" id="editor"><?= h($product->description) ?></textarea>
         </div> 
+        <br>
+        <div class="row">
+            <?php if($product['status'] == 1) { ?>
+                <label class="radio-inline"><input type="radio" name="status" value="1" checked>Public</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0">Private</label>
+            <?php }else{ ?>
+                <label class="radio-inline"><input type="radio" name="status" value="1">Public</label>
+                <label class="radio-inline"><input type="radio" name="status" value="0" checked>Private</label>
+            <?php } ?>
+        </div>
+
+        <div class="row"> 
+            <label for="name">Category</label>
+            <div class="col-md-6">  
+                <select id="categoryParent">
+                    <?php foreach ($categories as $category) { 
+                        if($category['id'] == $product['category_id']){
+                    ?>
+                        <option selected value=<?= $category['id'] ?>><?= $category['name'] ?></option>
+                    <?php 
+                        }else{
+                    ?>
+                        <option value=<?= $category['id'] ?>><?= $category['name'] ?></option>
+                    <?php        
+                        }
+                    } 
+                    ?>  
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <select name="category" id="categoryChild">
+                    <option value=null selected hidden>---- Choose type product ----</option>
+                </select>
+            </div>
+
+        </div>
+
         <fieldset>
             <legend>Options</legend>   
         <?php
