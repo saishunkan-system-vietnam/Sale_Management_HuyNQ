@@ -23,6 +23,24 @@ class ProductsComponent extends Component {
 
     }
 
+    public function selectAll(){
+        $products = $this->Products->find('all')
+                    ->select($this->Products)
+                    ->select($this->Categories)
+                    ->join([
+                        'categories' => [
+                            'table' => 'categories',
+                            'type' => 'INNER',
+                            'conditions' => 'categories.id = products.category_id'
+                        ]
+                    ]);
+        return $products;                    
+        // echo "<pre>";
+        // print_r($product->toArray());
+        // echo "</pre>";
+        // die('a');
+    }
+
     public function add($reqProduct){
         $query = $this->Products->query();
 
@@ -46,7 +64,7 @@ class ProductsComponent extends Component {
     public function update($reqProduct){
         $query = $this->Products->query();
         $query->update()
-        ->set(['name' => $reqProduct['name'],'price' => $reqProduct['price'],'quantity' => $reqProduct['quantity'],'description' => $reqProduct['description'],'user_id' => $reqProduct['user_id'],'created' => new DateTime('now'),'modified' => new DateTime('now')])
+        ->set(['name' => $reqProduct['name'],'price' => $reqProduct['price'],'quantity' => $reqProduct['quantity'],'description' => $reqProduct['description'],'category_id' => $reqProduct['category'],'status' => $reqProduct['status'],'user_id' => $reqProduct['user_id'],'created' => new DateTime('now'),'modified' => new DateTime('now')])
         ->where(['id' => $reqProduct['id']])
         ->execute();
     }

@@ -38,10 +38,14 @@ class ProductsController extends AppController
 
     public function index()
     {      
-        $products = $this->paginate($this->Products);
-        $attributes = $this->Attributes->find('all')->toArray();
+        $categories = $this->categories->selectAll();
+        $products = $this->paginate($this->products->selectAll());
+        // echo "<pre>";
+        // print_r($categories);
+        // echo "</pre>";
+        // die('a');
 
-        $this->set(compact('products'));
+        $this->set(compact('products','categories'));
     }
 
     public function view($id = null)
@@ -136,6 +140,7 @@ class ProductsController extends AppController
         $product = $this->Products->get($id);
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
         $categories = $this->categories->selectAll();
+        $product['category_parent'] = $this->Categories->find()->where(['id'=>$product->category_id])->first()->parent_id;
 
         $product['options'] = array();
 
@@ -162,7 +167,7 @@ class ProductsController extends AppController
   
             $this->products->update($request);
 
-            $removeAttrs = array("id","user_id","name","quantity","price","description");
+            $removeAttrs = array("id","user_id","name","quantity","price","description","status","category");
 
             foreach($removeAttrs as $key) {
                 unset($request[$key]);
@@ -188,10 +193,10 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-        echo "<pre>";
-        print_r($categories);
-        echo "</pre>";
-        die('a');
+        // echo "<pre>";
+        // print_r($product);
+        // echo "</pre>";
+        // die('a');
 
         $this->set(compact('product', 'attributes','categories'));
     }
@@ -264,5 +269,50 @@ class ProductsController extends AppController
         return $this->response
             ->withType('application/json')
             ->withStringBody(json_encode($cateChilds));
+    }
+
+    public function search(){
+        $categories = $this->categories->selectAll();
+        if ($this->request->is('post')) {
+            $request = $this->request->getData();
+            // echo "<pre>";
+            // print_r($this->products->selectAll()->toArray());
+            // echo "</pre>";
+            // die('a');
+
+            if($request['name'] !== "" && !isset($request['categoryParent']) && !isset($request['categoryChild'])){
+                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%']));
+                
+            }
+
+            if($request['name'] !== "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
+                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
+                                                                        ->where(['categories.parent_id'=>$request['categoryParent']])
+                                            );
+            }
+
+            if($request['name'] !== "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
+                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
+                                                                        ->where(['categories.parent_id'=>$request['categoryParent']])
+                                                                        ->where(['categories.id'=>$request['categoryChild']])
+                                            );
+            }
+
+            if($request['name'] == "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
+                $products = $this->paginate($this->products->selectAll()->where(['categories.parent_id'=>$request['categoryParent']]) );
+            }
+
+            if($request['name'] == "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
+                $products = $this->paginate($this->products->selectAll()->where(['categories.parent_id'=>$request['categoryParent']])
+                                                                        ->where(['categories.id'=>$request['categoryChild']])
+                                            ); 
+            }
+
+            if($request['name'] == "" && !isset($request['categoryParent']) && !isset($request['categoryChild']) ){
+                return $this->redirect(['action' => 'index']);
+            }
+
+        }
+        $this->set(compact('products','categories'));
     }
 }

@@ -8,9 +8,9 @@ $("#categoryParent").change(function(){
         data: {}
     }).done(function(rep){
         // console.log(rep);
-        $('#categoryChild').find('option').remove();
+        $('#categoryChild').find('option.opt').remove();
         rep.forEach(function(r) {
-          $('#categoryChild').append(new Option(r['name'], r['id']));
+          $('#categoryChild').append('<option class="opt" value='+r['id']+'>'+r['name']+'</option>');
         });
     });
 });

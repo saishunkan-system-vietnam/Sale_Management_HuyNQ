@@ -47,7 +47,7 @@
             <div class="col-md-6">  
                 <select id="categoryParent">
                     <?php foreach ($categories as $category) { 
-                        if($category['id'] == $product['category_id']){
+                        if($category['id'] == $product['category_parent']){
                     ?>
                         <option selected value=<?= $category['id'] ?>><?= $category['name'] ?></option>
                     <?php 
@@ -62,9 +62,24 @@
             </div>
 
             <div class="col-md-6">
-                <select name="category" id="categoryChild">
-                    <option value=null selected hidden>---- Choose type product ----</option>
-                </select>
+                <?php foreach ($categories as $category){ 
+                    if($category['id'] == $product['category_parent']){
+                ?>      
+                    <select name="category" id="categoryChild">
+                        <?php foreach ($category['options'] as $cate) { 
+                            if($cate['id'] == $product['category_id']){
+                        ?>
+                            <option class="opt" selected value=<?= $cate['id'] ?>><?= $cate['name'] ?></option>
+                        <?php 
+                            }else{
+                        ?>
+                            <option class="opt" value=<?= $cate['id'] ?>><?= $cate['name'] ?></option>
+                        <?php        
+                            }
+                        } 
+                        ?>  
+                    </select>
+                <?php } } ?>
             </div>
 
         </div>
@@ -100,3 +115,4 @@
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script('product.js') ?>
