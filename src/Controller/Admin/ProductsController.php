@@ -39,11 +39,7 @@ class ProductsController extends AppController
     public function index()
     {      
         $categories = $this->categories->selectAll();
-        $products = $this->paginate($this->products->selectAll());
-        // echo "<pre>";
-        // print_r($categories);
-        // echo "</pre>";
-        // die('a');
+        $products = $this->paginate($this->products->selectCategories());
 
         $this->set(compact('products','categories'));
     }
@@ -137,6 +133,12 @@ class ProductsController extends AppController
 
     public function edit($id = null)
     {
+        // $attributes = $this->products->selectAttributes();
+        // echo "<pre>";
+        // print_r($attributes->toArray());
+        // echo "<pre>";
+        // die('a');
+
         $product = $this->Products->get($id);
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
         $categories = $this->categories->selectAll();
@@ -275,35 +277,31 @@ class ProductsController extends AppController
         $categories = $this->categories->selectAll();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            // echo "<pre>";
-            // print_r($this->products->selectAll()->toArray());
-            // echo "</pre>";
-            // die('a');
 
             if($request['name'] !== "" && !isset($request['categoryParent']) && !isset($request['categoryChild'])){
-                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%']));
+                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%']));
                 
             }
 
             if($request['name'] !== "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
+                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
                                                                         ->where(['categories.parent_id'=>$request['categoryParent']])
                                             );
             }
 
             if($request['name'] !== "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectAll()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
+                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
                                                                         ->where(['categories.parent_id'=>$request['categoryParent']])
                                                                         ->where(['categories.id'=>$request['categoryChild']])
                                             );
             }
 
             if($request['name'] == "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectAll()->where(['categories.parent_id'=>$request['categoryParent']]) );
+                $products = $this->paginate($this->products->selectCategories()->where(['categories.parent_id'=>$request['categoryParent']]) );
             }
 
             if($request['name'] == "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectAll()->where(['categories.parent_id'=>$request['categoryParent']])
+                $products = $this->paginate($this->products->selectCategories()->where(['categories.parent_id'=>$request['categoryParent']])
                                                                         ->where(['categories.id'=>$request['categoryChild']])
                                             ); 
             }

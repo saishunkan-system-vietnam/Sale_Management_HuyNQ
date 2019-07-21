@@ -126,29 +126,11 @@ class AttributesController extends AppController
         }
     }
 
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $check = $this->attributes->checkParent($id);
-        $this->connection->begin();
-        if($check == 1){ 
-            $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
-            foreach ($attrChilds as $attrChild) {
-                $this->ProductAttributes->query()->delete()->where(['attribute_id' => $attrChild['id']])->execute();
-                $this->Attributes->query()->delete()->where(['id' => $attrChild['id']])->execute();
-            }
-            $this->Attributes->query()->delete()->where(['id' => $id])->execute();
-        }else{
-            $this->ProductAttributes->query()->delete()->where(['attribute_id' => $id])->execute();
-            $this->Attributes->query()->delete()->where(['id' => $id])->execute();
-        }
-        $result = $this->connection->commit();
-        if ($result) {
-            $this->Flash->success(__('The attribute has been deleted.'));
-        } else {
-            $this->Flash->error(__('The attribute could not be deleted. Please, try again.'));
-        }
-
-        return $this->redirect(['action' => 'index']);
+    public function view($id = null){
+        $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
+    
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($attrChilds));
     }
 }

@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 
+
 /**
  * Categories Controller
  *
@@ -34,9 +35,9 @@ class CategoriesController extends AppController
     public function index()
     {
         $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
-        $cateChilds = $this->categories->selectChild();
+        // $cateChilds = $this->categories->selectChild();
 
-        $this->set(compact('cateParents','cateChilds'));
+        $this->set(compact('cateParents'));
     }
 
     /**
@@ -94,38 +95,16 @@ class CategoriesController extends AppController
                 $request = $this->request->getData();
                 $this->connection->begin();
 
-                if($request['status'] == 1){
-                    $request['id'] = $id;
-                    $request['category'] = 0;
-                    $this->categories->update($request);
+                $request['id'] = $id;
+                $request['category'] = 0;
+                $this->categories->update($request);
                     
-                    $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-                    foreach ($cateChilds as $cateChild) {
-                        $request['id'] = $cateChild['id'];
-                        $request['name'] = $cateChild['name'];
-                        $request['category'] = $id;
-                        $this->categories->update($request);
-                        $products = $this->Products->find()->where(['category_id'=>$cateChild['id']])->toArray();
-                        foreach ($products as $product) {
-                            $this->Products->query()->update()->set(['status'=>1])->where(['id' => $product['id']])->execute();
-                        }
-                    }      
-                }else{
-                    $request['id'] = $id;
-                    $request['category'] = 0;
+                $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
+                foreach ($cateChilds as $cateChild) {
+                    $request['id'] = $cateChild['id'];
+                    $request['name'] = $cateChild['name'];
+                    $request['category'] = $id;
                     $this->categories->update($request);
-                    
-                    $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-                    foreach ($cateChilds as $cateChild) {
-                        $request['id'] = $cateChild['id'];
-                        $request['name'] = $cateChild['name'];
-                        $request['category'] = $id;
-                        $this->categories->update($request);
-                        $products = $this->Products->find()->where(['category_id'=>$cateChild['id']])->toArray();
-                        foreach ($products as $product) {
-                            $this->Products->query()->update()->set(['status'=>0])->where(['id' => $product['id']])->execute();
-                        }
-                    }
                 }
                 
                 $result = $this->connection->commit();
@@ -143,22 +122,14 @@ class CategoriesController extends AppController
 
             if ($this->request->is(['patch', 'post', 'put'])) {
                 $request = $this->request->getData();
+                    // echo "<pre>";
+                    // print_r($request);
+                    // echo "</pre>";
+                    // die('a');
                 $this->connection->begin();
-                if($request['status'] == 1){
-                    $request['id'] = $id;
-                    $this->categories->update($request);
-                    $products = $this->Products->find()->where(['category_id'=>$cateChild['id']])->toArray();
-                    foreach ($products as $product) {
-                        $this->Products->query()->update()->set(['status'=>1])->where(['id' => $product['id']])->execute();
-                    }
-                }else{
-                    $request['id'] = $id;
-                    $this->categories->update($request);
-                    $products = $this->Products->find()->where(['category_id'=>$cateChild['id']])->toArray();
-                    foreach ($products as $product) {
-                        $this->Products->query()->update()->set(['status'=>0])->where(['id' => $product['id']])->execute();
-                    }
-                }
+                $request['id'] = $id;
+                $this->categories->update($request);
+
                 $result = $this->connection->commit();
                 if($result){
                     $this->Flash->success(__('The category updated.'));
@@ -171,37 +142,12 @@ class CategoriesController extends AppController
         }
     }
 
-    /**
-     * Delete method
-     *
-     * @param string|null $id Category id.
-     * @return \Cake\Http\Response|null Redirects to index.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-    public function delete($id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $check = $this->categories->checkParent($id);
-        $this->connection->begin();
-        if($check == 1){      
-            $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-            foreach ($cateChilds as $cateChild) { 
-                $this->categories->deleteProduct($cateChild['id']);
-                $this->Categories->query()->delete()->where(['id' => $cateChild['id']])->execute();   
-            }
-            $this->Categories->query()->delete()->where(['id' => $id])->execute();
-               
-        }else{
-            $this->categories->deleteProduct($id);
-            $this->Categories->query()->delete()->where(['id' => $id])->execute();         
-        }
-        $result = $this->connection->commit();
-        if ($result) {
-            $this->Flash->success(__('The category has been deleted.'));
-        } else {
-            $this->Flash->error(__('The category could not be deleted. Please, try again.'));
-        }
+    public function view($id = null){  
+        $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
+    
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($cateChilds));
 
-        return $this->redirect(['action' => 'index']);
     }
 }

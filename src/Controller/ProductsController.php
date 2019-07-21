@@ -20,16 +20,28 @@ class ProductsController extends AppController
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->Images = TableRegistry::getTableLocator()->get('Images');
-        $this->viewBuilder()->layout("home");   
+        $this->viewBuilder()->layout("home");
+        $this->loadComponent('products');   
     }
 
     public function index()
     {
-        $products = $this->Products->find()->toArray();
+        $products = $this->Products->find('all')
+                    ->select($this->Products)
+                    ->select($this->Images)
+                    ->join([
+                        'images' => [
+                            'table' => 'images',
+                            'type' => 'LEFT',
+                            'conditions' => 'products.id = images.product_id'
+                        ]
+                    ])
+                    ->group(['products.id']);
 
-        foreach ($products as $product) {
-            $product['images'] = $this->Images->find()->where(['product_id'=>$product->id])->first()['name'];
-        }
+        // echo "<pre>";
+        // print_r($products->toArray());
+        // echo "</pre>";
+        // die('a');
 
         $this->set(compact('products'));
     }
@@ -41,8 +53,24 @@ class ProductsController extends AppController
         $this->set(compact('product'));
     }
 
+    public function add2cart($id = null){
+        if ($this->request->is('ajax')) {
+       
+        $product = $this->Products->find()->where(['id'=>$id])->first();
+
+        $this->Session->write('id',$id);
+        $this->Session->write('product',$product->name);
+        $this->Session->write('price',$product->price);
+        $this->Session->write('quantity',1);
+         }
+        // return $this->response
+        //     ->withType('application/json')
+        //     ->withStringBody(json_encode("aaa"));
+    }
+
     public function checkout()
     {
-
+        if ($this->request->is('post')) {
+        }
     }
 }

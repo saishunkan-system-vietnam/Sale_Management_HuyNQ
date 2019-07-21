@@ -74,23 +74,5 @@ class CategoriesComponent extends Component {
         ->execute();
         return $result;
     }
-
-    public function deleteProduct($id = null){
-        $this->connection->begin();
-            $products = $this->Products->find()->where(['category_id'=>$id])->toArray();
-
-            foreach ($products as $product) {
-                $images = $this->Images->find()->where(['product_id'=>$product['id']])->toArray();
-                foreach ($images as $image) {
-                    unlink('img/'.$image['name']);
-                }
-                $this->Images->query()->delete()->where(['product_id'=>$product['id']])->execute();
-                $this->ProductAttributes->query()->delete()->where(['product_id'=>$product['id']])->execute();
-                $this->Products->query()->delete()->where(['category_id' => $id])->execute();  
-            }
-
-        $result = $this->connection->commit();
-        return $result;
-    }
 }
 ?>

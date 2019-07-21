@@ -115,3 +115,5 @@ Router::prefix('admin', function ($routes) {
     // And have the prefix => admin route element added.
     $routes->fallbacks('DashedRoute');
 });
+
+$routes->connect('/products/add2cart/*', ['controller' => 'Products', 'action' => 'add2cart']);

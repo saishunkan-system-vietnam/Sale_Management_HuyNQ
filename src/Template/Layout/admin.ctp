@@ -18,9 +18,11 @@
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/Admin/dist/css/skins/_all-skins.min.css">
     <?= $this->Html->script('jquery-3.4.1.min.js') ?>
+    <?= $this->Html->script('toastr.min.js') ?>
 
     <?= $this->Html->css('base.css') ?>
     <?= $this->Html->css('profile.css') ?>
+    <?= $this->Html->css('toastr.min.css') ?>
 
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
@@ -178,7 +180,6 @@
 
       <!-- Default box -->
       <div class="box">
-
             <strong><?= $this->Flash->render() ?></strong>
             
             <div class="clearfix">

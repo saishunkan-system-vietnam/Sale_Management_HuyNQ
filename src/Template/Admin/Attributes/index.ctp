@@ -17,6 +17,7 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
@@ -25,9 +26,16 @@
             <tr>
                 <td><?= $this->Number->format($attribute->id) ?></td>
                 <td><?= h($attribute->name) ?></td>
+                <td>
+                    <?php if($attribute->status == 1){ ?>
+                        <p style="background-color: green; color: white; text-align: center;">Active</p>
+                    <?php }else{ ?>
+                        <p style="background-color: red; color: white; text-align: center;">Deactive</p>
+                    <?php } ?>
+                </td>
                 <td class="actions">
                     <?= $this->Html->link(__('Edit'), ['action' => 'edit', $attribute->id], ['class'=>'btn btn-warning']) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $attribute->id], ['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $attribute->id)]) ?>
+                    <a attribute_id="<?= $attribute->id ?>" class="view btn btn-primary">View</a>
                 </td>
             </tr>
             <?php endforeach; ?>
@@ -35,30 +43,17 @@
     </table>
 </div>
 <div class="attributes index large-6 medium-6 columns content">
-    <table cellpadding="0" cellspacing="0" style="width: 100%;">
+    <table id="attrChild" cellpadding="0" cellspacing="0" style="width: 100%;">
         <thead>
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Name</th>
-                <th scope="col">Attribute_Parent</th>
-                <th scope="col">ID_Parent</th>
+                <th scope="col">Status</th>
                 <th scope="col">Action</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($attrChilds as $attribute): ?>
-            <tr>
-                <td><?= $this->Number->format($attribute->id) ?></td>
-                <td><?= h($attribute->name) ?></td>
-                <td><?= h($attribute->parent_name) ?></td>
-                <td><?= $this->Number->format($attribute->parent_id) ?></td>
-                <td class="actions">
-                    <?= $this->Html->link(__('Edit'), ['action' => 'edit', $attribute->id], ['class'=>'btn btn-warning']) ?>
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $attribute->id], ['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $attribute->id)]) ?>
-                </td>
-            </tr>
-            <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
+<?= $this->Html->script('attribute.js') ?>
