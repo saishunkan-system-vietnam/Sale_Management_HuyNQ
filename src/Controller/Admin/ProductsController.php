@@ -22,7 +22,7 @@ class ProductsController extends AppController
     private $Categories;
 
     public function initialize()
-    {
+    {   
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
@@ -87,8 +87,10 @@ class ProductsController extends AppController
             }else{
                 $request['user_id'] = $this->Auth->user('id');
                 $this->connection->begin();
-                $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'category_id'=>$request['category'],'status'=>$request['status'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
-                $this->products->add($reqProduct);
+                
+                // $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'category_id'=>$request['category'],'status'=>$request['status'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
+                // $this->products->add($reqProduct);
+
 
                 $product = $this->Products->find()->where(['name'=> $request['name']])->first();
 

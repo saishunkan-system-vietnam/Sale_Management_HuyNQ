@@ -46,17 +46,66 @@ class AppController extends Controller
         ]);
         $this->loadComponent('Flash');
 
-        // Login
-        $this->loadComponent('Auth', [ 
+        if ($this->request->prefix == 'admin') {
+
+        $this->loadComponent('Auth', [
+            'authenticate' => [
+                'Form' => [
+                    'userModel' => 'Users',
+                    'fields' => ['email' => 'email', 'password' => 'password']
+                ],
+            ],
             'loginAction' => [
                 'controller' => 'Users',
                 'action' => 'login'
-            ]
+            ],
+            'loginRedirect' => [
+                'controller' => 'Users',
+                'action' => 'index'
+            ],
+            'logoutRedirect' => [
+                'controller' => 'Users',
+                'action' => 'login',
+            ],
+            'storage' => [
+                'className' => 'Session',
+                'key' => 'Auth.Admin',              
+            ],
         ]);
+        $this->Auth->allow(['display']);
+
+    } else {
+
+        $this->loadComponent('Auth', [
+            'authenticate' => [
+                'Form' => [
+                    'userModel' => 'Users',
+                    'fields' => ['email' => 'email', 'password' => 'password']
+                ],
+            ],
+            'loginAction' => [
+                'controller' => 'Users',
+                'action' => 'login'
+            ],
+            'loginRedirect' => [
+                'controller' => 'Products',
+                'action' => 'index'
+            ],
+            'logoutRedirect' => [
+                'controller' => 'Products',
+                'action' => 'index',
+            ],
+            'storage' => [
+                'className' => 'Session',
+                'key' => 'Auth.User',               
+            ],
+        ]);
+        $this->Auth->allow(['index','add2cart','checkout','order']);
+    }
 
         // Allow the display action so our PagesController
         // continues to work. Also enable the read only actions.
-        $this->Auth->allow(['display', 'view', 'index']);
+        // $this->Auth->allow(['display','add2cart']);
 
         /*
          * Enable the following component for recommended CakePHP security settings.

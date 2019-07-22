@@ -160,11 +160,16 @@ class UsersController extends AppController
                 ->where(['password' => $request['password']])
                 ->first();
                 if ($user) {
-                    $this->Auth->setUser($user);
-                    $this->Flash->success(__('Login successfull !'));
-                    return $this->redirect($this->Auth->redirectUrl());
-                }
-                $this->Flash->error('Your email or password is incorrect.');
+                    if($user['type'] == 1){
+                        $this->Auth->setUser($user);
+                        $this->Flash->success(__('Login successfull !'));
+                        return $this->redirect($this->Auth->redirectUrl());
+                    }else{
+                        $this->Flash->error('You are not permission.');
+                    }
+                }else{
+                    $this->Flash->error('Your email or password is incorrect.');
+                }       
             }
             $this->set(compact('user'));
         }

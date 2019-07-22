@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="csrf-token" content="{{ csrf_token() }}">
+	<meta name="csrfToken" content="<?php echo $this->Token->getToken(); ?>"> 
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
 	<title>Internship-Shop</title>
@@ -74,21 +74,23 @@
 					<ul class="header-btns">
 						<!-- Account -->
 						<li class="header-account dropdown default-dropdown">
-							<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+							<?php if(isset($auth['User'])){ ?>
+								<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
 								<div class="header-btns-icon">
 									<i class="fa fa-user-o"></i>
 								</div>
-								<strong class="text-uppercase">My Account <i class="fa fa-caret-down"></i></strong>
+								<strong class="text-uppercase"><?= $auth['User']['email'] ?></i></strong>
 							</div>
-							<a href="#" class="text-uppercase">Login</a> / <a href="#" class="text-uppercase">Join</a>
-							<ul class="custom-menu">
-								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
-								<li><a href="#"><i class="fa fa-heart-o"></i> My Wishlist</a></li>
-								<li><a href="#"><i class="fa fa-exchange"></i> Compare</a></li>
-								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-								<li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
-							</ul>
+							<a href="/logout" class="text-uppercase">Logout</a>
+							<?php }else{ ?>
+								<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+								<div class="header-btns-icon">
+									<i class="fa fa-user-o"></i>
+								</div>
+								<strong class="text-uppercase">My Account</i></strong>
+							</div>
+							<a href="/login" class="text-uppercase">Login</a>
+							<?php } ?>
 						</li>
 						<!-- /Account -->
 

@@ -62,12 +62,12 @@ Router::scope('/', function (RouteBuilder $routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    // $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    // $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 
     /**
      * Connect catchall routes for all controllers.
@@ -116,4 +116,10 @@ Router::prefix('admin', function ($routes) {
     $routes->fallbacks('DashedRoute');
 });
 
-$routes->connect('/products/add2cart/*', ['controller' => 'Products', 'action' => 'add2cart']);
+Router::scope('/', function ($routes) {
+    $routes->connect('/', ['controller' => 'Products', 'action' => 'index']);
+    $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+    $routes->connect('/add2cart', ['controller' => 'Products', 'action' => 'add2cart']);
+    $routes->connect('/order', ['controller' => 'Products', 'action' => 'order']);
+});

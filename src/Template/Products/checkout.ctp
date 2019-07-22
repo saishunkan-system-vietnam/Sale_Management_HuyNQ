@@ -15,7 +15,7 @@
 		<div class="container">
 			<!-- row -->
 			<div class="row">
-				<form id="checkout-form" class="clearfix">
+				<form id="checkout-form" action="/order" method="post">
 					<div class="col-md-6">
 						<div class="billing-details">
 							<p>Already a customer ? <a href="#">Login</a></p>
@@ -57,7 +57,6 @@
 								<thead>
 									<tr>
 										<th>Product</th>
-										<th></th>
 										<th class="text-center">Price</th>
 										<th class="text-center">Quantity</th>
 										<th class="text-center">Total</th>
@@ -65,20 +64,15 @@
 									</tr>
 								</thead>
 								<tbody>
+									<?php foreach ($cart as $value): ?>
 									<tr>
-										<td class="thumb"><img src="./img/thumb-product01.jpg" alt=""></td>
-										<td class="details">
-											<a href="#">Product Name Goes Here</a>
-											<ul>
-												<li><span>Size: XL</span></li>
-												<li><span>Color: Camelot</span></li>
-											</ul>
-										</td>
-										<td class="price text-center"><strong>$32.50</strong></td>
-										<td class="qty text-center"><input class="input" type="number" value="1"></td>
-										<td class="total text-center"><strong class="primary-color">$32.50</strong></td>
+										<td class="thumb"><img src="../img/<?= $value['image'] ?>" alt=""><?= $value['name'] ?></td>
+										<td class="price text-center"><strong><?= $value['price'] ?></strong></td>
+										<td class="qty text-center"><input class="input" type="number" value="<?= $value['quantity'] ?>"></td>
+										<td class="total text-center"><strong class="primary-color"><?= $value['quantity']*$value['price'] ?></strong></td>
 										<td class="text-right"><button class="main-btn icon-btn"><i class="fa fa-close"></i></button></td>
 									</tr>
+									<?php endforeach ?>
 								</tbody>
 								<tfoot>
 									<tr>
