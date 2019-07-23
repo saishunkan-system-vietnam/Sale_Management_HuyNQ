@@ -9,6 +9,8 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
+ * @property \App\Model\Table\CartsTable|\Cake\ORM\Association\HasMany $Carts
+ * @property \App\Model\Table\OrdersTable|\Cake\ORM\Association\HasMany $Orders
  * @property \App\Model\Table\ProductsTable|\Cake\ORM\Association\HasMany $Products
  *
  * @method \App\Model\Entity\User get($primaryKey, $options = [])
@@ -35,11 +37,17 @@ class UsersTable extends Table
         parent::initialize($config);
 
         $this->setTable('users');
-        $this->setDisplayField('id');
+        $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
+        $this->hasMany('Carts', [
+            'foreignKey' => 'user_id'
+        ]);
+        $this->hasMany('Orders', [
+            'foreignKey' => 'user_id'
+        ]);
         $this->hasMany('Products', [
             'foreignKey' => 'user_id'
         ]);
@@ -59,14 +67,40 @@ class UsersTable extends Table
 
         $validator
             ->email('email')
-            ->requirePresence('email', 'create',"Field is not isset")
-            ->notEmptyString('email',"Email cannot be empty");
+            ->allowEmptyString('email');
+
+        $validator
+            ->scalar('username')
+            ->maxLength('username', 100)
+            ->allowEmptyString('username');
 
         $validator
             ->scalar('password')
-            ->maxLength('password', 255)
-            ->requirePresence('password', 'create',"Field is not isset")
-            ->notEmptyString('password',"Password cannot be empty");
+            ->maxLength('password', 100)
+            ->allowEmptyString('password');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->allowEmptyString('name');
+
+        $validator
+            ->integer('phone')
+            ->allowEmptyString('phone');
+
+        $validator
+            ->scalar('address')
+            ->maxLength('address', 100)
+            ->allowEmptyString('address');
+
+        $validator
+            ->integer('type')
+            ->allowEmptyString('type');
+
+        $validator
+            ->scalar('notice')
+            ->maxLength('notice', 100)
+            ->allowEmptyString('notice');
 
         return $validator;
     }
@@ -81,6 +115,7 @@ class UsersTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->isUnique(['email']));
+        $rules->add($rules->isUnique(['username']));
 
         return $rules;
     }

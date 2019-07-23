@@ -10,6 +10,11 @@ use Cake\Validation\Validator;
  * Products Model
  *
  * @property \App\Model\Table\UsersTable|\Cake\ORM\Association\BelongsTo $Users
+ * @property \App\Model\Table\CategoriesTable|\Cake\ORM\Association\BelongsTo $Categories
+ * @property \App\Model\Table\CartDetailsTable|\Cake\ORM\Association\HasMany $CartDetails
+ * @property \App\Model\Table\ImagesTable|\Cake\ORM\Association\HasMany $Images
+ * @property \App\Model\Table\OrderDetailsTable|\Cake\ORM\Association\HasMany $OrderDetails
+ * @property \App\Model\Table\ProductAttributesTable|\Cake\ORM\Association\HasMany $ProductAttributes
  *
  * @method \App\Model\Entity\Product get($primaryKey, $options = [])
  * @method \App\Model\Entity\Product newEntity($data = null, array $options = [])
@@ -35,13 +40,28 @@ class ProductsTable extends Table
         parent::initialize($config);
 
         $this->setTable('products');
+        $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
         $this->addBehavior('Timestamp');
 
         $this->belongsTo('Users', [
-            'foreignKey' => 'user_id',
-            'joinType' => 'INNER'
+            'foreignKey' => 'user_id'
+        ]);
+        $this->belongsTo('Categories', [
+            'foreignKey' => 'category_id'
+        ]);
+        $this->hasMany('CartDetails', [
+            'foreignKey' => 'product_id'
+        ]);
+        $this->hasMany('Images', [
+            'foreignKey' => 'product_id'
+        ]);
+        $this->hasMany('OrderDetails', [
+            'foreignKey' => 'product_id'
+        ]);
+        $this->hasMany('ProductAttributes', [
+            'foreignKey' => 'product_id'
         ]);
     }
 
@@ -59,17 +79,24 @@ class ProductsTable extends Table
 
         $validator
             ->scalar('name')
-            ->requirePresence('name','create',"Field is not isset")
-            ->requirePresence('price','create',"Field is not isset")
-            ->requirePresence('quantity','create',"Field is not isset")
-            ->requirePresence('description','create',"Field is not isset")
-            ->allowEmptyString('name', false, "Name cannot be empty")
+            ->maxLength('name', 100)
+            ->allowEmptyString('name');
+
+        $validator
             ->integer('price')
-            ->allowEmptyString('price', false, "Price cannot be empty")
+            ->allowEmptyString('price');
+
+        $validator
             ->integer('quantity')
-            ->allowEmptyString('quantity', false, "Quantity cannot be empty")
-            ->scalar('body')
-            ->allowEmptyString('body', false, "Body cannot be empty");
+            ->allowEmptyString('quantity');
+
+        $validator
+            ->scalar('description')
+            ->allowEmptyString('description');
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
 
         return $validator;
     }
@@ -84,6 +111,7 @@ class ProductsTable extends Table
     public function buildRules(RulesChecker $rules)
     {
         $rules->add($rules->existsIn(['user_id'], 'Users'));
+        $rules->add($rules->existsIn(['category_id'], 'Categories'));
 
         return $rules;
     }

@@ -68,6 +68,10 @@ class AttributesTable extends Table
             ->maxLength('name', 100)
             ->allowEmptyString('name');
 
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
         return $validator;
     }
 

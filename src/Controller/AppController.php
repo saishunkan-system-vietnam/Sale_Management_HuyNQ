@@ -100,7 +100,7 @@ class AppController extends Controller
                 'key' => 'Auth.User',               
             ],
         ]);
-        $this->Auth->allow(['index','add2cart','checkout','order']);
+        $this->Auth->allow(['index','add2cart','checkout','order','view']);
     }
 
         // Allow the display action so our PagesController

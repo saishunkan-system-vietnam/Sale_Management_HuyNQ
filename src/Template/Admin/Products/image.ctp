@@ -2,7 +2,7 @@
 	<fieldset>
 		<legend>Upload Image</legend>
 		<form method="post" enctype="multipart/form-data">      
-			<input type="file" name="file"/>
+			<input type="file" multiple name="file[]"/>
 			<input type="submit" class="btn btn-primary" value="Submit" name="Submit"/>
 		</form>
 	</fieldset>

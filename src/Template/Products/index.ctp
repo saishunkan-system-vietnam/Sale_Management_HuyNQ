@@ -53,7 +53,7 @@
 								</div>
 								<div class="product-body">
 									<h3 class="product-price"><?= $this->Number->format($product->price) ?> VNĐ</h3>
-									<h2 class="product-name"><a href="#"><?= h($product->name) ?></a></h2>
+									<h2 class="product-name"><a href="/products/<?= $product->id ?>"><?= h($product->name) ?></a></h2>
 									<div class="product-btns">
 										<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
 										<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>

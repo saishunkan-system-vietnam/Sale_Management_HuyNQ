@@ -23,28 +23,6 @@ class ProductsComponent extends Component {
 
     }
 
-    // public function selectAttributes(){
-    //     $attributes = $this->ProductAttributes->find('all')
-    //                 ->select($this->Products)
-    //                 ->select($this->Attributes)
-    //                 ->select($this->ProductAttributes)
-    //                 ->join([
-    //                     'attributes' => [
-    //                         'table' => 'attributes',
-    //                         'type' => 'INNER',
-    //                         'conditions' => 'attributes.id = productattributes.attribute_id'
-    //                     ]
-    //                 ])
-    //                 ->join([
-    //                     'products' => [
-    //                         'table' => 'products',
-    //                         'type' => 'RIGHT',
-    //                         'conditions' => 'products.id = productattributes.product_id'
-    //                     ]
-    //                 ]);
-    //     return $attributes;
-    // }
-
     public function selectCategories(){
         $products = $this->Products->find('all')
                     ->select($this->Products)

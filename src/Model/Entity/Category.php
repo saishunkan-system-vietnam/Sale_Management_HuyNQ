@@ -9,10 +9,11 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string|null $name
  * @property int|null $parent_id
+ * @property int|null $status
  *
  * @property \App\Model\Entity\ParentCategory $parent_category
  * @property \App\Model\Entity\ChildCategory[] $child_categories
- * @property \App\Model\Entity\ProductCategory[] $product_categories
+ * @property \App\Model\Entity\Product[] $products
  */
 class Category extends Entity
 {
@@ -28,8 +29,9 @@ class Category extends Entity
     protected $_accessible = [
         'name' => true,
         'parent_id' => true,
+        'status' => true,
         'parent_category' => true,
         'child_categories' => true,
-        'product_categories' => true
+        'products' => true
     ];
 }

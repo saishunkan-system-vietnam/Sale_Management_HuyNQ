@@ -8,8 +8,10 @@ use Cake\ORM\Entity;
  *
  * @property int $id
  * @property string|null $name
+ * @property int|null $product_id
+ * @property int|null $status
  *
- * @property \App\Model\Entity\ProductImage[] $product_images
+ * @property \App\Model\Entity\Product $product
  */
 class Image extends Entity
 {
@@ -24,6 +26,8 @@ class Image extends Entity
      */
     protected $_accessible = [
         'name' => true,
-        'product_images' => true
+        'product_id' => true,
+        'status' => true,
+        'product' => true
     ];
 }

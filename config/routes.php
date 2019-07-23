@@ -122,4 +122,6 @@ Router::scope('/', function ($routes) {
     $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
     $routes->connect('/add2cart', ['controller' => 'Products', 'action' => 'add2cart']);
     $routes->connect('/order', ['controller' => 'Products', 'action' => 'order']);
+    $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
+    $routes->connect('/checkout/', ['controller' => 'Products', 'action' => 'checkout']);
 });

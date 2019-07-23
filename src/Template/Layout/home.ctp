@@ -28,10 +28,13 @@
 
 	<!-- Custom stlylesheet -->
 	<link type="text/css" rel="stylesheet" href="../Home/css/style.css" />
+
 	<?= $this->Html->script('jquery-3.4.1.min.js') ?>
     <?= $this->Html->script('toastr.min.js') ?>
     <?= $this->Html->css('toastr.min.css') ?>
     <?= $this->fetch('script') ?>
+    <?= $this->fetch('css') ?>
+
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -64,7 +67,7 @@
 				<div class="pull-left">
 					<!-- Logo -->
 					<div class="header-logo">
-						<a class="logo" href="/products">
+						<a class="logo" href="/">
 							<img src="../Home/img/logo.png" alt="">
 						</a>
 					</div>
@@ -96,7 +99,7 @@
 
 						<!-- Cart -->
 						<li class="header-cart dropdown default-dropdown">
-							<a href="/products/checkout">
+							<a href="/checkout">
 								<div class="header-btns-icon">
 									<i class="fa fa-shopping-cart"></i>
 								</div>

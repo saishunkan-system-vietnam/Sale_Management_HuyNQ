@@ -46,10 +46,9 @@ class ProductsController extends AppController
 
     public function view($id = null)
     {
+        $images = $this->Images->find('all')->where(['product_id'=>$id])->toArray();
         $product = $this->Products->get($id);
-
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
-
         $product['options'] = array();
 
         foreach ($attributes as $attribute) {
@@ -66,7 +65,7 @@ class ProductsController extends AppController
             }
         }
 
-        $this->set(compact('product'));
+        $this->set(compact('product','images'));
     }
 
     public function add()
@@ -87,6 +86,19 @@ class ProductsController extends AppController
             }else{
                 $request['user_id'] = $this->Auth->user('id');
                 $this->connection->begin();
+                $product = $this->Products->newEntity();
+                $product->user_id = $request['user_id'];
+                $product->name = $request['name'];
+                $product->price = $request['price'];
+                $product->quantity = $request['quantity'];
+                $product->description = $request['description'];
+                $product->category_id = $request['category'];
+                $product->status = $request['status'];
+                $product->created = new DateTime('now');
+                $product->modified = new DateTime('now');
+                if ($this->Products->save($product)) {
+                    $id = $product->id;
+                }
                 
                 // $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'category_id'=>$request['category'],'status'=>$request['status'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
                 // $this->products->add($reqProduct);
@@ -106,14 +118,14 @@ class ProductsController extends AppController
                         $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
                         ->values([
                             'attribute_id' => $req,
-                            'product_id' => $product->id
+                            'product_id' => $id
                         ])
                         ->execute();
                     }else{
                         $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
                         ->values([
                             'attribute_id' => $req,
-                            'product_id' => $product->id
+                            'product_id' => $id
                         ])
                         ->execute();
                     }
@@ -135,11 +147,7 @@ class ProductsController extends AppController
 
     public function edit($id = null)
     {
-        // $attributes = $this->products->selectAttributes();
-        // echo "<pre>";
-        // print_r($attributes->toArray());
-        // echo "<pre>";
-        // die('a');
+        $images = $this->Images->find('all')->where(['product_id'=>$id])->toArray();
 
         $product = $this->Products->get($id);
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
@@ -202,7 +210,7 @@ class ProductsController extends AppController
         // echo "</pre>";
         // die('a');
 
-        $this->set(compact('product', 'attributes','categories'));
+        $this->set(compact('product', 'attributes','categories','images'));
     }
 
     public function delete($id = null)
@@ -231,23 +239,53 @@ class ProductsController extends AppController
 
         if(isset($_POST["Submit"]))
         {
+            // echo "<pre>";
+            // print_r($_FILES);
+            // echo "<pre>";
+            // die('a');
             if($_FILES["file"]["error"] == UPLOAD_ERR_NO_FILE){
                 $this->Flash->success("Please, Select the file to upload!!!");
             }
             else{
-                $name = explode('.', $_FILES["file"]["name"]);
-                $newName = $name[0].'_'.rand(000000, 999999).'.'.$name[1];
+                $uploadOK = 1;
 
-                $reqImage = array('name'=>$newName,'product_id'=>$id);
-                $result = $this->products->addImage($reqImage);
-                move_uploaded_file($_FILES["file"]["tmp_name"], "img/".$newName);
+                foreach ($_FILES["file"]["size"] as $key => $value) {
+                    if ($value > 500000) {
+                        $name = $_FILES["file"]["name"][$key];
+                        $this->Flash->success("Sorry, ".$name." is too large.");
+                        $uploadOK = 0;
+                    }
+                }
 
+                foreach ($_FILES["file"]["type"] as $key => $value) {
+                    if($value != "image/jpeg" && $value != "image/png" && $value != "image/jpg") {
+                        $name = $_FILES["file"]["name"][$key];
+                        $this->Flash->success("Sorry, ".$name." files are not allowed. only JPG, JPEG, PNG & GIF");
+                        $uploadOK = 0;
+                    }
+                }
+                $result = "";
+                if($uploadOK == 1){
+                    $this->connection->begin();
+                    $i = 0;
+                    foreach ($_FILES["file"]["name"] as $value) {
+                        $name = explode('.', $value);
+                        $newName = $name[0].'_'.rand(000000, 999999).'.'.$name[1];
+
+                        $reqImage = array('name'=>$newName,'product_id'=>$id);
+                        $this->products->addImage($reqImage);
+                        move_uploaded_file($_FILES["file"]["tmp_name"][$i], "img/".$newName);
+                        $i++;
+                    }
+                    $result = $this->connection->commit();
+                }
+                
                 if($result){
                     $this->Flash->success("File uploaded successfully!!!");
-                    return $this->redirect(['action' => 'image', $id]);
                 }else{
                     $this->Flash->success("File uploaded fail !!!");
-                }       
+                }  
+                return $this->redirect(['action' => 'edit', $id]);     
             }
         }
         $this->set(compact('images'));
@@ -264,7 +302,7 @@ class ProductsController extends AppController
             $this->Flash->success("Image deleted fail !!!");
         }
 
-        return $this->redirect(['action' => 'image', $product['product_id']]);
+        return $this->redirect(['action' => 'edit', $product['product_id']]);
     }
 
     public function getcateChild($id = null){

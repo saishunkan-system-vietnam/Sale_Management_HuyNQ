@@ -53,7 +53,6 @@
                         <td class="actions">
                             <?= $this->Html->link(__('View'), ['action' => 'view', $product->id],['class'=>'btn btn-primary']) ?>
                             <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id],['class'=>'btn btn-warning']) ?>
-                            <?= $this->Html->link(__('Edit Image'), ['action' => 'image', $product->id],['class'=>'btn btn-success']) ?>
                             <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id],['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
                         </td>
                     </tr>

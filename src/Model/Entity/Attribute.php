@@ -9,6 +9,7 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property string|null $name
  * @property int|null $parent_id
+ * @property int|null $status
  *
  * @property \App\Model\Entity\ParentAttribute $parent_attribute
  * @property \App\Model\Entity\ChildAttribute[] $child_attributes
@@ -28,6 +29,7 @@ class Attribute extends Entity
     protected $_accessible = [
         'name' => true,
         'parent_id' => true,
+        'status' => true,
         'parent_attribute' => true,
         'child_attributes' => true,
         'product_attributes' => true

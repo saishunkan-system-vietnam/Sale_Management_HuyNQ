@@ -24,7 +24,7 @@ class ImagesTableTest extends TestCase
      */
     public $fixtures = [
         'app.Images',
-        'app.ProductImages'
+        'app.Products'
     ];
 
     /**
@@ -67,6 +67,16 @@ class ImagesTableTest extends TestCase
      * @return void
      */
     public function testValidationDefault()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+
+    /**
+     * Test buildRules method
+     *
+     * @return void
+     */
+    public function testBuildRules()
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

@@ -7,20 +7,23 @@ use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
 /**
- * Images Model
+ * OrderDetails Model
  *
+ * @property \App\Model\Table\OrdersTable|\Cake\ORM\Association\BelongsTo $Orders
  * @property \App\Model\Table\ProductsTable|\Cake\ORM\Association\BelongsTo $Products
  *
- * @method \App\Model\Entity\Image get($primaryKey, $options = [])
- * @method \App\Model\Entity\Image newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\Image[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Image|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Image saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Image patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\Image[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\Image findOrCreate($search, callable $callback = null, $options = [])
+ * @method \App\Model\Entity\OrderDetail get($primaryKey, $options = [])
+ * @method \App\Model\Entity\OrderDetail newEntity($data = null, array $options = [])
+ * @method \App\Model\Entity\OrderDetail[] newEntities(array $data, array $options = [])
+ * @method \App\Model\Entity\OrderDetail|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\OrderDetail saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
+ * @method \App\Model\Entity\OrderDetail patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method \App\Model\Entity\OrderDetail[] patchEntities($entities, array $data, array $options = [])
+ * @method \App\Model\Entity\OrderDetail findOrCreate($search, callable $callback = null, $options = [])
+ *
+ * @mixin \Cake\ORM\Behavior\TimestampBehavior
  */
-class ImagesTable extends Table
+class OrderDetailsTable extends Table
 {
     /**
      * Initialize method
@@ -32,10 +35,15 @@ class ImagesTable extends Table
     {
         parent::initialize($config);
 
-        $this->setTable('images');
+        $this->setTable('order_details');
         $this->setDisplayField('name');
         $this->setPrimaryKey('id');
 
+        $this->addBehavior('Timestamp');
+
+        $this->belongsTo('Orders', [
+            'foreignKey' => 'order_id'
+        ]);
         $this->belongsTo('Products', [
             'foreignKey' => 'product_id'
         ]);
@@ -59,8 +67,13 @@ class ImagesTable extends Table
             ->allowEmptyString('name');
 
         $validator
-            ->integer('status')
-            ->allowEmptyString('status');
+            ->integer('price')
+            ->allowEmptyString('price');
+
+        $validator
+            ->scalar('quantity')
+            ->maxLength('quantity', 100)
+            ->allowEmptyString('quantity');
 
         return $validator;
     }
@@ -74,6 +87,7 @@ class ImagesTable extends Table
      */
     public function buildRules(RulesChecker $rules)
     {
+        $rules->add($rules->existsIn(['order_id'], 'Orders'));
         $rules->add($rules->existsIn(['product_id'], 'Products'));
 
         return $rules;
