@@ -1,4 +1,3 @@
-
 $("#categoryParent").change(function(){
 	var idCategory = $(this).val();
     // var test = $(this).find('option:selected').text();

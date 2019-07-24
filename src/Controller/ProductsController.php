@@ -32,7 +32,7 @@ class ProductsController extends AppController
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("home");
         $this->loadComponent('products'); 
-        $this->loadComponent('home'); 
+        // $this->loadComponent('home'); 
     }
 
     public function index()
@@ -48,12 +48,7 @@ class ProductsController extends AppController
                         ]
                     ])
                     ->group(['products.id']);
-
-        // echo "<pre>";
-        // print_r($products->toArray());
-        // echo "</pre>";
-        // die('a');
-
+                    
         $this->set(compact('products'));
     }
 
@@ -98,50 +93,6 @@ class ProductsController extends AppController
         }
 
         $this->set(compact('product', 'moreProduct'));
-    }
-
-    public function add2cart(){
-        $session = $this->getRequest()->getSession();  
-        $request = $this->request->getData();
-        $product = $this->Products->find()->where(['id'=>$request['id']])->first();
-        $product['image'] = $this->Images->find()->where(['product_id'=>$request['id']])->first()->name;
-        $product['quantity'] = 1;
-        
-        // $session->destroy();
-        if($session->read('Cart') == null){
-            $session->write('Cart',array($product));
-        }else{
-            $cart = $session->read('Cart');
-            $session->delete('Cart');
-            $count = 0;
-            foreach ($cart as $value) {
-
-                if($value['id'] == $product['id']){
-                    $value['quantity'] = $value['quantity'] + 1;
-                    $count++;
-                }
-            }
-            if($count!==0){
-                $session->write('Cart', $cart);
-            }else{
-                array_push($cart,$product);
-                $session->write('Cart', $cart);
-            }   
-        }       
-
-        return $this->response
-            ->withType('application/json')
-            ->withStringBody(json_encode($session->read('Cart')));  
-    }
-
-    public function checkout()
-    {
-        $cart = [];
-        $session = $this->getRequest()->getSession();
-        if($session->read('Cart') !== null){
-            $cart = $session->read('Cart');
-        }
-        $this->set(compact('cart'));
     }
 
     public function order(){

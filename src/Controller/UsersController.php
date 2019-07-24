@@ -3,6 +3,8 @@ namespace App\Controller;
 
 use App\Controller\AppController;
 use Cake\ORM\TableRegistry;
+use Cake\Datasource\ConnectionManager;
+use DateTime;
 
 /**
  * Users Controller
@@ -13,7 +15,9 @@ use Cake\ORM\TableRegistry;
  */
 class UsersController extends AppController
 {
-    protected $user;
+    protected $Users;
+    private $Carts;
+    private $CartDetails;
     /**
      * Index method
      *
@@ -23,7 +27,11 @@ class UsersController extends AppController
     {
         parent::initialize();
         $this->Auth->allow(['logout', 'signup']);
-        $this->user = TableRegistry::getTableLocator()->get('Users');
+        $this->Users = TableRegistry::getTableLocator()->get('Users');
+        $this->Carts = TableRegistry::getTableLocator()->get('Carts');
+        $this->CartDetails = TableRegistry::getTableLocator()->get('CartDetails');
+        $this->connection = ConnectionManager::get('default');
+        $this->loadComponent('users');
     }
 
     public function index()
@@ -40,14 +48,6 @@ class UsersController extends AppController
      * @return \Cake\Http\Response|null
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function view($id = null)
-    {
-        $user = $this->Users->get($id, [
-            'contain' => ['Products']
-        ]);
-
-        $this->set('user', $user);
-    }
 
     public function profile($id = null)
     {
@@ -150,19 +150,29 @@ class UsersController extends AppController
 
     public function login()
     {
+        $session = $this->getRequest()->getSession(); 
+        $carts = $session->read('Cart');
+
         if($this->Auth->user('id')){
             $this->Flash->error(_('You are already logged in !'));
             return $this->redirect(['action' => 'index']);
         }else {
             if ($this->request->is('post')) {
-
                 $request = $this->getRequest()->getData();
-                $user = $this->user->find()                 
+                $user = $this->Users->find()                 
                 ->where(['email' => $request['email']])
                 ->where(['password' => $request['password']])
                 ->first();
                 if ($user) {
                     $this->Auth->setUser($user);
+                    if($carts!==null){
+                        $this->users->addCart($user['id'], $carts);
+                    }else{
+                        $data = $this->users->showSession($user['id']);
+                        $session->write('Cart',$data['Cart']);
+                        $session->write('Total',$data['Total']);
+                    }
+                    
                     $this->Flash->success(__('Login successfull !'));
                     return $this->redirect($this->Auth->redirectUrl());
                 }
@@ -174,7 +184,25 @@ class UsersController extends AppController
 
     public function logout()
     {
+        $session = $this->getRequest()->getSession();
+        $carts = $session->read('Cart');
+        $user_id = $session->read('Auth.User.id'); 
         $this->Flash->success('You are now logged out.');
+        if($carts !== null){
+        $this->connection->begin();
+            $cart_id = $this->Carts->find()->where(['user_id'=>$user_id])->first()['id'];
+
+            $this->CartDetails->query()->delete()
+                ->where(['cart_id' => $cart_id])
+                ->execute();
+
+            $this->Carts->query()->delete()
+                ->where(['user_id' => $user_id])
+                ->execute();
+
+            $this->users->addCart($user_id, $carts);
+        $result = $this->connection->commit();
+        }
         return $this->redirect($this->Auth->logout());
     }
 
