@@ -6,6 +6,7 @@ use Cake\Validation\Validator;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
 use DateTime;
+use Cake\View\Helper;
 
 /**
  * Products Controller
@@ -34,13 +35,15 @@ class ProductsController extends AppController
         $this->loadComponent('categories');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
+        //$this->loadHelper('Select');
     }
 
     public function index()
     {      
-        $categories = $this->categories->selectAll();
+        $categories = $this->Categories->find()->toArray();
+        
         $products = $this->paginate($this->products->selectCategories());
-
+        
         $this->set(compact('products','categories'));
     }
 
@@ -305,52 +308,82 @@ class ProductsController extends AppController
         return $this->redirect(['action' => 'edit', $product['product_id']]);
     }
 
-    public function getcateChild($id = null){
-        $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-
-        return $this->response
-            ->withType('application/json')
-            ->withStringBody(json_encode($cateChilds));
-    }
-
     public function search(){
         $categories = $this->categories->selectAll();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
 
-            if($request['name'] !== "" && !isset($request['categoryParent']) && !isset($request['categoryChild'])){
-                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%']));
-                
+            if($request['name'] !== ""){
+                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%']));            
             }
 
-            if($request['name'] !== "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
-                                                                        ->where(['categories.parent_id'=>$request['categoryParent']])
-                                            );
-            }
-
-            if($request['name'] !== "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%'])
-                                                                        ->where(['categories.parent_id'=>$request['categoryParent']])
-                                                                        ->where(['categories.id'=>$request['categoryChild']])
-                                            );
-            }
-
-            if($request['name'] == "" && isset($request['categoryParent']) && !isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectCategories()->where(['categories.parent_id'=>$request['categoryParent']]) );
-            }
-
-            if($request['name'] == "" && isset($request['categoryParent']) && isset($request['categoryChild']) ){
-                $products = $this->paginate($this->products->selectCategories()->where(['categories.parent_id'=>$request['categoryParent']])
-                                                                        ->where(['categories.id'=>$request['categoryChild']])
-                                            ); 
-            }
-
-            if($request['name'] == "" && !isset($request['categoryParent']) && !isset($request['categoryChild']) ){
+            if($request['name'] == ""){
                 return $this->redirect(['action' => 'index']);
             }
 
         }
         $this->set(compact('products','categories'));
     }
+
+    public function select(){
+        $categories = $this->Categories->find()->toArray();
+        foreach ($categories as $category) {
+            $sub_data['id'] = $category['id'];
+            $sub_data['name'] = $category['name'];
+            $sub_data['parent_id'] = $category['parent_id'];
+            $data[] = $sub_data;
+            foreach($data as $key => &$value)
+                {
+                 $output[$value["id"]] = &$value;
+                }
+            foreach($data as $key => &$value)
+            {
+                 if($value["parent_id"] && isset($output[$value["parent_id"]]))
+                 {
+                  $output[$value["parent_id"]]["nodes"][] = &$value;
+                 }
+            }
+            foreach($data as $key => &$value)
+            {
+                 if($value["parent_id"] && isset($output[$value["parent_id"]]))
+                 {
+                  unset($data[$key]);
+                 }
+            }
+        }
+        
+        return $data;
+    }
+
+    // public function html_ordered_menu($array,$parent_id = 0)
+    // {
+    //   $menu_html = '<select>';
+    //   foreach($array as $element)
+    //   {
+    //     if($element['parent_id']==$parent_id)
+    //     {
+    //       $menu_html .= '<option value="'.$element['id'].'">';
+    //       $menu_html .= $this->ordered_menu($array, $element['id']);
+    //       $menu_html .= '</option>';
+    //     }
+    //   }
+    //   $menu_html .= '</select>';print_r($menu_html);
+    //   return $menu_html;
+    // }
+
+    // public function ordered_menu($array,$parent_id = 0)
+    // {
+    //   $temp_array = array();
+    //   foreach($array as $element)
+    //   {
+    //     if($element['parent_id']==$parent_id)
+    //     {
+    //       $element['subs'] = $this->ordered_menu($array,$element['id']);
+    //       $temp_array[] = $element;
+    //     }
+    //   }
+
+    //   return $temp_array;
+    // }
+
 }

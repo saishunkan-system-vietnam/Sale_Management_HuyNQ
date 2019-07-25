@@ -11,10 +11,6 @@
                     <?php endforeach ?>
                 </select>
 
-                <select name="categoryChild" id="categoryChild" style="width: 250px; float: left; margin-right: 10px;">
-                    <option selected disabled hidden>-- Choose type category detail --</option> 
-                </select>
-
                 <input type="text" class="" name="name" placeholder="Product Name.." style="width: 300px; margin-right: 10px; float: left;">
                 <button type="submit" class="btn btn-primary">Search</button>
             </form> 

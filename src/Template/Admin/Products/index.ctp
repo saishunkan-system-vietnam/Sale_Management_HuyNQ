@@ -4,20 +4,17 @@
         <div class="row">
             <form action="/admin/products/search" method="post">
 
-                <select name="categoryParent" id="categoryParent" style="width: 200px; float: left; margin-right: 10px;">
-                    <?php foreach ($categories as $category): ?>
+                <!-- <select name="categoryParent" id="categoryParent" style="width: 200px; float: left; margin-right: 10px;">
                     <option selected disabled hidden>-- Choose type category --</option> 
-                    <option value=<?= $category['id'] ?>><?= $category['name'] ?></option>
-                    <?php endforeach ?>
-                </select>
-
-                <select name="categoryChild" id="categoryChild" style="width: 250px; float: left; margin-right: 10px;">
-                    <option selected disabled hidden>-- Choose type category detail --</option> 
-                </select>
+                </select> -->
 
                 <input type="text" class="" name="name" placeholder="Product Name.." style="width: 300px; margin-right: 10px; float: left;">
                 <button type="submit" class="btn btn-primary">Search</button>
-            </form> 
+            </form>
+
+            <select>
+                <?php $this->Select->showCategories($categories); ?>
+            </select>
         </div>
         <table cellpadding="0" cellspacing="0" style="width: 100%;">
             <thead>

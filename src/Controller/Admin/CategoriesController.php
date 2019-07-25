@@ -33,7 +33,7 @@ class CategoriesController extends AppController
     }
 
     public function index()
-    {
+    { 
         $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
         // $cateChilds = $this->categories->selectChild();
 
@@ -50,10 +50,7 @@ class CategoriesController extends AppController
         $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            // echo "<pre>";
-            // print_r($request);
-            // echo "</pre>";
-            // die('a');
+ 
             if(!isset($request['category'])){
                 $this->Categories->query()->insert(['name', 'parent_id', 'status'])
                 ->values([
