@@ -188,21 +188,27 @@ class UsersController extends AppController
         $carts = $session->read('Cart');
         $user_id = $session->read('Auth.User.id'); 
         $this->Flash->success('You are now logged out.');
-        if($carts !== null){
+
         $this->connection->begin();
             $cart_id = $this->Carts->find()->where(['user_id'=>$user_id])->first()['id'];
-
-            $this->CartDetails->query()->delete()
+            if($cart_id !== null){
+                $this->CartDetails->query()->delete()
                 ->where(['cart_id' => $cart_id])
                 ->execute();
 
-            $this->Carts->query()->delete()
-                ->where(['user_id' => $user_id])
-                ->execute();
+                $this->Carts->query()->delete()
+                    ->where(['id' => $cart_id])
+                    ->execute();
+                    
+                $this->users->addCart($user_id, $carts);
+            }else{
+                $this->users->addCart($user_id, $carts);
+            }  
+        $this->connection->commit();
+        $session->delete('Cart');
+        $session->delete('Total');
+        $session->delete('Auth.User');
 
-            $this->users->addCart($user_id, $carts);
-        $result = $this->connection->commit();
-        }
         return $this->redirect($this->Auth->logout());
     }
 
