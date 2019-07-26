@@ -16,20 +16,12 @@
         <div class="row"> 
             <label for="name">Category</label>
             <div class="col-md-6">  
-                <select id="categoryParent">
-                    <option value=null selected disabled hidden>---- Choose type product ----</option> 
-                    <?php foreach ($categories as $category) { ?>
-                        <option value=<?= $category['id'] ?>><?= $category['name'] ?></option>
-                    <?php } ?>  
+                <select name="category" id="categories">
+                    <option selected disabled hidden>-- Choose type category --</option> 
+                    <?php $this->Select->showCategories($categories); ?>
                 </select>
             </div>
 
-            <div class="col-md-6">
-                <select name="category" id="categoryChild">
-                    <option value=null selected hidden>---- Choose type product ----</option>
-                </select>
-            </div>
- 
         </div>
 
         <div class="row">

@@ -12,7 +12,8 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
 
-            <select>
+            <select id="category">
+                <option selected disabled hidden>-- Choose type category --</option> 
                 <?php $this->Select->showCategories($categories); ?>
             </select>
         </div>

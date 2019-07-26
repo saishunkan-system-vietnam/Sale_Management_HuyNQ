@@ -35,7 +35,6 @@ class ProductsController extends AppController
         $this->loadComponent('categories');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
-        //$this->loadHelper('Select');
     }
 
     public function index()
@@ -74,7 +73,7 @@ class ProductsController extends AppController
     public function add()
     {   
         $attributes = $this->attributes->selectAll();
-        $categories = $this->categories->selectAll();
+        $categories = $this->Categories->find()->toArray();
         
         if ($this->request->is('post')) {
             $request = $this->request->getData();
@@ -103,10 +102,6 @@ class ProductsController extends AppController
                     $id = $product->id;
                 }
                 
-                // $reqProduct = array('user_id'=>$request['user_id'],'name'=>$request['name'],'price'=>$request['price'],'quantity'=>$request['quantity'],'description'=>$request['description'],'category_id'=>$request['category'],'status'=>$request['status'],'created'=>new DateTime('now'),'modified'=>new DateTime('now'));
-                // $this->products->add($reqProduct);
-
-
                 $product = $this->Products->find()->where(['name'=> $request['name']])->first();
 
                 $removeAttrs = array("user_id","name","quantity","price","description","category",'status');
@@ -208,10 +203,6 @@ class ProductsController extends AppController
             }
             $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
-        // echo "<pre>";
-        // print_r($product);
-        // echo "</pre>";
-        // die('a');
 
         $this->set(compact('product', 'attributes','categories','images'));
     }
@@ -325,65 +316,33 @@ class ProductsController extends AppController
         $this->set(compact('products','categories'));
     }
 
-    public function select(){
-        $categories = $this->Categories->find()->toArray();
-        foreach ($categories as $category) {
-            $sub_data['id'] = $category['id'];
-            $sub_data['name'] = $category['name'];
-            $sub_data['parent_id'] = $category['parent_id'];
-            $data[] = $sub_data;
-            foreach($data as $key => &$value)
-                {
-                 $output[$value["id"]] = &$value;
-                }
-            foreach($data as $key => &$value)
-            {
-                 if($value["parent_id"] && isset($output[$value["parent_id"]]))
-                 {
-                  $output[$value["parent_id"]]["nodes"][] = &$value;
-                 }
+    public function searchCate(){
+        if($this->request->is('post')){
+            $request = $this->request->getData();
+            $categories = $this->Categories->find()->toArray();
+            foreach ($categories as $value) {
+                $sub_data["id"] = $value["id"];
+                 $sub_data["name"] = $value["name"];
+                 $sub_data["parent_id"] = $value["parent_id"];
+                 $data[] = $sub_data;
             }
-            foreach($data as $key => &$value)
-            {
-                 if($value["parent_id"] && isset($output[$value["parent_id"]]))
-                 {
-                  unset($data[$key]);
-                 }
-            }
+            
+            
+            echo "<pre>";
+            print_r($data);
+            echo "<pre>";
+            die('a');
+
         }
-        
-        return $data;
     }
 
-    // public function html_ordered_menu($array,$parent_id = 0)
-    // {
-    //   $menu_html = '<select>';
-    //   foreach($array as $element)
-    //   {
-    //     if($element['parent_id']==$parent_id)
-    //     {
-    //       $menu_html .= '<option value="'.$element['id'].'">';
-    //       $menu_html .= $this->ordered_menu($array, $element['id']);
-    //       $menu_html .= '</option>';
-    //     }
-    //   }
-    //   $menu_html .= '</select>';print_r($menu_html);
-    //   return $menu_html;
-    // }
-
-    // public function ordered_menu($array,$parent_id = 0)
-    // {
-    //   $temp_array = array();
-    //   foreach($array as $element)
-    //   {
-    //     if($element['parent_id']==$parent_id)
-    //     {
-    //       $element['subs'] = $this->ordered_menu($array,$element['id']);
-    //       $temp_array[] = $element;
-    //     }
-    //   }
-
-    //   return $temp_array;
-    // }
-
+    public function getCate($categories){
+        foreach ($categories as $key => $value) {
+            return $value['id'];
+            $result = $this->Categories->find()->where(['parent_id'=>$value['id']])->toArray();
+            if($result){
+                $this->getData($result);
+            }
+        }
+    }
 }

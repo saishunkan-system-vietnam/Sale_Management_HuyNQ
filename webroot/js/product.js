@@ -1,17 +1,15 @@
 
 // CKEDITOR.replace('description');
 
-$("#categoryParent").click(function(){
+$("#category").change(function(){
+    var category_id = $(this).val();
+    // alert(category_id);
     $.ajax({
-        url: '/admin/products/select',
+        url: '/admin/products/searchCate',
         method: 'POST',
-        data: {}
+        data: {category_id: category_id}
     }).done(function(rep){
         console.log(rep);
-        // $('#categoryChild').find('option.opt').remove();
-        // rep.forEach(function(r) {
-        //   $('#categoryChild').append('<option class="opt" value='+r['id']+'>'+r['name']+'</option>');
-        // });
     });
 });
 
