@@ -83,46 +83,50 @@ class AttributesController extends AppController
         $check = $this->attributes->checkParent($id);
         if($check == 1){
             $attribute = $this->Attributes->find()->where(['id'=>$id])->first();
+            $this->set(compact('attribute'));
+        }else{
+            $attribute = $this->Attributes->find()->where(['id'=>$id])->first();
+            $attrParents = $this->Attributes->find()->where(['parent_id'=>0])->toArray();
+            $this->set(compact('attribute', 'attrParents'));
+        }
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $request = $this->request->getData();
 
-            if ($this->request->is(['patch', 'post', 'put'])) {
-                $request = $this->request->getData();
-                $this->connection->begin();
-                $request['id'] = $id;
-                $request['attribute'] = 0;
-                $this->attributes->update($request);
-                
-                $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
-                foreach ($attrChilds as $attrChild) {
-                    $request['id'] = $attrChild['id'];
-                    $request['name'] = $attrChild['name'];
-                    $request['attribute'] = $id;
-                    $this->attributes->update($request);
+            $validation = $this->Attributes->newEntity($request,['validate' => 'attributes']);
+            if($validation->getErrors()){
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
                 }
-                $result = $this->connection->commit();
+            }else{
+                if($check == 1){  
+                    $this->connection->begin();
+                    $request['id'] = $id;
+                    $request['attribute'] = 0;
+                    $this->attributes->update($request);
+                            
+                    $attrChilds = $this->Attributes->find()->where(['parent_id'=>$id])->toArray();
+                    foreach ($attrChilds as $attrChild) {
+                        $request['id'] = $attrChild['id'];
+                        $request['name'] = $attrChild['name'];
+                        $request['attribute'] = $id;
+                        $this->attributes->update($request);
+                    }
+
+                    $result = $this->connection->commit();
+                }else{
+                    $this->connection->begin();
+                    $request['id'] = $id;
+                    $this->attributes->update($request);
+                    $result = $this->connection->commit();
+                }
                 if($result){
                     $this->Flash->success(__('The attribute updated.'));
                     return $this->redirect(['action' => 'index']);
                 }
                 $this->Flash->error(__('The attribute could not be saved. Please, try again.'));
             }
-
-            $this->set(compact('attribute'));
-        }else{
-            $attribute = $this->Attributes->find()->where(['id'=>$id])->first();
-            $attrParents = $this->Attributes->find()->where(['parent_id'=>0])->toArray();
-
-            if ($this->request->is(['patch', 'post', 'put'])) {
-                $request = $this->request->getData();
-                $request['id'] = $id;
-                $result = $this->attributes->update($request);
-                if($result){
-                    $this->Flash->success(__('The category updated.'));
-                    return $this->redirect(['action' => 'index']);
-                }
-                $this->Flash->error(__('The category could not be saved. Please, try again.'));
-            }
-
-            $this->set(compact('attribute', 'attrParents'));
         }
     }
 

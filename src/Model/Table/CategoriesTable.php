@@ -6,22 +6,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * Categories Model
- *
- * @property \App\Model\Table\CategoriesTable|\Cake\ORM\Association\BelongsTo $ParentCategories
- * @property \App\Model\Table\CategoriesTable|\Cake\ORM\Association\HasMany $ChildCategories
- * @property \App\Model\Table\ProductsTable|\Cake\ORM\Association\HasMany $Products
- *
- * @method \App\Model\Entity\Category get($primaryKey, $options = [])
- * @method \App\Model\Entity\Category newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\Category[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Category|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Category saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Category patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\Category[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\Category findOrCreate($search, callable $callback = null, $options = [])
- */
 class CategoriesTable extends Table
 {
     /**
@@ -66,7 +50,14 @@ class CategoriesTable extends Table
         $validator
             ->scalar('name')
             ->maxLength('name', 100)
-            ->allowEmptyString('name');
+            ->allowEmptyString('name')
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->scalar('parent_id')
+            ->requirePresence('parent_id','create',"Field is not isset")
+            ->allowEmptyString('parent_id', false, "Category cannot be empty");
 
         $validator
             ->integer('status')
@@ -75,6 +66,29 @@ class CategoriesTable extends Table
         return $validator;
     }
 
+    public function validationCategories(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->allowEmptyString('name')
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->scalar('parent_id')
+            ->allowEmptyString('parent_id', false, "Category cannot be empty");
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
+        return $validator;
+    }
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.

@@ -7,6 +7,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
 use DateTime;
 use Cake\View\Helper;
+use Cake\Database\Expression\QueryExpression;
 
 /**
  * Products Controller
@@ -77,12 +78,12 @@ class ProductsController extends AppController
         
         if ($this->request->is('post')) {
             $request = $this->request->getData();
- 
+
             $validation = $this->Products->newEntity($request);
-            if($validation->getErrors()){
-                foreach ($validation->getErrors() as $errors) {
+            if($validation->getErrors()){  
+                foreach ($validation->getErrors() as $key => $errors) {
                     foreach ($errors as $error) {
-                        $this->Flash->success($error);
+                        $this->set('err'.$key.'',$error);
                     }
                 }
             }else{
@@ -94,7 +95,7 @@ class ProductsController extends AppController
                 $product->price = $request['price'];
                 $product->quantity = $request['quantity'];
                 $product->description = $request['description'];
-                $product->category_id = $request['category'];
+                $product->category_id = $request['category_id'];
                 $product->status = $request['status'];
                 $product->created = new DateTime('now');
                 $product->modified = new DateTime('now');
@@ -148,8 +149,9 @@ class ProductsController extends AppController
         $images = $this->Images->find('all')->where(['product_id'=>$id])->toArray();
 
         $product = $this->Products->get($id);
+        $category_id = $product['category_id'];
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=> $id])->toArray();
-        $categories = $this->categories->selectAll();
+        $categories = $this->Categories->find()->toArray(); 
         $product['category_parent'] = $this->Categories->find()->where(['id'=>$product->category_id])->first()->parent_id;
 
         $product['options'] = array();
@@ -172,39 +174,47 @@ class ProductsController extends AppController
 
             $request['user_id'] = $this->Auth->user('id');
             $request['id'] = $id;
- 
-            $this->connection->begin();
-  
-            $this->products->update($request);
+            $validation = $this->Products->newEntity($request);
+            if($validation->getErrors()){  
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
+                }
+            }else{
+                $this->connection->begin();
+      
+                $this->products->update($request);
 
-            $removeAttrs = array("id","user_id","name","quantity","price","description","status","category");
+                $removeAttrs = array("id","user_id","name","quantity","price","description","status","category");
 
-            foreach($removeAttrs as $key) {
-                unset($request[$key]);
+                foreach($removeAttrs as $key) {
+                    unset($request[$key]);
+                }
+
+                $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
+
+                foreach ($request as $req) {
+                    $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
+                        ->values([
+                            'attribute_id' => $req,
+                            'product_id' => $product->id
+                        ])
+                        ->execute();
+                }
+
+                $result = $this->connection->commit();
+
+                if ($result) {
+                    $this->Flash->success(__('The product has been saved.'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The product could not be saved. Please, try again.'));
             }
-
-            $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
-
-            foreach ($request as $req) {
-                $this->ProductAttributes->query()->insert(['attribute_id', 'product_id'])
-                    ->values([
-                        'attribute_id' => $req,
-                        'product_id' => $product->id
-                    ])
-                    ->execute();
-            }
-
-            $result = $this->connection->commit();
-
-            if ($result) {
-                $this->Flash->success(__('The product has been saved.'));
-
-                return $this->redirect(['action' => 'index']);
-            }
-            $this->Flash->error(__('The product could not be saved. Please, try again.'));
         }
 
-        $this->set(compact('product', 'attributes','categories','images'));
+        $this->set(compact('product', 'attributes','categories','images','category_id'));
     }
 
     public function delete($id = null)
@@ -233,10 +243,6 @@ class ProductsController extends AppController
 
         if(isset($_POST["Submit"]))
         {
-            // echo "<pre>";
-            // print_r($_FILES);
-            // echo "<pre>";
-            // die('a');
             if($_FILES["file"]["error"] == UPLOAD_ERR_NO_FILE){
                 $this->Flash->success("Please, Select the file to upload!!!");
             }
@@ -317,32 +323,41 @@ class ProductsController extends AppController
     }
 
     public function searchCate(){
+        $this->viewBuilder()->autoLayout(false);
         if($this->request->is('post')){
             $request = $this->request->getData();
-            $categories = $this->Categories->find()->toArray();
-            foreach ($categories as $value) {
-                $sub_data["id"] = $value["id"];
-                 $sub_data["name"] = $value["name"];
-                 $sub_data["parent_id"] = $value["parent_id"];
-                 $data[] = $sub_data;
+            $array = $this->Categories->find()->where(['parent_id'=>$request['category_id']])->toArray();
+
+            if(!empty($array)){
+                $data = $this->getChild($array);
+                $data = explode(',', $data);
+                $data[0] = $request['category_id'];
+            }else{
+                $data[] = $request['category_id'];
+            }
+
+            $products = $this->Products->find()->where(['category_id IN' => $data])->toArray();
+            foreach ($products as $product) {
+                $category = $this->Categories->find()->where(['id'=>$product['category_id']])->first()->name;
+                $product['category'] = $category;
             }
             
-            
-            echo "<pre>";
-            print_r($data);
-            echo "<pre>";
-            die('a');
-
         }
+        $this->set(compact('products'));
     }
 
-    public function getCate($categories){
-        foreach ($categories as $key => $value) {
-            return $value['id'];
-            $result = $this->Categories->find()->where(['parent_id'=>$value['id']])->toArray();
-            if($result){
-                $this->getData($result);
-            }
+    public function getChild($array)
+    {
+      $data = "";
+      foreach($array as $key => $element)
+      {
+        $data = $data.",".$element['id'];
+        $result = $this->Categories->find()->where(['parent_id'=>$element['id']])->toArray();
+        if(!empty($result))
+        {
+          $data = $data."".$this->getChild($result);
         }
+      }
+      return $data;
     }
 }

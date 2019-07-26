@@ -10,9 +10,14 @@ $("#category").change(function(){
         data: {category_id: category_id}
     }).done(function(rep){
         console.log(rep);
+        $("#product_table tbody tr").remove();
+        $("#product_table tbody").html(rep);
     });
 });
 
+$(".input").click(function(){
+    $(this).find(".error").css({"display": "none"});
+});
 
 
 

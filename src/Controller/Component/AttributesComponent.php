@@ -53,7 +53,8 @@ class attributesComponent extends Component {
     public function update($reqAttribute){
         $result = $this->Attributes->query()->update()
         ->set(['name' => $reqAttribute['name'],
-               'parent_id' => $reqAttribute['attribute']
+               'parent_id' => $reqAttribute['attribute'],
+               'status' => $reqAttribute['status']
               ])
         ->where(['id' => $reqAttribute['id']])
         ->execute();

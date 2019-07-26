@@ -80,24 +80,38 @@ class ProductsTable extends Table
         $validator
             ->scalar('name')
             ->maxLength('name', 100)
-            ->allowEmptyString('name');
+            ->allowEmptyString('name')
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
 
         $validator
             ->integer('price')
-            ->allowEmptyString('price');
+            ->allowEmptyString('price')
+            ->requirePresence('price','create',"Field is not isset")
+            ->allowEmptyString('price', false, "Price cannot be empty");
 
         $validator
             ->integer('quantity')
-            ->allowEmptyString('quantity');
+            ->allowEmptyString('quantity')
+            ->requirePresence('quantity','create',"Field is not isset")
+            ->allowEmptyString('quantity', false, "Quantity cannot be empty");
 
         $validator
             ->scalar('description')
-            ->allowEmptyString('description');
+            ->allowEmptyString('description')
+            ->requirePresence('description','create',"Field is not isset")
+            ->allowEmptyString('description', false, "Description cannot be empty");
 
         $validator
             ->integer('status')
-            ->allowEmptyString('status');
+            ->allowEmptyString('status')
+            ->requirePresence('status','create',"Field is not isset");
 
+        $validator
+            ->scalar('category_id')
+            ->requirePresence('category_id','create',"Field is not isset")
+            ->allowEmptyString('category_id', false, "Category cannot be empty");
+        
         return $validator;
     }
 

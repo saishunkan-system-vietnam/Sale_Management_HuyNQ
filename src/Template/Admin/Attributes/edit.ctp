@@ -15,9 +15,13 @@
     <?= $this->Form->create($attribute) ?>
     <fieldset>
         <legend><?= __('Edit Attribute') ?></legend>
-        <?php
-            echo $this->Form->control('name');
-        ?>
+        <div class="input text">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" value="<?= $attribute['name'] ?>">
+            <?php if (isset($errname) ): ?>
+                <p class="error" style="color: red;"><?= $errname ?></p>
+            <?php endif ?>
+        </div>
 
         <div class="row">
             <?php if($attribute['status'] == 1) { ?>
@@ -50,3 +54,4 @@
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script('attribute.js') ?>

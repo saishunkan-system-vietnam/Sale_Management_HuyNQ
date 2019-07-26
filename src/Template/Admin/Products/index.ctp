@@ -17,7 +17,7 @@
                 <?php $this->Select->showCategories($categories); ?>
             </select>
         </div>
-        <table cellpadding="0" cellspacing="0" style="width: 100%;">
+        <table cellpadding="0" cellspacing="0" style="width: 100%;" id="product_table">
             <thead>
                 <tr>
                     <th scope="col"><?= $this->Paginator->sort('id') ?></th>

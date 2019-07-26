@@ -6,22 +6,6 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Validation\Validator;
 
-/**
- * Attributes Model
- *
- * @property \App\Model\Table\AttributesTable|\Cake\ORM\Association\BelongsTo $ParentAttributes
- * @property \App\Model\Table\AttributesTable|\Cake\ORM\Association\HasMany $ChildAttributes
- * @property \App\Model\Table\ProductAttributesTable|\Cake\ORM\Association\HasMany $ProductAttributes
- *
- * @method \App\Model\Entity\Attribute get($primaryKey, $options = [])
- * @method \App\Model\Entity\Attribute newEntity($data = null, array $options = [])
- * @method \App\Model\Entity\Attribute[] newEntities(array $data, array $options = [])
- * @method \App\Model\Entity\Attribute|bool save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Attribute saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \App\Model\Entity\Attribute patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \App\Model\Entity\Attribute[] patchEntities($entities, array $data, array $options = [])
- * @method \App\Model\Entity\Attribute findOrCreate($search, callable $callback = null, $options = [])
- */
 class AttributesTable extends Table
 {
     /**
@@ -67,6 +51,30 @@ class AttributesTable extends Table
             ->scalar('name')
             ->maxLength('name', 100)
             ->allowEmptyString('name');
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
+        return $validator;
+    }
+
+    public function validationAttributes(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->allowEmptyString('name')
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->scalar('parent_id')
+            ->allowEmptyString('parent_id', false, "Category cannot be empty");
 
         $validator
             ->integer('status')

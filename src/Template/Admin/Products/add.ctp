@@ -3,11 +3,27 @@
     <fieldset>
         <legend><?= __('Add Product') ?></legend>
         <div class="">
-            <?php
-            echo $this->Form->control('name');
-            echo $this->Form->control('price');
-            echo $this->Form->control('quantity');
-            ?>
+            <div class="input text">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" value>
+                <?php if (isset($errname)): ?>
+                    <p class="error" style="color: red;"><?= $errname ?></p>
+                <?php endif ?>
+            </div>
+            <div class="input text">
+                <label for="price">Price</label>
+                <input type="number" name="price" id="price" value>
+                <?php if (isset($errprice)): ?>
+                    <p class="error" style="color: red;"><?= $errprice ?></p>
+                <?php endif ?>
+            </div>
+            <div class="input text">
+                <label for="quantity">Quantity</label>
+                <input type="number" name="quantity" id="quantity" value>
+                <?php if (isset($errquantity)): ?>
+                    <p class="error" style="color: red;"><?= $errquantity ?></p>
+                <?php endif ?>
+            </div>
             <div class="input text">
                 <label>Description</label>
                 <textarea name="description" class="ckeditor" id="description"></textarea>
@@ -15,11 +31,14 @@
         </div>
         <div class="row"> 
             <label for="name">Category</label>
-            <div class="col-md-6">  
-                <select name="category" id="categories">
-                    <option selected disabled hidden>-- Choose type category --</option> 
+            <div class="col-md-6 input text">  
+                <select name="category_id" id="categories">
+                    <option value selected hidden>-- Choose type category --</option> 
                     <?php $this->Select->showCategories($categories); ?>
                 </select>
+                <?php if (isset($errcategory_id)): ?>
+                    <p class="error" style="color: red;"><?= $errcategory_id ?></p>
+                <?php endif ?>
             </div>
 
         </div>

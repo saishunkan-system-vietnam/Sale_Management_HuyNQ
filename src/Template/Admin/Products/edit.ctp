@@ -7,26 +7,38 @@
 <nav class="large-2 medium-2 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Html->link(__('Add'), ['controller' => 'Users', 'action' => 'add']) ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $product->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]
-            )
-        ?></li>
         <li><?= $this->Html->link(__('Return'), ['action' => 'index']) ?></li>
-        <li class="heading"><?= $this->Html->link(__('Users'), ['controller' => 'Users', 'action' => 'index']) ?></li>
     </ul>
 </nav>
 <div class="products form large-10 medium-10 columns content">
     <?= $this->Form->create($product) ?>
     <fieldset>
         <legend><?= __('Edit Product') ?></legend>
-        <?php
-            echo $this->Form->control('name');
-            echo $this->Form->control('price');
-            echo $this->Form->control('quantity');
-        ?>
+
+        <div class="input text">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" value="<?= $product->name ?>">
+            <?php if (isset($errname)): ?>
+                <p class="error" style="color: red;"><?= $errname ?></p>
+            <?php endif ?>
+        </div>
+
+        <div class="input text">
+            <label for="price">Price</label>
+            <input type="number" name="price" id="price" value="<?= $product->price ?>">
+            <?php if (isset($errprice)): ?>
+                <p class="error" style="color: red;"><?= $errprice ?></p>
+            <?php endif ?>
+        </div>
+
+        <div class="input text">
+             <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" id="quantity" value="<?= $product->quantity ?>">
+            <?php if (isset($errquantity)): ?>
+                <p class="error" style="color: red;"><?= $errquantity ?></p>
+            <?php endif ?>
+        </div>
+        
         <div>
             <label>Description</label>
             <textarea name="description" class="ckeditor" id="editor"><?= h($product->description) ?></textarea>
@@ -44,44 +56,11 @@
 
         <div class="row"> 
             <label for="name">Category</label>
-            <div class="col-md-6">  
-                <select id="categoryParent">
-                    <?php foreach ($categories as $category) { 
-                        if($category['id'] == $product['category_parent']){
-                    ?>
-                        <option selected value=<?= $category['id'] ?>><?= $category['name'] ?></option>
-                    <?php 
-                        }else{
-                    ?>
-                        <option value=<?= $category['id'] ?>><?= $category['name'] ?></option>
-                    <?php        
-                        }
-                    } 
-                    ?>  
+            <div class="col-md-6"> 
+                <select name="category_id">
+                    <?php $this->Select->showCategories($categories,0,'',$category_id); ?>
                 </select>
             </div>
-
-            <div class="col-md-6">
-                <?php foreach ($categories as $category){ 
-                    if($category['id'] == $product['category_parent']){
-                ?>      
-                    <select name="category" id="categoryChild">
-                        <?php foreach ($category['options'] as $cate) { 
-                            if($cate['id'] == $product['category_id']){
-                        ?>
-                            <option class="opt" selected value=<?= $cate['id'] ?>><?= $cate['name'] ?></option>
-                        <?php 
-                            }else{
-                        ?>
-                            <option class="opt" value=<?= $cate['id'] ?>><?= $cate['name'] ?></option>
-                        <?php        
-                            }
-                        } 
-                        ?>  
-                    </select>
-                <?php } } ?>
-            </div>
-
         </div>
 
         <fieldset>

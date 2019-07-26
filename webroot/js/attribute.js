@@ -20,3 +20,7 @@ $(".view").click(function(){
         });
     });
 });
+
+$(".input").click(function(){
+    $(this).find(".error").css({"display": "none"});
+});

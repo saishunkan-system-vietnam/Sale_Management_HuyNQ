@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 use App\Controller\AppController;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
+use Cake\Validation\Validator;
 
 
 /**
@@ -50,92 +51,92 @@ class CategoriesController extends AppController
         $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
- 
-            if(!isset($request['category'])){
-                $this->Categories->query()->insert(['name', 'parent_id', 'status'])
-                ->values([
-                    'name' => $request['name'],
-                    'parent_id' => 0,
-                    'status' => $request['status']
-                ])
-                ->execute();
-                return $this->redirect(['action' => 'index']);
-            }else{
-                $this->Categories->query()->insert(['name', 'parent_id', 'status'])
-                ->values([
-                    'name' => $request['name'],
-                    'parent_id' => $request['category'],
-                    'status' => $request['status']
-                ])
-                ->execute();
-                return $this->redirect(['action' => 'index']);
+            if(isset($request['parent_id'])){
+                $this->set('parent_id',$request['parent_id']);
             }
+            $validation = $this->Categories->newEntity($request);
+            if($validation->getErrors()){  
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
+                }
+            }else{
+                if(!isset($request['parent_id'])){
+                    $this->Categories->query()->insert(['name', 'parent_id', 'status'])
+                    ->values([
+                        'name' => $request['name'],
+                        'parent_id' => 0,
+                        'status' => $request['status']
+                    ])
+                    ->execute();
+                    return $this->redirect(['action' => 'index']);
+                }else{
+                    $this->Categories->query()->insert(['name', 'parent_id', 'status'])
+                    ->values([
+                        'name' => $request['name'],
+                        'parent_id' => $request['parent_id'],
+                        'status' => $request['status']
+                    ])
+                    ->execute();
+                    return $this->redirect(['action' => 'index']);
+                }
 
-            $this->Flash->error(__('The category could not be saved. Please, try again.'));
+                $this->Flash->error(__('The category could not be saved. Please, try again.'));
+            }
         }
         $this->set(compact('cateParents'));
     }
 
-    /**
-     * Edit method
-     *
-     * @param string|null $id Category id.
-     * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
     public function edit($id = null)
     {
         $check = $this->categories->checkParent($id);
         if($check == 1){
             $category = $this->Categories->find()->where(['id'=>$id])->first();
-            if ($this->request->is(['patch', 'post', 'put'])) {
-                $request = $this->request->getData();
-                $this->connection->begin();
-
-                $request['id'] = $id;
-                $request['category'] = 0;
-                $this->categories->update($request);
-                    
-                $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-                foreach ($cateChilds as $cateChild) {
-                    $request['id'] = $cateChild['id'];
-                    $request['name'] = $cateChild['name'];
-                    $request['category'] = $id;
-                    $this->categories->update($request);
-                }
-                
-                $result = $this->connection->commit();
-                if($result){
-                    $this->Flash->success(__('The category updated.'));
-                    return $this->redirect(['action' => 'index']);
-                }
-                $this->Flash->error(__('The category could not be saved. Please, try again.'));
-            }
-
             $this->set(compact('category'));
         }else{
             $category = $this->Categories->find()->where(['id'=>$id])->first();
             $cateParents = $this->Categories->find()->where(['parent_id'=>0])->toArray();
+            $this->set(compact('category', 'cateParents'));
+        }
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $request = $this->request->getData();
 
-            if ($this->request->is(['patch', 'post', 'put'])) {
-                $request = $this->request->getData();
-                    // echo "<pre>";
-                    // print_r($request);
-                    // echo "</pre>";
-                    // die('a');
-                $this->connection->begin();
-                $request['id'] = $id;
-                $this->categories->update($request);
+            $validation = $this->Categories->newEntity($request,['validate' => 'categories']);
+            if($validation->getErrors()){
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
+                }
+            }else{
+                if($check == 1){  
+                    $this->connection->begin();
+                    $request['id'] = $id;
+                    $request['category'] = 0;
+                    $this->categories->update($request);
+                            
+                    $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
+                    foreach ($cateChilds as $cateChild) {
+                        $request['id'] = $cateChild['id'];
+                        $request['name'] = $cateChild['name'];
+                        $request['category'] = $id;
+                        $this->categories->update($request);
+                    }
 
-                $result = $this->connection->commit();
+                    $result = $this->connection->commit();
+                }else{
+                    $this->connection->begin();
+                    $request['id'] = $id;
+                    $this->categories->update($request);
+                    $result = $this->connection->commit();
+                }
                 if($result){
                     $this->Flash->success(__('The category updated.'));
                     return $this->redirect(['action' => 'index']);
                 }
                 $this->Flash->error(__('The category could not be saved. Please, try again.'));
             }
-
-            $this->set(compact('category', 'cateParents'));
         }
     }
 
