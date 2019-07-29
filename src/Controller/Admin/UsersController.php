@@ -29,6 +29,7 @@ class UsersController extends AppController
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
+        $this->loadComponent('users');
     }
 
     public function index()
@@ -72,18 +73,28 @@ class UsersController extends AppController
     {
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            $validation = $this->Users->newEntity($request);
+            $validation = $this->Users->newEntity($request,['validate' => 'add']);
             if($validation->getErrors()){
-                foreach ($validation->getErrors() as $errors) {
+                foreach ($validation->getErrors() as $key => $errors) {
                     foreach ($errors as $error) {
-                        $this->Flash->success($error);
+                        $this->set('err'.$key.'',$error);
                     }
                 }
             }else{
-                $result = $this->Users->query()->insert(['email', 'password','created','modified'])
+                $request['password'] = md5($request['password']);
+                if($request['type'] == 1){
+                    $request['notice'] = "admin";
+                }else{
+                    $request['notice'] = "user";
+                }
+
+                $result = $this->Users->query()->insert(['email', 'password','type','status','notice','created','modified'])
                     ->values([
                         'email' => $request['email'],
                         'password' => $request['password'],
+                        'type' => $request['type'],
+                        'status' => $request['status'],
+                        'notice' => $request['notice'],
                         'created' => new DateTime('now'),
                         'modified' => new DateTime('now')
                     ])
@@ -111,12 +122,11 @@ class UsersController extends AppController
         $user = $this->Users->get($id);
         $request = $this->request->getData();
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $result = $this->connection->execute('UPDATE users SET email=?,password=?,modified=? WHERE id=?', 
-                            [$request['email'],$request['password'],new DateTime('now'),$id],
-                            ['string','string','date','integer']);
+            $validation = $this->Users->newEntity($request);
+            $request['id'] = $id;
+            $result = $this->users->update($request);
             if ($result) {
                 $this->Flash->success(__('The user has been saved.'));
-
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
@@ -133,8 +143,12 @@ class UsersController extends AppController
      */
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
-        $result = $this->connection->execute('DELETE FROM users WHERE id = ?',[$id],['integer']);
+        $query = $this->Users->query();
+        $result = $query->update()
+        ->set(['status' => 0,'modified' => new DateTime('now')])
+        ->where(['id' => $id])
+        ->execute();
+
         if ($result) {
             $this->Flash->success(__('The user has been deleted.'));
         } else {
@@ -142,6 +156,24 @@ class UsersController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    public function searchType(){
+        $this->viewBuilder()->autoLayout(false);
+        $request = $this->getRequest()->getData();
+        $users = $this->Users->find()->where(['type'=>$request['type']])->toArray();
+        $this->set(compact('users'));
+    }
+
+    public function search(){
+        $this->viewBuilder()->autoLayout(false);
+        $request = $this->getRequest()->getData();
+        if($request['data'] !== ""){
+            $users = $this->paginate($this->Users->find()->where(['OR'=>[['name LIKE' => '%' . $request['data'] . '%'],
+                                                                           ['email LIKE' => '%' . $request['data'] . '%'],
+                                                                           ['address LIKE' => '%' . $request['data'] . '%']]]));            
+        }
+        $this->set(compact('users'));
     }
 
     public function login()
@@ -153,14 +185,13 @@ class UsersController extends AppController
             return $this->redirect(['action' => 'index']);
         }else {
             if ($this->request->is('post')) {
-
                 $request = $this->getRequest()->getData();
                 $user = $this->Users->find()                 
                 ->where(['email' => $request['email']])
-                ->where(['password' => $request['password']])
-                ->first();
+                ->where(['password' => md5($request['password'])])
+                ->first(); 
                 if ($user) {
-                    if($user['type'] == 1){
+                    if($user['type'] == 1 && $user['status'] == 1){
                         $this->Auth->setUser($user);
                         $this->Flash->success(__('Login successfull !'));
                         return $this->redirect($this->Auth->redirectUrl());
@@ -205,5 +236,32 @@ class UsersController extends AppController
             }      
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }
+    }
+
+    public function changePassword($id = null){
+        $user = $this->Users->get($id);
+        $request = $this->request->getData();
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $validation = $this->Users->newEntity($request,['validate' => 'password']);
+            if($validation->getErrors()){
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
+                }
+            }else{
+                $request['id'] = $id;
+                $result = $this->Users->query()->update()
+                ->set(['password' => md5($request['new_password']),'modified' => new DateTime('now')])
+                ->where(['id' => $request['id']])
+                ->execute();
+                if ($result) {
+                    $this->Flash->success(__('The Password has been saved.'));
+                    return $this->redirect(['action' => 'changePassword', $id]);
+                }
+                $this->Flash->error(__('The Password could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('user'));
     }
 }

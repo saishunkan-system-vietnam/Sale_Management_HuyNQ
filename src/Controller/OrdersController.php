@@ -38,11 +38,11 @@ class OrdersController extends AppController
     
     public function index()
     {
-        $this->paginate = [
-            'contain' => ['Users']
-        ];
-        $orders = $this->paginate($this->Orders);
-
-        $this->set(compact('orders'));
+        $session = $this->getRequest()->getSession();
+        $user = $session->read("Auth.User");
+        // echo "<pre>";
+        // print_r($user);
+        // die('a');
+        $this->set(compact('user'));
     }
 }

@@ -4,18 +4,16 @@
  * @var \App\Model\Entity\User $user
  */
 ?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
+<nav class="large-2 medium-2 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
         <li><?= $this->Html->link(__('Add'), ['action' => 'add']) ?> </li>
         <li><?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?> </li>
         <li><?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], ['confirm' => __('Are you sure you want to delete # {0}?', $user->id)]) ?> </li>
         <li><?= $this->Html->link(__('Return'), ['action' => 'index']) ?> </li>
-        <li class="heading"><?= $this->Html->link(__('Products'), ['controller' => 'Products', 'action' => 'view']) ?></li>
     </ul>
 </nav>
-<div class="users view large-9 medium-8 columns content">
-    <h3><?= h($user->id) ?></h3>
+<div class="users view large-10 medium-10 columns content">
     <table class="vertical-table">
         <tr>
             <th scope="row"><?= __('Email') ?></th>
@@ -44,7 +42,7 @@
                 <th scope="col"><?= __('Name') ?></th>
                 <th scope="col"><?= __('Price') ?></th>
                 <th scope="col"><?= __('Quantity') ?></th>
-                <th scope="col"><?= __('Body') ?></th>
+                <th scope="col"><?= __('Description') ?></th>
                 <th scope="col"><?= __('Created') ?></th>
                 <th scope="col"><?= __('Modified') ?></th>
                 <th scope="col" class="actions"><?= __('Actions') ?></th>
@@ -56,7 +54,7 @@
                 <td><?= h($products->name) ?></td>
                 <td><?= h($products->price) ?></td>
                 <td><?= h($products->quantity) ?></td>
-                <td><?= h($products->body) ?></td>
+                <td><?= h($products->description) ?></td>
                 <td><?= h($products->created) ?></td>
                 <td><?= h($products->modified) ?></td>
                 <td class="actions">

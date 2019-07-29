@@ -161,25 +161,28 @@ class UsersController extends AppController
                 $request = $this->getRequest()->getData();
                 $user = $this->Users->find()                 
                 ->where(['email' => $request['email']])
-                ->where(['password' => $request['password']])
+                ->where(['password' => md5($request['password'])])
                 ->first();
                 if ($user) {
-                    $this->Auth->setUser($user);
-                    if($carts!==null){
-                        $this->users->addCart($user['id'], $carts);
+                    if($user['type'] == 0 && $user['status'] == 1){
+                        $this->Auth->setUser($user);
+                        if($carts!==null){
+                            $this->users->addCart($user['id'], $carts);
+                        }else{
+                            $data = $this->users->showSession($user['id']);
+                            $session->write('Cart',$data['Cart']);
+                            $session->write('Total',$data['Total']);
+                        }
+                        $this->Flash->success(__('Login successfull !'));
+                        return $this->redirect($this->Auth->redirectUrl());
                     }else{
-                        $data = $this->users->showSession($user['id']);
-                        $session->write('Cart',$data['Cart']);
-                        $session->write('Total',$data['Total']);
-                    }
-                    
-                    $this->Flash->success(__('Login successfull !'));
-                    return $this->redirect($this->Auth->redirectUrl());
-                }
-                $this->Flash->error('Your email or password is incorrect.');
+                        $this->Flash->error('Please create account User to login.');
+                    } 
+                }else{
+                    $this->Flash->error('Your email or password is incorrect.');
+                }         
             }
-        }
-        
+        }  
     }
 
     public function logout()

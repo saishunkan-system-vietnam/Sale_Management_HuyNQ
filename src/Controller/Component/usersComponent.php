@@ -22,6 +22,16 @@ class UsersComponent extends Component {
         $this->connection = ConnectionManager::get('default');
     }
 
+    public function update($reqUser){
+        $query = $this->Users->query();
+        $result = $query->update()
+        ->set(['name' => $reqUser['name'],'phone' => $reqUser['phone'],'address' => $reqUser['address'],'type' => $reqUser['type'],'status' => $reqUser['status'],'modified' => new DateTime('now')])
+        ->where(['id' => $reqUser['id']])
+        ->execute();
+
+        return $result;
+    }
+
     public function addCart($user_id, $carts){
         
         $this->connection->begin();
@@ -33,10 +43,7 @@ class UsersComponent extends Component {
         if ($this->Carts->save($cart)) {
             $id = $cart->id;
         }
-        // echo "<pre>";
-        // print_r($carts);
-        // echo "</pre>";
-        // die('a');
+
         foreach ($carts as $value) {
             $this->CartDetails->query()->insert(['cart_id', 'product_id','name','price','quantity','created','modified'])
             ->values([

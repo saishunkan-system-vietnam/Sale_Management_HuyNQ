@@ -57,3 +57,12 @@ $('.sub').click(function () {
         } 
     }
 });
+
+$('#register').click(function() {
+    if(this.checked) {
+        $(this).find("#new_address").css({"disabled": "false", "color: red"});
+    } else {
+        alert("aaa");
+        $(this).find("#new_address").css({"disabled": "true"});
+    }
+});

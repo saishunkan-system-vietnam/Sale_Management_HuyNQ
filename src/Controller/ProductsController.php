@@ -47,7 +47,7 @@ class ProductsController extends AppController
                             'conditions' => 'products.id = images.product_id'
                         ]
                     ])
-                    ->group(['products.id']);
+                    ->group(['products.id'])->where(['products.status'=>1]);
                     
         $this->set(compact('products'));
     }

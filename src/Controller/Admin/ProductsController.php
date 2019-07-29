@@ -73,6 +73,8 @@ class ProductsController extends AppController
 
     public function add()
     {   
+        $session = $this->getRequest()->getSession();
+        $user = $session->read('Auth.Admin');
         $attributes = $this->attributes->selectAll();
         $categories = $this->Categories->find()->toArray();
         
@@ -87,11 +89,15 @@ class ProductsController extends AppController
                     }
                 }
             }else{
-                $request['user_id'] = $this->Auth->user('id');
+                $request['user_id'] = $user['id'];
+                // echo "<pre>";
+                // print_r($request);
+                // echo "</pre>";
+                // die('a');
                 $this->connection->begin();
                 $product = $this->products->add($request);
                 $id = $product->id;
-                $removeAttrs = array("user_id","name","quantity","price","description","category",'status');
+                $removeAttrs = array("user_id","name","quantity","price","description","category_id",'status');
 
                 foreach($removeAttrs as $key) {
                     unset($request[$key]);
