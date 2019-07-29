@@ -35,7 +35,7 @@
         
         <?php if (isset($attrParents)): ?>
             <label>Attribute</label>
-            <select name="category">
+            <select name="attribute">
                 <?php foreach ($attrParents as $attrParent){ 
                     if($attrParent['id'] == $attribute['parent_id']){
                 ?>

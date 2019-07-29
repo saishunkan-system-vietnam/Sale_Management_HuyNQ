@@ -110,6 +110,7 @@ Router::prefix('admin', function ($routes) {
         $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
     $routes->resources('Products');
     $routes->connect('/products/getcateChild/*', ['controller' => 'Products', 'action' => 'getcateChild']);
+    $routes->connect('/products/upload_image', ['controller' => 'Products', 'action' => 'upload_image']);
     $routes->extensions(['json', 'xml']);
     // All routes here will be prefixed with `/admin`
     // And have the prefix => admin route element added.

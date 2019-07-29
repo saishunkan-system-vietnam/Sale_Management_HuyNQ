@@ -11,7 +11,7 @@
     </ul>
 </nav>
 <div class="products form large-10 medium-10 columns content">
-    <?= $this->Form->create($product) ?>
+    <?= $this->Form->create($product, ['type' => 'file']) ?>
     <fieldset>
         <legend><?= __('Edit Product') ?></legend>
 
@@ -66,20 +66,25 @@
         <fieldset>
             <legend>Options</legend>   
         <?php
-            foreach ($product['options'] as $option) {
+            foreach ($attributes as $attribute) {
         ?>
                 <div class="form-group" style="width: 45%; float: left; margin: 5px;">
-                    <label><?= $option['parent_name'] ?></label>
-                    <select class="form-control" name="<?= $option['id'].'_'.str_replace(' ','',$option['parent_name']) ?>">
+                    <label><?= $attribute['name'] ?></label>
+                    <select class="form-control" name="<?= $attribute['name'] ?>">
                         <?php 
-                        foreach ($option['options'] as $opt) { 
-                            if($opt['id'] != $option['id']){                           
+                        if(!isset($attribute['product_attr'])){
+                        ?>
+                            <option value selected hidden>---- Choose type <?= $attribute['name'] ?> ----</option> 
+                        <?php
+                        }
+                        foreach ($attribute['options'] as $opt) { 
+                            if($opt['id'] !== $attribute['product_attr']){                           
                         ?>
                                 <option value=<?= $opt['id'] ?>><?= $opt['name'] ?></option>
                         <?php
                             }else{
                         ?>
-                                <option selected="selected" value=<?= $option['id'] ?>><?= $option['name'] ?></option>
+                                <option selected="selected" value=<?= $opt['id'] ?>><?= $opt['name'] ?></option>
                         <?php        
                             }
                         }
@@ -90,31 +95,30 @@
             }
             ?>
         </fieldset> 
-    </fieldset>
-    <?= $this->Form->button(__('Submit')) ?>
-    <?= $this->Form->end() ?>
 
         <div>
-            <fieldset>
-                <legend>Upload Image</legend>
-                <form action="/admin/products/image/<?= $product->id ?> " method="post" enctype="multipart/form-data">      
-                    <input type="file" multiple name="file[]"/>
-                    <input type="submit" class="btn_upload btn btn-primary" value="Submit" name="Submit"/>
-                </form>
+            <fieldset class="input text">
+                <legend>Upload Image</legend>     
+                    <input id="file" type="file" multiple name="file[]"/>
+                    <?php if (isset($errimage)): ?>
+                        <p class="error" style="color: red;"><?= $errimage ?></p>
+                    <?php endif ?>
             </fieldset>
-        </div>
-        <?php foreach ($images as $image) {
+            <?php foreach ($images as $image) {
             ?>
             <div class="card col-md-3" style="width: 18rem; height: 282px;">
                 <img class="card-img-top" src="/img/<?= $image['name'] ?>" style="height: 258px;" alt="Card image cap">
                 <div class="card-body">
-        <!--            <h5 class="card-title">Card title</h5>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
-                    <?= $this->Form->postLink(__('Delete'), ['action' => 'deleteImage', $image->id], ['confirm' => __('Are you sure you want to delete # {0}?', $image->id)], ['class' => 'btn btn-primary']) ?>
+                    <a href="/admin/products/deleteImage/<?= $image->id ?>">Delete</a>
                 </div>
             </div>
             <?php
             } 
-        ?>
+            ?>
+        </div>
+
+    </fieldset>
+    <?= $this->Form->button(__('Submit')) ?>
+    <?= $this->Form->end() ?>
 </div>
 <?= $this->Html->script('product.js') ?>

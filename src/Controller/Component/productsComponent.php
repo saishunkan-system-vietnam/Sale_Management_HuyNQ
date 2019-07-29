@@ -38,29 +38,27 @@ class ProductsComponent extends Component {
     }
 
     public function add($reqProduct){
-        $query = $this->Products->query();
+        $product = $this->Products->newEntity();
+            $product->user_id = $reqProduct['user_id'];
+            $product->name = $reqProduct['name'];
+            $product->price = $reqProduct['price'];
+            $product->quantity = $reqProduct['quantity'];
+            $product->description = $reqProduct['description'];
+            $product->category_id = $reqProduct['category_id'];
+            $product->status = $reqProduct['status'];
+            $product->created = new DateTime('now');
+            $product->modified = new DateTime('now');
 
-        $result = $query->insert(['user_id', 'name','price','quantity','description','category_id','status','created','modified'])
-        ->values([
-            'user_id' => $reqProduct['user_id'],
-            'name' => $reqProduct['name'],
-            'price' => $reqProduct['price'],
-            'quantity' => $reqProduct['quantity'],
-            'description' => $reqProduct['description'],
-            'category_id' => $reqProduct['category_id'],
-            'status' => $reqProduct['status'],
-            'created' => $reqProduct['created'],
-            'modified' => $reqProduct['modified']
-        ])
-        ->execute();
+        $product = $this->Products->save($product);
+ 
 
-        return $result;
+        return $product;
     }
 
     public function update($reqProduct){
         $query = $this->Products->query();
         $query->update()
-        ->set(['name' => $reqProduct['name'],'price' => $reqProduct['price'],'quantity' => $reqProduct['quantity'],'description' => $reqProduct['description'],'category_id' => $reqProduct['category'],'status' => $reqProduct['status'],'user_id' => $reqProduct['user_id'],'created' => new DateTime('now'),'modified' => new DateTime('now')])
+        ->set(['name' => $reqProduct['name'],'price' => $reqProduct['price'],'quantity' => $reqProduct['quantity'],'description' => $reqProduct['description'],'category_id' => $reqProduct['category_id'],'status' => $reqProduct['status'],'user_id' => $reqProduct['user_id'],'created' => new DateTime('now'),'modified' => new DateTime('now')])
         ->where(['id' => $reqProduct['id']])
         ->execute();
     }
@@ -75,6 +73,35 @@ class ProductsComponent extends Component {
         ->execute();
 
         return $result;
+    }
+
+    public function checkImage($reqImage){
+        // echo "<pre>";
+        // print_r($reqImage);
+        // echo "</pre>";
+        // die('a');
+        $uploadOK = 1;
+        $message = "";
+        foreach ($reqImage as $key => $value) {
+            if ($value["size"] > 500000) {
+                $name = $value["name"];
+                $message = $message."Sorry, ".$name." is too large.<br>";
+                $uploadOK = 0;
+            }
+
+            if($value["type"] != "image/jpeg" && $value["type"] != "image/png" && $value["type"] != "image/jpg") {
+                $name = $value["name"];
+                $message = $message."Sorry, ".$name." files are not allowed. only JPG, JPEG, PNG & GIF.<br>";
+                $uploadOK = 0;
+            }
+        }
+
+        if($uploadOK == 1){
+            return $uploadOK;
+        }else{
+            return $message;
+        }
+        
     }
 }
 ?>

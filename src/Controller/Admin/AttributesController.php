@@ -51,10 +51,7 @@ class AttributesController extends AppController
         $attrParents = $this->Attributes->find()->where(['parent_id' => 0])->toArray();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            // echo "<pre>";
-            // print_r($request);
-            // echo "</pre>";
-            // die('a');
+ 
             if(!isset($request['attribute'])){
                 $this->Attributes->query()->insert(['name', 'parent_id'])
                 ->values([
