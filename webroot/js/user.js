@@ -23,8 +23,13 @@ $("#btn_search").click(function(){
 		    method: 'POST',
 		    data: {data: data}
 		}).done(function(rep){
+            console.log(rep);
 		    $("#user_table tbody tr").remove();
-		    $("#user_table tbody").html(rep);
+            if(rep !== ""){
+                $("#user_table tbody").html(rep);
+            }else{
+                $("#user_table tbody").html("Not data");
+            }	    
 		});
     }
 });

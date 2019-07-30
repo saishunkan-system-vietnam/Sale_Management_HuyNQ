@@ -77,8 +77,8 @@
                 <img src="/Admin/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
 
                 <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
+                  <?= $auth['Admin']['email'] ?>
+                  <!-- <small>Member since Nov. 2012</small> -->
                 </p>
               </li>
               <!-- Menu Footer-->
@@ -110,7 +110,7 @@
           <img src="/Admin/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>Alexander Pierce</p>
+          <p><?= $auth['Admin']['email'] ?></p>
         </div>
       </div>
       <!-- sidebar menu: : style can be found in sidebar.less -->

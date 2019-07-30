@@ -16,12 +16,37 @@ $("#category").change(function(){
     }).done(function(rep){
         console.log(rep);
         $("#product_table tbody tr").remove();
-        $("#product_table tbody").html(rep);
+        rep = rep.replace(/\s/g,'');
+        if(rep !== ""){
+            $("#product_table tbody").html(rep);
+        }else{
+            $("#product_table tbody").html("Not data");
+        } 
     });
 });
 
 $(".input").click(function(){
     $(this).find(".error").css({"display": "none"});
+});
+
+$("#btn_search").click(function(){
+    var data = document.getElementById("input_search").value;
+    if(data !== ""){
+        $.ajax({
+            url: '/admin/products/search',
+            method: 'POST',
+            data: {data: data}
+        }).done(function(rep){
+            console.log(rep);
+            $("#product_table tbody tr").remove();
+            rep = rep.replace(/\s/g,'');
+            if(rep !== ""){
+                $("#product_table tbody").html(rep);
+            }else{
+                $("#product_table tbody").html("Not data");
+            }       
+        });
+    }
 });
 
 // $("input[name=file]").change(function() {

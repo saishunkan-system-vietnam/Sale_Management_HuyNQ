@@ -122,6 +122,7 @@ Router::scope('/', function ($routes) {
     $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
     $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
     $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
+    $routes->connect('/order', ['controller' => 'Products', 'action' => 'order']);
 });
 
 Router::scope('/', function ($routes) {

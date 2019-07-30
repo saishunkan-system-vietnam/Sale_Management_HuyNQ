@@ -108,6 +108,7 @@ class UsersTable extends Table
             ->maxLength('notice', 100)
             ->requirePresence('notice','create',"Field is not isset")
             ->allowEmptyString('notice', false, "notice cannot be empty");
+            
 
         return $validator;
     }

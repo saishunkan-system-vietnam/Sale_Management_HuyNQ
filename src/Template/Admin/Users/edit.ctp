@@ -32,11 +32,11 @@
         </div>
         <div class="input text">
             <label for="name">Phone</label>
-            <input type="text" name="phone" id="phone" value="<?= $user->phone ?>">
+            <input type="number" name="phone" id="phone" value="<?= $user->phone ?>">
         </div>
         <div class="input text">
             <label for="name">Address</label>
-            <input type="text" name="address" id="address" value="<?= $user->address ?>">
+            <textarea name="address" id="address"><?= $user->address ?></textarea>
         </div>
         <div class="input text">
             <label for="name">Notice</label>

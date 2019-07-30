@@ -72,6 +72,7 @@ class UsersController extends AppController
     public function add()
     {
         if ($this->request->is('post')) {
+            $session = $this->getRequest()->getSession();
             $request = $this->request->getData();
             $validation = $this->Users->newEntity($request,['validate' => 'add']);
             if($validation->getErrors()){
@@ -80,6 +81,7 @@ class UsersController extends AppController
                         $this->set('err'.$key.'',$error);
                     }
                 }
+                $session->write('User', $request);
             }else{
                 $request['password'] = md5($request['password']);
                 if($request['type'] == 1){
@@ -101,6 +103,7 @@ class UsersController extends AppController
                     ->execute();
 
                 if ($result) {
+                    $session->delete('User');
                     $this->Flash->success(__('The user has been saved.'));
 
                     return $this->redirect(['action' => 'index']);

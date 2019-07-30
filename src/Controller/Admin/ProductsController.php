@@ -79,8 +79,13 @@ class ProductsController extends AppController
         $categories = $this->Categories->find()->toArray();
         
         if ($this->request->is('post')) {
+            $session = $this->getRequest()->getSession();
             $request = $this->request->getData();
-
+            $session->write('Infor', $request);
+            // echo "<pre>";
+            // print_r($session->read());
+            // echo "</pre>";
+            // die("a");
             $validation = $this->Products->newEntity($request);
             if($validation->getErrors()){  
                 foreach ($validation->getErrors() as $key => $errors) {
@@ -90,10 +95,6 @@ class ProductsController extends AppController
                 }
             }else{
                 $request['user_id'] = $user['id'];
-                // echo "<pre>";
-                // print_r($request);
-                // echo "</pre>";
-                // die('a');
                 $this->connection->begin();
                 $product = $this->products->add($request);
                 $id = $product->id;
@@ -117,7 +118,7 @@ class ProductsController extends AppController
 
                 if ($result) {
                     $this->Flash->success(__('The product has been saved.'));
-
+                    $session->delete('Infor');
                     return $this->redirect(['action' => 'index']);
                 }
             }
@@ -248,20 +249,12 @@ class ProductsController extends AppController
     }
 
     public function search(){
-        $categories = $this->categories->selectAll();
-        if ($this->request->is('post')) {
-            $request = $this->request->getData();
-
-            if($request['name'] !== ""){
-                $products = $this->paginate($this->products->selectCategories()->where(['products.name LIKE' => '%' . $request['name'] . '%']));            
-            }
-
-            if($request['name'] == ""){
-                return $this->redirect(['action' => 'index']);
-            }
-
+        $this->viewBuilder()->autoLayout(false);
+        $request = $this->getRequest()->getData();
+        if($request['data'] !== ""){
+            $products = $this->paginate($this->Products->find()->where(['name LIKE' => '%' . $request['data'] . '%']));            
         }
-        $this->set(compact('products','categories'));
+        $this->set(compact('products'));
     }
 
     public function searchCate(){

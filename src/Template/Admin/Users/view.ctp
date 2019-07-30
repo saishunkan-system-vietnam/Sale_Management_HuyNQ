@@ -20,8 +20,36 @@
             <td><?= h($user->email) ?></td>
         </tr>
         <tr>
-            <th scope="row"><?= __('Id') ?></th>
-            <td><?= $this->Number->format($user->id) ?></td>
+            <th scope="row"><?= __('Name') ?></th>
+            <td><?= h($user->name) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Phone') ?></th>
+            <td>0<?= $this->Number->format($user->phone) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Address') ?></th>
+            <td><?= h($user->address) ?></td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Status') ?></th>
+            <td>
+                <?php if($user->status == 1){ ?>
+                    Active
+                <?php }else{ ?>
+                    Deactive
+                <?php } ?>
+            </td>
+        </tr>
+        <tr>
+            <th scope="row"><?= __('Type') ?></th>
+            <td>
+                <?php if($user->type == 1){ ?>
+                    Admin
+                <?php }else{ ?>
+                    User
+                <?php } ?>
+            </td>
         </tr>
         <tr>
             <th scope="row"><?= __('Created') ?></th>
@@ -38,7 +66,6 @@
         <table cellpadding="0" cellspacing="0">
             <tr>
                 <th scope="col"><?= __('Id') ?></th>
-                <th scope="col"><?= __('User Id') ?></th>
                 <th scope="col"><?= __('Name') ?></th>
                 <th scope="col"><?= __('Price') ?></th>
                 <th scope="col"><?= __('Quantity') ?></th>
@@ -50,7 +77,6 @@
             <?php foreach ($user->products as $products): ?>
             <tr>
                 <td><?= h($products->id) ?></td>
-                <td><?= h($products->user_id) ?></td>
                 <td><?= h($products->name) ?></td>
                 <td><?= h($products->price) ?></td>
                 <td><?= h($products->quantity) ?></td>

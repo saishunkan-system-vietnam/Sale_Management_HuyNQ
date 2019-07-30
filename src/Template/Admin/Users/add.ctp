@@ -16,7 +16,7 @@
         <legend><?= __('Add User') ?></legend>
         <div class="input text">
             <label for="name">Email</label>
-            <input type="email" name="email" id="email">
+            <input type="email" name="email" id="email" value="<?php if(isset($_SESSION['User']['email'])){ echo $_SESSION['User']['email']; } ?>">
             <?php if (isset($erremail)): ?>
                 <p class="error" style="color: red;"><?= $erremail ?></p>
             <?php endif ?>

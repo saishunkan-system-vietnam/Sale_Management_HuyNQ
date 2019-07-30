@@ -2,20 +2,15 @@
     <fieldset>
         <legend><?= __('List Product') ?></legend>
         <div class="row">
-            <form action="/admin/products/search" method="post">
-
-                <!-- <select name="categoryParent" id="categoryParent" style="width: 200px; float: left; margin-right: 10px;">
-                    <option selected disabled hidden>-- Choose type category --</option> 
-                </select> -->
-
-                <input type="text" class="" name="name" placeholder="Product Name.." style="width: 300px; margin-right: 10px; float: left;">
-                <button type="submit" class="btn btn-primary">Search</button>
-            </form>
-
-            <select id="category">
+            <select id="category" class="col-md-4">
                 <option selected disabled hidden>-- Choose type category --</option> 
                 <?php $this->Select->showCategories($categories); ?>
             </select>
+
+            <div class="col-md-4">
+                <input type="text" name="search" id="input_search" value="" style="float: left; width: 300px;margin-right: 10px;" placeholder="Please enter name">
+                <button type="button" id="btn_search" class="btn btn-primary">Search</button>
+            </div>
         </div>
         <table cellpadding="0" cellspacing="0" style="width: 100%;" id="product_table">
             <thead>
@@ -49,9 +44,9 @@
                         <td><?= h($product->created) ?></td>
                         <td><?= h($product->modified) ?></td>
                         <td class="actions">
-                            <?= $this->Html->link(__('View'), ['action' => 'view', $product->id],['class'=>'btn btn-primary']) ?>
-                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id],['class'=>'btn btn-warning']) ?>
-                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id],['class'=>'btn btn-danger'], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
+                            <?= $this->Html->link(__('View'), ['action' => 'view', $product->id]) ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $product->id]) ?>
+                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $product->id], ['confirm' => __('Are you sure you want to delete # {0}?', $product->id)]) ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>

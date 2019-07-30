@@ -32,7 +32,7 @@ class ProductsController extends AppController
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("home");
         $this->loadComponent('products'); 
-        // $this->loadComponent('home'); 
+        $this->loadComponent('home'); 
     }
 
     public function index()
@@ -100,6 +100,10 @@ class ProductsController extends AppController
             $session = $this->getRequest()->getSession();
             $cart = $session->read('Cart');
             $request = $this->request->getData();
+            echo "<pre>";
+            print_r($request);
+            echo "</pre>";
+            die('a');
             
             $this->home->addUser($request);
             
