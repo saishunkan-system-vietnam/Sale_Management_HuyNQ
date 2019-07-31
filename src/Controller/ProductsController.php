@@ -38,17 +38,17 @@ class ProductsController extends AppController
     public function index()
     {
         $products = $this->Products->find('all')
-                    ->select($this->Products)
-                    ->select($this->Images)
-                    ->join([
-                        'images' => [
-                            'table' => 'images',
-                            'type' => 'LEFT',
-                            'conditions' => 'products.id = images.product_id'
-                        ]
-                    ])
-                    ->group(['products.id'])->where(['products.status'=>1]);
-                    
+        ->select($this->Products)
+        ->select($this->Images)
+        ->join([
+            'images' => [
+                'table' => 'images',
+                'type' => 'LEFT',
+                'conditions' => 'products.id = images.product_id'
+            ]
+        ])
+        ->group(['products.id'])->where(['products.status'=>1]);
+
         $this->set(compact('products'));
     }
 
@@ -97,19 +97,36 @@ class ProductsController extends AppController
 
     public function order(){
         if ($this->request->is('post')) {
+
             $session = $this->getRequest()->getSession();
             $cart = $session->read('Cart');
             $request = $this->request->getData();
-            echo "<pre>";
-            print_r($request);
-            echo "</pre>";
-            die('a');
-            
-            $this->home->addUser($request);
-            
-            $user_id = $this->Users->find()->where(['email'=>$request['email']])->first()->id;
+            $user = $session->read('Auth.User');
+            $request['total'] = $session->read('Total');
 
-            $this->home->addOrder($cart, $user_id);
+            try {
+                $this->connection->begin();
+                if($user){
+                     if(isset($request['new_address'])){
+                        $request['address'] = $request['new_address'];
+                        $this->home->addOrder($request,$cart, $user['id']);
+                        
+                     }else{
+                        $this->home->addOrder($request,$cart, $user['id']);
+                 }
+                }else{
+                    $user = $this->home->addUser($request);
+                    $this->home->addOrder($request,$cart, $user['id']);
+                }
+                $this->connection->commit();
+
+                $this->Flash->success(__('The Order has been sended.'));
+                return $this->redirect(['action' => 'index']);
+            } catch(\Exception $e) {
+                $this->connection->rollback();
+                $this->Flash->error(__('The Order could not be sended. Please, try again.'));
+            }
         }
+        $this->render(false);
     }
 }

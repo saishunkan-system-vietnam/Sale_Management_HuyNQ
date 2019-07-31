@@ -82,10 +82,6 @@ class ProductsController extends AppController
             $session = $this->getRequest()->getSession();
             $request = $this->request->getData();
             $session->write('Infor', $request);
-            // echo "<pre>";
-            // print_r($session->read());
-            // echo "</pre>";
-            // die("a");
             $validation = $this->Products->newEntity($request);
             if($validation->getErrors()){  
                 foreach ($validation->getErrors() as $key => $errors) {
@@ -216,15 +212,20 @@ class ProductsController extends AppController
 
     public function delete($id = null)
     {
-        $this->request->allowMethod(['post', 'delete']);
+        // $this->request->allowMethod(['post', 'delete']);
         $this->connection->begin();
-            $images = $this->Images->find()->where(['product_id'=>$id])->toArray();
-            foreach ($images as $image) {
-                unlink('img/'.$image['name']);
-            }
-            $this->Images->query()->delete()->where(['product_id' => $id])->execute();
-            $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
-            $this->Products->query()->delete()->where(['id' => $id])->execute();
+            $query = $this->Products->query();
+            $result = $query->update()
+            ->set(['status' => 0,'modified' => new DateTime('now')])
+            ->where(['id' => $id])
+            ->execute();
+            // $images = $this->Images->find()->where(['product_id'=>$id])->toArray();
+            // foreach ($images as $image) {
+            //     unlink('img/'.$image['name']);
+            // }
+            // $this->Images->query()->delete()->where(['product_id' => $id])->execute();
+            // $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
+            // $this->Products->query()->delete()->where(['id' => $id])->execute();
         $result = $this->connection->commit();
         if ($result) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -232,6 +233,23 @@ class ProductsController extends AppController
             $this->Flash->error(__('The product could not be deleted. Please, try again.'));
         }
 
+        return $this->redirect(['action' => 'index']);
+    }
+
+    public function restore($id = null)
+    {
+        $this->connection->begin();
+            $query = $this->Products->query();
+            $result = $query->update()
+            ->set(['status' => 1,'modified' => new DateTime('now')])
+            ->where(['id' => $id])
+            ->execute();
+        $result = $this->connection->commit();
+        if ($result) {
+            $this->Flash->success(__('The product has been restored.'));
+        } else {
+            $this->Flash->error(__('The product could not be restored. Please, try again.'));
+        }
         return $this->redirect(['action' => 'index']);
     }
 

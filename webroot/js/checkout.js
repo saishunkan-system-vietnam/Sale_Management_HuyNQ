@@ -68,12 +68,17 @@ $('#register').click(function() {
 
 $( "#btn_submit" ).click(function() {
     var new_address = document.getElementById("new_address").value;
-    if (new_address == "") {
-    document.getElementById("errnew_address").innerHTML = "New Address must be filled out or you can close this.";
-    return false;
-  }else{
-    return true;
-  }
+    if($('#new_address').is(':disabled')){
+        return true;
+    }else{
+        if (new_address == "") {
+            $("#errnew_address").css({"display": "block"});
+            document.getElementById("errnew_address").innerHTML = "New Address must be filled out or you can close this.";
+            return false;
+        }else{
+            return true;
+        }
+    }  
 });
 
 $("#new_address").click(function(){
@@ -81,10 +86,10 @@ $("#new_address").click(function(){
 });
 
 $( "#btn_submit1" ).click(function() {
-    var name = $("input[name=name]").val();
-    var address = $("input[name=address]").val();
-    var phone = $("input[name=phone]").val();
-    var email = $("input[name=email]").val();
+    var name = document.getElementById("name").val();
+    var address = document.getElementById("address").val();
+    var phone = document.getElementById("phone").val();
+    var email = document.getElementById("email").val();
     var check = 1;
     if (name == "") {
         document.getElementById("errname").innerHTML = "Name must be filled out.";
@@ -111,7 +116,7 @@ $( "#btn_submit1" ).click(function() {
     }
 });
 
-$(".form-group").click(function(){
+$(".form").click(function(){
     document.getElementById("errname").innerHTML = "";
     document.getElementById("erremail").innerHTML = "";
     document.getElementById("erraddress").innerHTML = "";

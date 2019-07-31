@@ -20,67 +20,62 @@ class HomeComponent extends Component {
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->Categories = TableRegistry::getTableLocator()->get('Categories');
         $this->Images=TableRegistry::getTableLocator()->get('Images');
-        $this->Images=TableRegistry::getTableLocator()->get('Users');
-        $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
+        $this->Users=TableRegistry::getTableLocator()->get('Users');
+        $this->Orders = TableRegistry::get('Orders');
+        $this->ProductAttributes = TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->OrderDetails=TableRegistry::getTableLocator()->get('OrderDetails');
         $this->connection = ConnectionManager::get('default');
     }
 
     public function addUser($reqUser){
-        $result = $this->Users->query()->insert(['email', 'password', 'name', 'phone', 'address', 'type','notice','created','modified'])
-                                    ->values([
-                                        'email' => $reqUser['email'],
-                                        'password' => $reqUser['password'],
-                                        'name' => $reqUser['name'],
-                                        'phone' => $reqUser['phone'],
-                                        'address' => $reqUser['address'],
-                                        'type' => 0,
-                                        'notice' => 'user',
-                                        'created' => new DateTime('now'),
-                                        'modified' => new DateTime('now')
-                                    ])
-                                    ->execute();
-        return $result;
+        $reqUser['password'] = rand(000000, 999999);
+
+        $user = $this->Users->newEntity();
+        $user->email = $reqUser['email'];
+        $user->password = $reqUser['password'];
+        $user->name = $reqUser['name'];
+        $user->phone = $reqUser['phone'];
+        $user->address = $reqUser['address'];
+        $user->type = 0;
+        $user->notice = 'user';
+        $user->status = 1;
+        $user->created = new DateTime('now');
+        $user->modified = new DateTime('now');
+        $user = $this->Users->save($user);
+
+        return $user;
     }
 
-    public function addOrder($reqOrder, $user_id){
-        $total = 0;
-        foreach ($reqOrder as $value) {
-            $total = $total + $value['price']*$value['quantity'];
+    public function addOrder($reqOrder,$cart,$user_id){
+        $order = $this->Orders->newEntity();
+        $order->user_id = $user_id;
+        $order->name = $reqOrder['name'];
+        $order->phone = (int)$reqOrder['phone'];
+        $order->address = $reqOrder['address'];
+        $order->email = $reqOrder['email'];
+        $order->total = $reqOrder['total'];
+        $order->status = 0;
+        $order->note = "Waiting Process12321";
+        $order->created = new DateTime('now');
+        $order->modified = new DateTime('now');
+        if($this->Orders->save($order)) {
+            foreach ($cart as $value) {
+                        $this->OrderDetails->query()->insert(['order_id', 'product_id', 'name', 'price', 'quantity','created','modified'])
+                                                ->values([
+                                                    'order_id' => $order['id'],
+                                                    'product_id' => $value['id'],
+                                                    'name' => $value['name'],
+                                                    'price' => $value['price'],
+                                                    'quantity' => $value['quantity'],
+                                                    'created' => new DateTime('now'),
+                                                    'modified' => new DateTime('now')
+                                                ])
+                                                ->execute();
+            }
+        } else {            
+            $this->Flash->error(__('The Order could not be sended. Please, try again.'));
         }
-        $this->connection->begin();
-        $result= $this->Orders->query()->insert(['user_id', 'name', 'phone', 'address', 'email','total','status','created','modified'])
-                                    ->values([
-                                        'user_id' => $user_id,
-                                        'name' => $reqOrder['name'],
-                                        'phone' => $reqOrder['phone'],
-                                        'address' => $reqOrder['address'],
-                                        'email' => $reqOrder['email'],
-                                        'total' => $total,
-                                        'status' => 0,
-                                        'created' => new DateTime('now'),
-                                        'modified' => new DateTime('now')
-                                    ])
-                                    ->execute();
-                                    
-        foreach ($reqOrder as $value) {
-            $this->OrderDetails->query()->insert(['order_id', 'product_id', 'name', 'price', 'quantity','created','modified'])
-                                    ->values([
-                                        'user_id' => $user_id,
-                                        'name' => $reqOrder['name'],
-                                        'phone' => $reqOrder['phone'],
-                                        'address' => $reqOrder['address'],
-                                        'email' => $reqOrder['email'],
-                                        'total' => $total,
-                                        'status' => 0,
-                                        'created' => new DateTime('now'),
-                                        'modified' => new DateTime('now')
-                                    ])
-                                    ->execute();
-        }
-
-        $result = $this->connection->commit();
-
     }
 }
 ?>
+

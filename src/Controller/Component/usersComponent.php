@@ -11,6 +11,7 @@ class UsersComponent extends Component {
     private $Users;
     private $Carts;
     private $CartDetails;
+    private $Images;
 
     public function initialize(array $config)
     {
@@ -19,6 +20,7 @@ class UsersComponent extends Component {
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->Carts = TableRegistry::getTableLocator()->get('Carts');
         $this->CartDetails = TableRegistry::getTableLocator()->get('CartDetails');
+        $this->Images = TableRegistry::getTableLocator()->get('Images');
         $this->connection = ConnectionManager::get('default');
     }
 
@@ -35,6 +37,14 @@ class UsersComponent extends Component {
     public function addCart($user_id, $carts){
         
         $this->connection->begin();
+        $cart_id = $this->Carts->find()->where(['user_id'=>$user_id])->first()['id'];
+        $this->CartDetails->query()->delete()
+            ->where(['cart_id' => $cart_id])
+            ->execute();
+        $this->Carts->query()->delete()
+            ->where(['user_id' => $user_id])
+            ->execute();
+
             $cart = $this->Carts->newEntity();
             $cart->user_id = $user_id;
             $cart->created = new DateTime();
@@ -69,6 +79,7 @@ class UsersComponent extends Component {
         $total = 0;
         foreach ($cartDetail as $value) {
             $total = $total + $value['price']*$value['quantity'];
+            $value['image'] = $this->Images->find()->where(['product_id'=>$value['product_id']])->first()['name'];
         }
         $data = array('Cart'=>$cartDetail,'Total'=>$total);
         return $data;

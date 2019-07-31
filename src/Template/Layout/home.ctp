@@ -205,8 +205,9 @@
 		<!-- /container -->
 	</div>
 	<!-- /NAVIGATION -->
-
     <div class="container clearfix">
+    	<br>
+    	<h1><?= $this->Flash->render() ?></h1>
         <?= $this->fetch('content') ?>
     </div>
 

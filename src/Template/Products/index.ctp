@@ -1,12 +1,3 @@
-<div id="breadcrumb">
-	<div class="container">
-		<ul class="breadcrumb">
-			<li><a href="#">Home</a></li>
-			<li class="active">List</li>
-		</ul>
-	</div>
-</div>
-<!-- /BREADCRUMB -->
 
 <!-- section -->
 <div class="section">

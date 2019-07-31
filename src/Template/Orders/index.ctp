@@ -22,20 +22,20 @@
 								<div class="section-title">
 									<h3 class="title">Billing Details</h3>
 								</div>
-								<div class="form-group">
-									<input class="input" type="text" name="name" placeholder="Your Name">
+								<div class="form-group form">
+									<input class="input" id="name" type="text" name="name" placeholder="Your Name">
 									<p id="errname" class="error" style="color: red;"></p>
 								</div>
-								<div class="form-group">
-									<input class="input" type="email" name="email" placeholder="Email">
+								<div class="form-group form">
+									<input class="input" id="email" type="email" name="email" placeholder="Email">
 									<p id="erremail" class="error" style="color: red;"></p>
 								</div>
-								<div class="form-group">
-									<input class="input" type="text" name="address" placeholder="Address">
+								<div class="form-group form">
+									<input class="input" id="address" type="text" name="address" placeholder="Address">
 									<p id="erraddress" class="error" style="color: red;"></p>
 								</div>
-								<div class="form-group">
-									<input class="input" type="number" name="phone" placeholder="Telephone">
+								<div class="form-group form">
+									<input class="input" id="phone" type="number" name="phone" placeholder="Telephone">
 									<p id="errphone" class="error" style="color: red;"></p>
 								</div>
 								<div class="form-group">
@@ -67,7 +67,7 @@
 										<label class="font-weak" for="register">New address delivery?</label>
 										<div class="caption">
 											<p>We will ship to this new address.<p>
-											<input class="input" type="text" disabled="true" id="new_address" name="new_address" placeholder="Enter Your New Address">
+											<input class="input" type="text" disabled id="new_address" name="new_address" placeholder="Enter Your New Address">
 											<p id="errnew_address" style="color: red;"></p>
 										</div>
 									</div>

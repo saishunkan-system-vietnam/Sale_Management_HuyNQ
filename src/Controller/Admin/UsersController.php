@@ -161,6 +161,23 @@ class UsersController extends AppController
         return $this->redirect(['action' => 'index']);
     }
 
+    public function restore($id = null)
+    {
+        $query = $this->Users->query();
+        $result = $query->update()
+        ->set(['status' => 1,'modified' => new DateTime('now')])
+        ->where(['id' => $id])
+        ->execute();
+
+        if ($result) {
+            $this->Flash->success(__('The user has been restored.'));
+        } else {
+            $this->Flash->error(__('The user could not be restored. Please, try again.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
+    }
+
     public function searchType(){
         $this->viewBuilder()->autoLayout(false);
         $request = $this->getRequest()->getData();

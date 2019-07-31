@@ -152,7 +152,10 @@ class UsersController extends AppController
     {
         $session = $this->getRequest()->getSession(); 
         $carts = $session->read('Cart');
-
+        // echo "<pre>";
+        // print_r($carts);
+        // echo "</pre>";
+        // die('a');
         if($this->Auth->user('id')){
             $this->Flash->error(_('You are already logged in !'));
             return $this->redirect(['action' => 'index']);
