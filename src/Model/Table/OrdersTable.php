@@ -62,20 +62,24 @@ class OrdersTable extends Table
         $validator
             ->scalar('name')
             ->maxLength('name', 100)
-            ->allowEmptyString('name');
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
 
         $validator
             ->integer('phone')
-            ->allowEmptyString('phone');
+            ->requirePresence('phone','create',"Field is not isset")
+            ->allowEmptyString('phone', false, "Phone cannot be empty");
 
         $validator
             ->scalar('address')
             ->maxLength('address', 100)
-            ->allowEmptyString('address');
+            ->requirePresence('address','create',"Field is not isset")
+            ->allowEmptyString('address', false, "Address cannot be empty");
 
         $validator
             ->email('email')
-            ->allowEmptyString('email');
+            ->requirePresence('email','create',"Field is not isset")
+            ->allowEmptyString('email', false, "Email cannot be empty");
 
         $validator
             ->integer('total')

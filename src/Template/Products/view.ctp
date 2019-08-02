@@ -42,7 +42,8 @@
 								<span class="sale">-20%</span>
 							</div> -->
 							<h2 class="product-name"><?= $product['name'] ?></h2>
-							<h3 class="product-price"><?= $product['price'] ?> VNĐ</h3>
+							<h3 class="product-price"><?= $this->number->format($product['price']) ?> VNĐ</h3>
+							<p><strong>Quantity:</strong> <?= $this->number->format($product['quantity']) ?></p>
 							<p><strong>Availability:</strong> In Stock</p>
 							<p><strong>Brand:</strong> <?= $product['category']['parentName'] ?></p>
 							<div class="product-options">
@@ -57,7 +58,8 @@
 							</div>
 
 							<div class="product-btns">
-								<button product_id="<?= h($product->id) ?>" class="primary-btn add2cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+								<input style="text-align: center;" type="number" name="quantity" value="1" min="1" max="5" />
+								<button  style="margin-left: 20px;" product_id="<?= h($product->id) ?>" class="primary-btn add2cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
 							</div>
 						</div>
 					</div>
@@ -103,7 +105,7 @@
 						</div>
 
 						<div class="product-body">
-							<h3 class="product-price"><?= $value['price'] ?></h3>
+							<h3 class="product-price"><?= $this->number->format($value['price']) ?> VNĐ</h3>
 							<h2 class="product-name"><a href="/products/<?= $value->id ?>"><?= $value['name'] ?></a></h2>
 							<div class="product-btns">
 								<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>

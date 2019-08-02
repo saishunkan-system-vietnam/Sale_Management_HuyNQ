@@ -29,14 +29,23 @@
         <div class="input text">
             <label for="name">Name</label>
             <input type="text" name="name" id="name" value="<?= $user->name ?>">
+            <?php if (isset($errname)): ?>
+                <p class="error" style="color: red;"><?= $errname ?></p>
+            <?php endif ?>
         </div>
         <div class="input text">
             <label for="name">Phone</label>
             <input type="number" name="phone" id="phone" value="<?= $user->phone ?>">
+            <?php if (isset($errphone)): ?>
+                <p class="error" style="color: red;"><?= $errphone ?></p>
+            <?php endif ?>
         </div>
         <div class="input text">
             <label for="name">Address</label>
             <textarea name="address" id="address"><?= $user->address ?></textarea>
+            <?php if (isset($erraddress)): ?>
+                <p class="error" style="color: red;"><?= $erraddress ?></p>
+            <?php endif ?>
         </div>
         <div class="input text">
             <label for="name">Notice</label>

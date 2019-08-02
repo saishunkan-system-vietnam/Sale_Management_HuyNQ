@@ -117,17 +117,13 @@ Router::prefix('admin', function ($routes) {
     $routes->fallbacks('DashedRoute');
 });
 
-Router::scope('/', function ($routes) {
     $routes->connect('/', ['controller' => 'Products', 'action' => 'index']);
-    $routes->connect('/login', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/signin', ['controller' => 'Users', 'action' => 'login']);
     $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
     $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
-    $routes->connect('/order', ['controller' => 'Products', 'action' => 'order']);
-});
+    $routes->connect('/order', ['controller' => 'Orders', 'action' => 'order']);
 
-Router::scope('/', function ($routes) {
     $routes->connect('/add2cart', ['controller' => 'Carts', 'action' => 'add2cart']);
     $routes->connect('/del2cart', ['controller' => 'Carts', 'action' => 'del2cart']);
     $routes->connect('/checkout', ['controller' => 'Carts', 'action' => 'checkout']);
     $routes->connect('/deleteCart', ['controller' => 'Carts', 'action' => 'deleteCart']);
-});

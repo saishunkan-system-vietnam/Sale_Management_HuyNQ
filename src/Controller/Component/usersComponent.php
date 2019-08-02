@@ -79,7 +79,13 @@ class UsersComponent extends Component {
         $total = 0;
         foreach ($cartDetail as $value) {
             $total = $total + $value['price']*$value['quantity'];
-            $value['image'] = $this->Images->find()->where(['product_id'=>$value['product_id']])->first()['name'];
+            $image_name = $this->Images->find()->where(['product_id'=>$value['product_id']])->first()['name'];
+            if($image_name){
+                $value['image'] = $image_name;
+            }else{
+                $value['image'] = "default.png";
+            }
+            $value['id'] = $value['product_id'];
         }
         $data = array('Cart'=>$cartDetail,'Total'=>$total);
         return $data;

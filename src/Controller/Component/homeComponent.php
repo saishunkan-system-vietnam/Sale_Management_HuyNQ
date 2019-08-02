@@ -28,11 +28,9 @@ class HomeComponent extends Component {
     }
 
     public function addUser($reqUser){
-        $reqUser['password'] = rand(000000, 999999);
-
         $user = $this->Users->newEntity();
         $user->email = $reqUser['email'];
-        $user->password = $reqUser['password'];
+        $user->password = md5($reqUser['password']);
         $user->name = $reqUser['name'];
         $user->phone = $reqUser['phone'];
         $user->address = $reqUser['address'];
@@ -55,7 +53,7 @@ class HomeComponent extends Component {
         $order->email = $reqOrder['email'];
         $order->total = $reqOrder['total'];
         $order->status = 0;
-        $order->note = "Waiting Process12321";
+        $order->note = "Waiting Process";
         $order->created = new DateTime('now');
         $order->modified = new DateTime('now');
         if($this->Orders->save($order)) {

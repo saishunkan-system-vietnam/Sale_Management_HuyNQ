@@ -125,12 +125,20 @@ class UsersController extends AppController
         $user = $this->Users->get($id);
         $request = $this->request->getData();
         if ($this->request->is(['patch', 'post', 'put'])) {
-            $validation = $this->Users->newEntity($request);
-            $request['id'] = $id;
-            $result = $this->users->update($request);
-            if ($result) {
-                $this->Flash->success(__('The user has been saved.'));
-                return $this->redirect(['action' => 'index']);
+            $validation = $this->Users->newEntity($request,['validate' => 'edit']);
+            if($validation->getErrors()){
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err'.$key.'',$error);
+                    }
+                }
+            }else{
+                $request['id'] = $id;
+                $result = $this->users->update($request);
+                if ($result) {
+                    $this->Flash->success(__('The user has been saved.'));
+                    return $this->redirect(['action' => 'index']);
+                }
             }
             $this->Flash->error(__('The user could not be saved. Please, try again.'));
         }

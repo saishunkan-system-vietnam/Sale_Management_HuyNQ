@@ -171,13 +171,14 @@ class UsersTable extends Table
             ->allowEmptyString('email', false, "email cannot be empty")
             ->add('email','custom',[
                 'rule'=>  function($value, $context){
-                    $email = $this->find()->where(['email'=>$context['data']['email']])->first();
-                    if (!isset($email)) {
+                    $result = $this->find()->where(['email'=>$context['data']['email']])->first();
+                    if ($result !== null) {
+                        return false;
+                    }else{
                         return true;
-                    }
-                    return false;
+                    }      
                 },
-                'message'=>'This email was used !',
+                'message'=>'Email was used!',
             ]);
 
         $validator
@@ -201,6 +202,82 @@ class UsersTable extends Table
                 ]
             ])
             ->notEmpty('confirm_password');
+
+        return $validator;
+    }
+
+    public function validationOrder(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->integer('phone')
+            ->requirePresence('phone','create',"Field is not isset")
+            ->allowEmptyString('phone', false, "Phone cannot be empty");
+
+        $validator
+            ->scalar('address')
+            ->maxLength('address', 100)
+            ->requirePresence('address','create',"Field is not isset")
+            ->allowEmptyString('address', false, "Address cannot be empty");
+
+        $validator
+            ->email('email')
+            ->requirePresence('email','create',"Field is not isset")
+            ->allowEmptyString('email', false, "Email cannot be empty")
+            ->add('email','custom',[
+                'rule'=>  function($value, $context){
+                    $result = $this->find()->where(['email'=>$context['data']['email']])->first();
+                    if ($result !== null) {
+                        return false;
+                    }else{
+                        return true;
+                    }      
+                },
+                'message'=>'Email was used!',
+            ]);
+
+        $validator
+            ->integer('total')
+            ->allowEmptyString('total');
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
+        return $validator;
+    }
+
+    public function validationEdit(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->integer('phone')
+            ->requirePresence('phone','create',"Field is not isset")
+            ->allowEmptyString('phone', false, "Phone cannot be empty");
+
+        $validator
+            ->scalar('address')
+            ->maxLength('address', 100)
+            ->requirePresence('address','create',"Field is not isset")
+            ->allowEmptyString('address', false, "Address cannot be empty");
 
         return $validator;
     }

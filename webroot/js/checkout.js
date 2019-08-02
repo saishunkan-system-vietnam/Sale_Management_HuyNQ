@@ -23,12 +23,12 @@ $(".delete_cart").click(function(){
 $('.add').click(function () {
     var product_id = $(this).attr("product_id");
         if ($(this).prev().val() < 5) {
-
             $.ajax({        
                 url: '/add2cart',
                 method: 'POST',
                 data: {
-                    id : product_id
+                    id : product_id,
+                    quantity: 1
                 }
             }).done(function(rep){
                 console.log(rep);
@@ -85,40 +85,38 @@ $("#new_address").click(function(){
     $("#errnew_address").css({"display": "none"});
 });
 
-$( "#btn_submit1" ).click(function() {
-    var name = document.getElementById("name").val();
-    var address = document.getElementById("address").val();
-    var phone = document.getElementById("phone").val();
-    var email = document.getElementById("email").val();
-    var check = 1;
-    if (name == "") {
-        document.getElementById("errname").innerHTML = "Name must be filled out.";
-        check = 0;
-        return false;
-    }
-    if (email == "") {
-        document.getElementById("erremail").innerHTML = "Email must be filled out.";
-        check = 0;
-        return false;
-    }
-    if (address == "") {
-        document.getElementById("erraddress").innerHTML = "Address must be filled out.";
-        check = 0;
-        return false;
-    }
-    if (phone == "") {
-        document.getElementById("errphone").innerHTML = "Phone must be filled out.";
-        check = 0;
-        return false;
-    }
-    if(check == 1){
-        return true
-    }
+$(".form").click(function(){
+    $(this).find(".error").css({"display": "none"});
 });
 
-$(".form").click(function(){
-    document.getElementById("errname").innerHTML = "";
-    document.getElementById("erremail").innerHTML = "";
-    document.getElementById("erraddress").innerHTML = "";
-    document.getElementById("errphone").innerHTML = "";
-});
+// $( "#btn_submit1" ).click(function() {
+//     var name = document.getElementById("name").val();
+//     var address = document.getElementById("address").val();
+//     var phone = document.getElementById("phone").val();
+//     var email = document.getElementById("email").val();
+//     var check = 1;
+//     if (name == "") {
+//         document.getElementById("errname").innerHTML = "Name must be filled out.";
+//         check = 0;
+//         return false;
+//     }
+//     if (email == "") {
+//         document.getElementById("erremail").innerHTML = "Email must be filled out.";
+//         check = 0;
+//         return false;
+//     }
+//     if (address == "") {
+//         document.getElementById("erraddress").innerHTML = "Address must be filled out.";
+//         check = 0;
+//         return false;
+//     }
+//     if (phone == "") {
+//         document.getElementById("errphone").innerHTML = "Phone must be filled out.";
+//         check = 0;
+//         return false;
+//     }
+//     if(check == 1){
+//         return true
+//     }
+// });
+

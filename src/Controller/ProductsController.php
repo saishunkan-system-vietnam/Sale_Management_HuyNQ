@@ -5,6 +5,7 @@ use App\Controller\AppController;
 use Cake\Validation\Validator;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
+use Cake\Mailer\Email;
 
 /**
  * Products Controller
@@ -20,10 +21,12 @@ class ProductsController extends AppController
     private $Attributes;
     private $ProductAttributes;
     private $Categories;
+    private $Orders;
     public function initialize()
     {
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
+        $this->Orders = TableRegistry::getTableLocator()->get('Orders');
         $this->Images = TableRegistry::getTableLocator()->get('Images');
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
@@ -36,7 +39,11 @@ class ProductsController extends AppController
     }
 
     public function index()
-    {
+    {   
+        $this->paginate = [
+            'maxLimit' => 8
+        ];
+
         $products = $this->Products->find('all')
         ->select($this->Products)
         ->select($this->Images)
@@ -48,8 +55,14 @@ class ProductsController extends AppController
             ]
         ])
         ->group(['products.id'])->where(['products.status'=>1]);
+        $products = $this->paginate($products);
 
-        $this->set(compact('products'));
+        $categories = $this->Categories->find()->toArray();
+        $session = $this->getRequest()->getSession(); 
+        // echo "<pre>";
+        // print_r($session->read());
+        // die('a');
+        $this->set(compact('products','categories'));
     }
 
     public function view($id = null)
@@ -93,40 +106,5 @@ class ProductsController extends AppController
         }
 
         $this->set(compact('product', 'moreProduct'));
-    }
-
-    public function order(){
-        if ($this->request->is('post')) {
-
-            $session = $this->getRequest()->getSession();
-            $cart = $session->read('Cart');
-            $request = $this->request->getData();
-            $user = $session->read('Auth.User');
-            $request['total'] = $session->read('Total');
-
-            try {
-                $this->connection->begin();
-                if($user){
-                     if(isset($request['new_address'])){
-                        $request['address'] = $request['new_address'];
-                        $this->home->addOrder($request,$cart, $user['id']);
-                        
-                     }else{
-                        $this->home->addOrder($request,$cart, $user['id']);
-                 }
-                }else{
-                    $user = $this->home->addUser($request);
-                    $this->home->addOrder($request,$cart, $user['id']);
-                }
-                $this->connection->commit();
-
-                $this->Flash->success(__('The Order has been sended.'));
-                return $this->redirect(['action' => 'index']);
-            } catch(\Exception $e) {
-                $this->connection->rollback();
-                $this->Flash->error(__('The Order could not be sended. Please, try again.'));
-            }
-        }
-        $this->render(false);
     }
 }

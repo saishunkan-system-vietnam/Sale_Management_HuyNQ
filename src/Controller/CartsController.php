@@ -51,13 +51,19 @@ class CartsController extends AppController
         $session = $this->getRequest()->getSession();  
         $request = $this->request->getData();
         $product = $this->Products->find()->where(['id'=>$request['id']])->first();
-        $product['image'] = $this->Images->find()->where(['product_id'=>$request['id']])->first()->name;
-        $product['quantity'] = 1;
+        $image_name = $this->Images->find()->where(['product_id'=>$request['id']])->first()['name'];
+        if(!empty($image_name)){
+            $product['image'] = $image_name;
+        }else{
+            $product['image'] = "default.png";
+        }
+        $product['quantity'] = $request['quantity'];
         $count = 0;
         $total = 0;
 
         // $session->destroy();
         if($session->read('Cart') == null){
+            $quantity = 1;
             $session->write('Cart',array($product));
             $session->write('Total', $product['quantity']*$product['price']);
         }else{
@@ -67,27 +73,30 @@ class CartsController extends AppController
             foreach ($cart as $value) {
                 
                 if($value['id'] == $product['id']){
-                    if($value['quantity']<5){
-                        $value['quantity'] = $value['quantity'] + 1;            
+                    $quantity = $value['quantity'] + $product['quantity'];
+                    if($quantity<=5){
+                        $value['quantity'] = $quantity;            
                     }
-
                     $count++;
                 }
-                $total = $total + $value['quantity']*$value['price'];
-                $session->write('Total', $total);
             }
-            if($count!==0){
+            if($count != 0){
                 $session->write('Cart', $cart);
             }else{
                 array_push($cart,$product);
                 $session->write('Cart', $cart);
-            }   
+            }
+            foreach ($cart as $value) {
+                $total = $total + $value['quantity']*$value['price'];
+            }
+            $session->write('Total', $total);  
         }       
 
         return $this->response
             ->withType('application/json')
-            ->withStringBody(json_encode($session->read('Cart')));  
+            ->withStringBody(json_encode($quantity));  
     }
+
     public function del2cart(){
         $session = $this->getRequest()->getSession();
         $product_id = $this->request->getData();

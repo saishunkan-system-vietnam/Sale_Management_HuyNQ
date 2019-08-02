@@ -147,12 +147,11 @@ class ProductsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
             // echo "<pre>";
-            // print_r($request);
-            // echo "</pre>";
+            // print_r($request['file'][0]);
             // die('a');
             $request['user_id'] = $this->Auth->user('id');
             $request['id'] = $id;
-            if(!empty($request['file'])){
+            if($request['file']){
                 $result = $this->products->checkImage($request['file']);
             }
             $validation = $this->Products->newEntity($request);

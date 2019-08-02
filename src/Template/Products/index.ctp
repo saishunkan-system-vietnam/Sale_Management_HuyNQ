@@ -48,6 +48,7 @@
 									<div class="product-btns">
 										<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
 										<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+										<input type="hidden" name="quantity" value=1>
 										<button product_id="<?= h($product->id) ?>" class="primary-btn add2cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
 									</div>
 								</div>
@@ -55,6 +56,16 @@
 						</div>
 						<!-- /Product Single -->
 					<?php endforeach; ?>
+				</div>
+				<div class="paginator">
+					<ul class="pagination">
+					    <?= $this->Paginator->first('<< ' . __('first')) ?>
+					    <?= $this->Paginator->prev('< ' . __('previous')) ?>
+					    <?= $this->Paginator->numbers() ?>
+					    <?= $this->Paginator->next(__('next') . ' >') ?>
+					    <?= $this->Paginator->last(__('last') . ' >>') ?>
+					</ul>
+					<p><?= $this->Paginator->counter(['format' => __('Page {{page}} of {{pages}}, showing {{current}} record(s) out of {{count}} total')]) ?></p>
 				</div>
 				<!-- /row -->
 			</div>

@@ -34,6 +34,8 @@ class OrdersController extends AppController
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("home");
         $this->loadComponent('products'); 
+        $this->loadComponent('home'); 
+        $this->loadComponent('email'); 
     }
     
     public function index()
@@ -43,6 +45,58 @@ class OrdersController extends AppController
         // echo "<pre>";
         // print_r($user);
         // die('a');
+        $this->set(compact('user'));
+    }
+
+    public function order(){
+        $session = $this->getRequest()->getSession();
+        $user = $session->read("Auth.User");
+
+        if ($this->request->is('post')) {
+            $request = $this->request->getData();
+            $validation = $this->Users->newEntity($request,['validate' => 'order']);
+            if ($validation->getErrors() && !$user) {
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->set('err' . $key . '', $error);
+                    }
+                }
+            } else {
+                $session = $this->getRequest()->getSession();
+                $cart = $session->read('Cart');
+                $user = $session->read('Auth.User');
+                $total = $session->read('Total');
+                $password = "";
+                $request['total'] = $session->read('Total');
+
+                try {
+                    $this->connection->begin();
+                    if ($user) {
+                        if (isset($request['new_address'])) {
+                            $request['address'] = $request['new_address'];
+                            $this->home->addOrder($request,$cart, $user['id']);
+                         } else {
+                            $this->home->addOrder($request,$cart, $user['id']);
+                        }
+                    } else {
+                        $request['password'] = rand(000000, 999999);
+                        $password = $request['password'];
+                        $user = $this->home->addUser($request);
+                        $this->home->addOrder($request,$cart, $user['id']);
+                    }
+                    $this->connection->commit();
+
+                    $this->Flash->success(__('The Order has been sended. Please check email !'));
+                    $this->email->sendEmail($user, $cart, $total, $password);
+                    $session->delete('Cart');
+                    $session->delete('Total');
+                    return $this->redirect(['controller'=>'Products','action' => 'index']);
+                } catch(\Exception $e) {
+                    $this->connection->rollback();
+                    $this->Flash->error(__('The Order could not be sended. Please, try again.'));
+                }
+            }
+        }
         $this->set(compact('user'));
     }
 }

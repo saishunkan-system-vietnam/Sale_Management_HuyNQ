@@ -194,7 +194,7 @@ class UsersController extends AppController
         $carts = $session->read('Cart');
         $user_id = $session->read('Auth.User.id'); 
         $this->Flash->success('You are now logged out.');
-
+        if($carts){
         $this->connection->begin();
             $cart_id = $this->Carts->find()->where(['user_id'=>$user_id])->first()['id'];
             if($cart_id !== null){
@@ -210,11 +210,11 @@ class UsersController extends AppController
             }else{
                 $this->users->addCart($user_id, $carts);
             }  
-        $this->connection->commit();
-        $session->delete('Cart');
-        $session->delete('Total');
-        $session->delete('Auth.User');
-
+            $this->connection->commit();
+            $session->delete('Cart');
+            $session->delete('Total');
+            $session->delete('Auth.User');
+        }
         return $this->redirect($this->Auth->logout());
     }
 

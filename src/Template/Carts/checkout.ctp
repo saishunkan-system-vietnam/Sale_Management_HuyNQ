@@ -54,7 +54,9 @@
 								</tfoot>
 							</table>
 							<div class="pull-right">
-								<a href="/orders" class="primary-btn">Place Order</a>
+								<?php if (!empty($_SESSION['Cart'])): ?>	
+								<a href="/order" id="place_order" class="primary-btn">Place Order</a>
+								<?php endif; ?>
 							</div>
 						</div>
 					</div>
