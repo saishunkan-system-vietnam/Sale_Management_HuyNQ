@@ -17,7 +17,6 @@
 							<!-- <select class="input search-categories">
 								<option value="0">Search Products</option>
 							</select> -->
-							<b class="input search-categories" style="text-align: center; padding-top: 10px; color: #F8694A;">Search Product</b>
 							<button class="search-btn"><i class="fa fa-search"></i></button>
 						</form>
 					</div>
@@ -35,13 +34,15 @@
 						<!-- Product Single -->
 						<div class="col-md-3 col-sm-6 col-xs-6">
 							<div class="product product-single">
-								<div style="width: 262px; height: 262px;"  class="product-thumb">
-									<?php if($product->Images['name'] !== null){ ?>
-										<img src="img/<?= $product->Images['name'] ?>" alt="">
-									<?php }else{ ?>
-										<img src="img/default.PNG" alt="">
-									<?php } ?>
-								</div>
+								<a href="/products/<?= $product->id ?>">
+									<div style="width: 262px; height: 262px;"  class="product-thumb">
+										<?php if($product->Images['name'] !== null){ ?>
+											<img src="img/<?= $product->Images['name'] ?>" alt="">
+										<?php }else{ ?>
+											<img src="img/default.PNG" alt="">
+										<?php } ?>
+									</div>
+								</a>
 								<div class="product-body">
 									<h3 class="product-price"><?= $this->Number->format($product->price) ?> VNĐ</h3>
 									<h2 class="product-name"><a href="/products/<?= $product->id ?>"><?= h($product->name) ?></a></h2>

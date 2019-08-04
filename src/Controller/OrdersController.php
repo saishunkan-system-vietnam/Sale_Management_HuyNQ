@@ -54,7 +54,7 @@ class OrdersController extends AppController
 
         if ($this->request->is('post')) {
             $request = $this->request->getData();
-            $validation = $this->Users->newEntity($request,['validate' => 'order']);
+            $validation = $this->Users->newEntity($request, ['validate' => 'order']);
             if ($validation->getErrors() && !$user) {
                 foreach ($validation->getErrors() as $key => $errors) {
                     foreach ($errors as $error) {

@@ -32,6 +32,7 @@
 	<?= $this->Html->script('jquery-3.4.1.min.js') ?>
 	<?= $this->Html->script('toastr.min.js') ?>
 	<?= $this->Html->css('toastr.min.css') ?>
+	<?= $this->Html->css('tab.css') ?>
 	<?= $this->fetch('script') ?>
 	<?= $this->fetch('css') ?>
 
@@ -92,7 +93,6 @@
 									</div>
 									<strong class="text-uppercase">My Account</i></strong>
 								</div>
-								<!-- <a href="/signin" class="text-uppercase">Login</a> -->
 								<a style="cursor: pointer;" class="text-uppercase" data-toggle="modal" data-target="#exampleModal">Login</a>
 								<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									<div class="modal-dialog" role="document">
@@ -105,27 +105,67 @@
 											<div class="modal-body">
 												<div class="card">
 													<article class="card-body">
-														<h4 class="card-title mb-4 mt-1">Sign in</h4>
-														<form>
-															<div class="form-group">
-																<label>Your email</label>
-																<input name="email" class="form-control" placeholder="Email" type="email">
-															</div> <!-- form-group// -->
-															<div class="form-group">
-																<a class="float-right" href="#">Forgot?</a>
-																<label>Your password</label>
-																<input class="form-control" name="password" placeholder="******" type="password">
-															</div> <!-- form-group// --> 
-															<div class="form-group"> 
-																<div class="checkbox">
-																	<label> <input type="checkbox"> Save password </label>
-																</div> <!-- checkbox .// -->
-															</div> <!-- form-group// -->  
-															<div class="form-group">
-																<button id="btn_login" type="button" style="width: 49%; float: left; margin-right: 10px;" class="btn btn-primary btn-block"> Login  </button>
-																<button type="button" style="width: 49%;" class="btn btn-default btn-block"> Sign up  </button>
-															</div> <!-- form-group// -->                                                           
-														</form>
+														<div class="tab">
+															<button class="tablinks" onclick="openCity(event, 'Signin')">Sign in</button>
+															<button class="tablinks" onclick="openCity(event, 'Signup')">Sign up</button>
+														</div>
+
+														<div id="Signin" class="tabcontent">
+															<form>
+																<div class="form-group form">
+																	<label>Your email</label>
+																	<input name="email" class="form-control" placeholder="Email" type="email">
+																	<p id="erremail" class="error" style="color: red;"></p>
+																</div> 
+																<div class="form-group form">
+																	<a class="float-right" href="#">Forgot?</a>
+																	<label>Your password</label>
+																	<input class="form-control" name="password" placeholder="******" type="password">
+																	<p id="errpassword" class="error" style="color: red;"></p>
+																</div> 
+																<div class="form-group"> 
+																	<div class="checkbox">
+																		<label> <input type="checkbox"> Save password </label>
+																	</div> 
+																</div>   
+																<div class="form-group">
+																	<button id="btn_login" type="button" class="btn btn-primary btn-block"> Login  </button>
+																</div>                             
+															</form>
+														</div>
+
+														<div id="Signup" class="tabcontent">
+															<form>
+																<div class="form-group form">
+																	<label>Name</label>
+																	<input name="name" class="form-control" placeholder="Name" type="text">
+																	<p id="errname" class="error" style="color: red;"></p>
+																</div> 
+																<div class="form-group form">
+																	<label>Phone</label>
+																	<input name="phone" class="form-control" placeholder="Phone" type="number">
+																	<p id="errphone" class="error" style="color: red;"></p>
+																</div>
+																<div class="form-group form">
+																	<label>Address</label>
+																	<input name="address" class="form-control" placeholder="Address" type="text">
+																	<p id="erraddress" class="error" style="color: red;"></p>
+																</div>  
+																<div class="form-group form">
+																	<label>Email</label>
+																	<input name="email1" class="form-control" placeholder="Email" type="email">
+																	<p id="erremail1" class="error" style="color: red;"></p>
+																</div> 
+																<div class="form-group form">
+																	<label>Password</label>
+																	<input class="form-control" name="password1" placeholder="******" type="password">
+																	<p id="errpassword1" class="error" style="color: red;"></p>
+																</div>  
+																<div class="form-group">
+																	<button id="btn_register" type="button" class="btn btn-primary btn-block"> Register  </button>
+																</div>                             
+															</form>
+														</div>
 													</article>
 												</div> <!-- card.// -->
 
@@ -283,31 +323,104 @@
 					<!-- /FOOTER -->
 
 					<!-- jQuery Plugins -->
-<script src="../Home/js/jquery.min.js"></script>
-<script src="../Home/js/bootstrap.min.js"></script>
-<script src="../Home/js/slick.min.js"></script>
-<script src="../Home/js/nouislider.min.js"></script>
-<script src="../Home/js/jquery.zoom.min.js"></script>
-<script src="../Home/js/main.js"></script>
+	<script src="../Home/js/jquery.min.js"></script>
+	<script src="../Home/js/bootstrap.min.js"></script>
+	<script src="../Home/js/slick.min.js"></script>
+	<script src="../Home/js/nouislider.min.js"></script>
+	<script src="../Home/js/jquery.zoom.min.js"></script>
+	<script src="../Home/js/main.js"></script>
 
 </body>
-<!-- <script>
+<script>
 
-$("#btn_login").click(function(){
-	var email = $("input[name=email]").val();
-	var password = $("input[name=password]").val();
+	$("#btn_login").click(function(){
+		var email = $("input[name=email]").val();
+		var password = $("input[name=password]").val();
 
-	$.ajax({        
-        url: '/signin',
-        method: 'POST',
-        data: {
-            email : email,
-            password: password
-        }
-    }).done(function(rep){
-    	console.log(rep);
-    	//toastr.success(rep);
-    });
-});				
-</script> -->
+		$.ajax({        
+			url: '/signin',
+			method: 'POST',
+			data: {
+				email : email,
+				password: password
+			}
+		}).done(function(rep){
+			console.log(rep);
+			if (typeof(rep['email']) != "undefined" && rep['email'] !== "") {
+				$("#erremail").css({"display": "block"});
+				document.getElementById("erremail").innerHTML = rep['email'];
+			}
+			if (typeof(rep['password']) != "undefined" && rep['password'] !== "") {
+				$("#errpassword").css({"display": "block"});
+				document.getElementById("errpassword").innerHTML = rep['password'];
+			}
+			if (rep == "") {
+				location.reload();
+			}	
+		});
+	});	
+
+	$("#btn_register").click(function(){
+		var email = $("input[name=email1]").val();
+		var password = $("input[name=password1]").val();
+		var name = $("input[name=name]").val();
+		var phone = $("input[name=phone]").val();
+		var address = $("input[name=address]").val();
+
+		$.ajax({        
+			url: '/signup',
+			method: 'POST',
+			data: {
+				email : email,
+				password: password,
+				name: name,
+				phone: phone,
+				address: address
+			}
+		}).done(function(rep){
+			console.log(rep);
+			if (typeof(rep['email']) != "undefined" && rep['email'] !== "") {
+				$("#erremail1").css({"display": "block"});
+				document.getElementById("erremail1").innerHTML = rep['email'];
+			}
+			if (typeof(rep['password']) != "undefined" && rep['password'] !== "") {
+				$("#errpassword1").css({"display": "block"});
+				document.getElementById("errpassword1").innerHTML = rep['password'];
+			}
+			if (typeof(rep['name']) != "undefined" && rep['name'] !== "") {
+				$("#errname").css({"display": "block"});
+				document.getElementById("errname").innerHTML = rep['name'];
+			}
+			if (typeof(rep['phone']) != "undefined" && rep['phone'] !== "") {
+				$("#errphone").css({"display": "block"});
+				document.getElementById("errphone").innerHTML = rep['phone'];
+			}
+			if (typeof(rep['address']) != "undefined" && rep['address'] !== "") {
+				$("#erraddress").css({"display": "block"});
+				document.getElementById("erraddress").innerHTML = rep['address'];
+			}
+			if (rep == "") {
+				location.reload();
+			}	
+		});
+	});	
+
+	function openCity(evt, cityName) {
+		var i, tabcontent, tablinks;
+		tabcontent = document.getElementsByClassName("tabcontent");
+		for (i = 0; i < tabcontent.length; i++) {
+			tabcontent[i].style.display = "none";
+		}
+		tablinks = document.getElementsByClassName("tablinks");
+		for (i = 0; i < tablinks.length; i++) {
+			tablinks[i].className = tablinks[i].className.replace(" active", "");
+				}
+		document.getElementById(cityName).style.display = "block";
+		evt.currentTarget.className += " active";
+	}	
+
+	$(".form").click(function(){
+    	$(this).find(".error").css({"display": "none"});
+	});		
+</script>
 </html>

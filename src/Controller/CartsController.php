@@ -60,7 +60,7 @@ class CartsController extends AppController
         $product['quantity'] = $request['quantity'];
         $count = 0;
         $total = 0;
-
+        $quantity = 0;
         // $session->destroy();
         if($session->read('Cart') == null){
             $quantity = 1;

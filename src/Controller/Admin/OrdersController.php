@@ -19,22 +19,16 @@ use Cake\Database\Expression\QueryExpression;
 class OrdersController extends AppController
 {
     private $Products;
-    private $Attributes;
-    private $Images;
-    private $ProductAttributes;
-    private $Categories;
+    private $Orders;
+    private $OrderDetails;
 
     public function initialize()
     {   
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
-        $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
-        $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
-        $this->Images=TableRegistry::getTableLocator()->get('Images');
-        $this->Categories=TableRegistry::getTableLocator()->get('Categories');
+        $this->Orders = TableRegistry::getTableLocator()->get('Orders');
+        $this->OrderDetails = TableRegistry::getTableLocator()->get('OrderDetails');
         $this->loadComponent('products');
-        $this->loadComponent('attributes');
-        $this->loadComponent('categories');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
     }
@@ -67,11 +61,30 @@ class OrdersController extends AppController
     public function edit($id = null)
     {
         if ($this->request->is(['patch', 'post', 'put'])) {
+            $this->connection->begin();
             $request = $this->request->getData();
-            $result = $this->Orders->query()->update()
+            $this->Orders->query()->update()
             ->set(['status' => $request['status'], 'note' => $request['note'], 'modified' => new DateTime('now')])
             ->where(['id' => $id])
             ->execute();
+
+            if ($request['status'] == 2) {
+                $products = $this->OrderDetails->find()->where(['order_id' => $id])->toArray();
+                foreach ($products as $value) {
+                    $old_quantity = $this->Products->find()->where(['id' => $value['product_id']])->first()['quantity'];
+                    if ($old_quantity < $value['quantity']) {
+                        $this->Flash->success(__(''.$value['name'].' is not enough quantity.'));
+                        return $this->redirect(['action' => 'view', $id]);
+                    }
+                    $quantity = $old_quantity - $value['quantity'];
+                    $this->Products->query()->update()
+                    ->set(['quantity' => $quantity])
+                    ->where(['id' => $value['product_id']])
+                    ->execute();
+                }
+            }
+            $result = $this->connection->commit();
+
             if ($result) {
                 $this->Flash->success(__('The order has been updated.'));
 
@@ -79,7 +92,6 @@ class OrdersController extends AppController
             }
             $this->Flash->error(__('The order could not be updated. Please, try again.'));
         }
-        $this->render(false);
     }
 
     public function search()

@@ -119,6 +119,7 @@ Router::prefix('admin', function ($routes) {
 
     $routes->connect('/', ['controller' => 'Products', 'action' => 'index']);
     $routes->connect('/signin', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
     $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
     $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
     $routes->connect('/order', ['controller' => 'Orders', 'action' => 'order']);

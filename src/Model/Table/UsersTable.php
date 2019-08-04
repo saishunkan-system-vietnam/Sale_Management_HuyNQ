@@ -281,6 +281,55 @@ class UsersTable extends Table
 
         return $validator;
     }
+
+    public function validationSignup(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->integer('phone')
+            ->requirePresence('phone','create',"Field is not isset")
+            ->allowEmptyString('phone', false, "Phone cannot be empty");
+
+        $validator
+            ->scalar('address')
+            ->maxLength('address', 100)
+            ->requirePresence('address','create',"Field is not isset")
+            ->allowEmptyString('address', false, "Address cannot be empty");
+
+        $validator
+            ->scalar('email')
+            ->maxLength('email', 100)
+            ->requirePresence('email','create',"Field is not isset")
+            ->allowEmptyString('email', false, "Email cannot be empty")
+            ->add('email','custom',[
+                'rule'=>  function($value, $context){
+                    $result = $this->find()->where(['email'=>$context['data']['email']])->first();
+                    if ($result !== null) {
+                        return false;
+                    }else{
+                        return true;
+                    }      
+                },
+                'message'=>'Email was used!',
+            ]);
+
+        $validator
+            ->scalar('password')
+            ->maxLength('password', 100)
+            ->requirePresence('password','create',"Field is not isset")
+            ->allowEmptyString('password', false, "Password cannot be empty");
+
+        return $validator;
+    }
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.
