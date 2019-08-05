@@ -12,15 +12,18 @@
 					<div class="row">
 						<!-- Search -->
 						<div class="header-search">
-							<form>
-								<input class="input search-input" type="text" placeholder="Enter your keyword">
-							<!-- <select class="input search-categories">
-								<option value="0">Search Products</option>
-							</select> -->
-							<button class="search-btn"><i class="fa fa-search"></i></button>
-						</form>
-					</div>
-					<!-- /Search -->
+							<?= $this->Form->create("",["type" => 'get']) ?>
+								<input class="input search-input" id="keyword" name="keyword" type="text" placeholder="Enter your keyword">
+								<button class="search-btn"><i class="fa fa-search"></i></button>
+								<select class="form-control" name="price">
+									<option value="" selected disabled hidden>--Choose price--</option>
+								    <option value="asc">Low to High</option>
+								    <option value="desc">High to Low</option>
+								</select>
+								<button type="submit" class="btn btn-primary">Submit</button>
+							<?= $this->Form->end() ?>
+						</div>
+						<!-- /Search -->
 
 					<!-- section title -->
 					<div class="col-md-12">
@@ -29,10 +32,10 @@
 						</div>
 					</div>
 					<!-- section title -->
-
+					<div id="product_list">
 					<?php foreach ($products as $product): ?>
 						<!-- Product Single -->
-						<div class="col-md-3 col-sm-6 col-xs-6">
+						<div class="product col-md-3 col-sm-6 col-xs-6">
 							<div class="product product-single">
 								<a href="/products/<?= $product->id ?>">
 									<div style="width: 262px; height: 262px;"  class="product-thumb">
@@ -57,6 +60,7 @@
 						</div>
 						<!-- /Product Single -->
 					<?php endforeach; ?>
+					</div>
 				</div>
 				<div class="paginator">
 					<ul class="pagination">

@@ -215,7 +215,8 @@
 					<div class="category-nav show-on-click">
 						<span class="category-header">Categories <i class="fa fa-list"></i></span>
 						<ul class="category-list">
-							<li class="dropdown side-dropdown">
+							<?php $this->Select->getCategories($categories); ?> 
+							<!-- <li class="dropdown side-dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Women’s Clothing <i class="fa fa-angle-right"></i></a>
 								<div class="custom-menu">
 									<div class="row">
@@ -256,7 +257,7 @@
 													</div>
 												</div>
 											</div>
-										</li>
+										</li> -->
 										<li><a href="#">Men’s Clothing</a></li>
 									</ul>
 								</div>
@@ -421,6 +422,24 @@
 
 	$(".form").click(function(){
     	$(this).find(".error").css({"display": "none"});
+	});	
+
+	$(".search_cate").click(function(){
+		var category_id = $(this).attr('category_id');
+		$.ajax({
+	        url: '/search',
+	        method: 'POST',
+	        data: {category_id: category_id}
+	    }).done(function(rep){
+	        console.log(rep);
+	        $("#product_list").remove(".product");
+	        // rep = rep.replace(/\s/g,'');
+	        if(rep !== ""){
+	            $("#product_list").html(rep);
+	        }else{
+	            $("#product_list").html("Not data");
+	        } 
+	    });
 	});		
 </script>
 </html>
