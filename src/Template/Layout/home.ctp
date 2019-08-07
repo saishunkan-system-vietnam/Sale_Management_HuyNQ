@@ -215,8 +215,8 @@
 					<div class="category-nav show-on-click">
 						<span class="category-header">Categories <i class="fa fa-list"></i></span>
 						<ul class="category-list">
-							<?php $this->Select->getCategories($categories); ?> 
-							<!-- <li class="dropdown side-dropdown">
+							<!-- <?php $this->Select->getCategories($categories); ?>  -->
+							<li class="dropdown side-dropdown">
 								<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Women’s Clothing <i class="fa fa-angle-right"></i></a>
 								<div class="custom-menu">
 									<div class="row">
@@ -257,7 +257,7 @@
 													</div>
 												</div>
 											</div>
-										</li> -->
+										</li>
 										<li><a href="#">Men’s Clothing</a></li>
 									</ul>
 								</div>

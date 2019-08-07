@@ -41,6 +41,10 @@ class ProductsController extends AppController
 
     public function index()
     {   
+        $this->Categories->recover();
+        $node = $this->Categories->get(1);
+        echo $this->Categories->childCount($node);
+        die();
         $this->paginate = [
             'maxLimit' => 8
             ];
@@ -57,26 +61,9 @@ class ProductsController extends AppController
             ])
             ->group(['products.id'])->where(['products.status'=>1]);
         $attributes = $this->attributes->selectAll();
-        $categories = $this->Categories->find()->toArray();
-        $keyword = $this->request->query('keyword');
-        $price = $this->request->query('price');
-        // echo "<pre>";
-        // print_r($categories);
-        // die('a');
-        if (!empty($keyword)) {
-            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']);    
-        }
-        if (!empty($price)) {
-            if ($price == 'asc') {
-                $products = $products->order(['price' => 'ASC']); 
-            }else{
-                $products = $products->order(['price' => 'DESC']);
-            }
-        }
+        $categories = $this->Categories->find()->toArray(); 
         $products = $this->paginate($products);
-        // echo "<pre>";
-        // print_r($attributes);
-        // die('a');
+
         $this->set(compact('products','categories','attributes'));       
     }
 
@@ -123,28 +110,20 @@ class ProductsController extends AppController
         $this->set(compact('product', 'moreProduct'));
     }
 
-    public function search($category_id = null)
+    public function search($data = null)
     {
-        $this->viewBuilder()->autoLayout(false);
-        if($this->request->is('post')){
-            $request = $this->request->getData();
-            $array = $this->Categories->find()->where(['parent_id'=>$request['category_id']])->toArray();
-
-            if(!empty($array)){
-                $data = $this->getChild($array);
-                $data = explode(',', $data);
-                $data[0] = $request['category_id'];
-            }else{
-                $data[] = $request['category_id'];
-            }
-
-            $this->paginate = [
+        $request = $this->request->getData();
+        $data = explode('=', $data);
+        $attribute_id = $data[1];
+        $attributes = $this->attributes->selectAll();
+        $this->paginate = [
             'maxLimit' => 8
             ];
 
             $products = $this->Products->find('all')
             ->select($this->Products)
             ->select($this->Images)
+            ->select($this->ProductAttributes)
             ->join([
                 'images' => [
                     'table' => 'images',
@@ -152,24 +131,36 @@ class ProductsController extends AppController
                     'conditions' => 'products.id = images.product_id'
                 ]
             ])
-            ->group(['products.id'])->where(['products.status'=>1])->where(['products.category_id IN' => $data]);
-            $products = $this->paginate($products);
+            ->join([
+                'productattributes' => [
+                    'table' => 'product_attributes',
+                    'type' => 'RIGHT',
+                    'conditions' => 'products.id = productattributes.product_id'
+                ]
+            ])
+            ->where(['products.status'=>1]);
+        
+        if ($data !== null) {
+            $products = $products->where(['productattributes.attribute_id' => $attribute_id]);
         }
-        $this->set(compact('products'));
-    }
+        $keyword = $this->request->query('keyword');
+        $price = $this->request->query('price');
 
-    public function getChild($array)
-    {
-      $data = "";
-      foreach($array as $key => $element)
-      {
-        $data = $data.",".$element['id'];
-        $result = $this->Categories->find()->where(['parent_id'=>$element['id']])->toArray();
-        if(!empty($result))
-        {
-          $data = $data."".$this->getChild($result);
+        if (!empty($keyword)) {
+            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']);    
         }
-      }
-      return $data;
+        if (!empty($price)) {
+            if ($price == 'asc') {
+                $products = $products->order(['price' => 'ASC']); 
+            }else{
+                $products = $products->order(['price' => 'DESC']);
+            }
+        }
+
+        $products = $this->paginate($products);
+        // echo "<pre>";
+        // print_r($products);
+        // die('a');
+        $this->set(compact('products', 'attributes'));    
     }
 }

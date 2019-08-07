@@ -33,6 +33,7 @@ class CategoriesTable extends Table
         $this->hasMany('Products', [
             'foreignKey' => 'category_id'
         ]);
+        $this->addBehavior('Tree');
     }
 
     /**
