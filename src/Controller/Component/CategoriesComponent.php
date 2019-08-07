@@ -18,10 +18,11 @@ class CategoriesComponent extends Component {
         $this->Images=TableRegistry::getTableLocator()->get('Images');
         $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->connection = ConnectionManager::get('default');
+        $this->Categories->recover();
     }
 
     public function selectAll(){
-        $categories = $this->Categories->find('all')->where(['parent_id'=> 0])->toArray();
+        $categories = $this->Categories->find('all')->where(['parent_id IS NULL'])->toArray();
         foreach ($categories as $category) {
             $cate = $this->Categories->find('all')->where(['parent_id'=> $category['id']])->toArray();
             $category['options'] = $cate;
@@ -43,8 +44,8 @@ class CategoriesComponent extends Component {
     }
 
     public function selectChild(){
-        $cateChilds = $this->Categories->find()->where(['parent_id !=' => 0])->toArray();
-        $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
+        $cateChilds = $this->Categories->find()->where(['parent_id NOT NULL'])->toArray();
+        $cateParents = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         foreach ($cateChilds as $cateChild) {
             foreach ($cateParents as $cateParent) {
                 if($cateChild->parent_id == $cateParent->id){
@@ -57,7 +58,7 @@ class CategoriesComponent extends Component {
 
     public function checkParent($id = null){
         $parent_id = $this->Categories->find()->where(['id' => $id])->first()->parent_id;
-        if($parent_id == 0){
+        if($parent_id == null){
             return 1;
         }else{
             return 0;

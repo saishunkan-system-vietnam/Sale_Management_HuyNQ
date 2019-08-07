@@ -57,7 +57,6 @@ class CategoriesTable extends Table
 
         $validator
             ->scalar('parent_id')
-            ->requirePresence('parent_id','create',"Field is not isset")
             ->allowEmptyString('parent_id', false, "Category cannot be empty");
 
         $validator

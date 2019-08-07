@@ -37,14 +37,12 @@ class ProductsController extends AppController
         $this->loadComponent('products'); 
         $this->loadComponent('attributes'); 
         $this->loadComponent('home'); 
+        $this->Categories->recover();
     }
 
     public function index()
     {   
-        $this->Categories->recover();
-        $node = $this->Categories->get(1);
-        echo $this->Categories->childCount($node);
-        die();
+        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $this->paginate = [
             'maxLimit' => 8
             ];
@@ -61,7 +59,6 @@ class ProductsController extends AppController
             ])
             ->group(['products.id'])->where(['products.status'=>1]);
         $attributes = $this->attributes->selectAll();
-        $categories = $this->Categories->find()->toArray(); 
         $products = $this->paginate($products);
 
         $this->set(compact('products','categories','attributes'));       
@@ -111,10 +108,15 @@ class ProductsController extends AppController
     }
 
     public function search($data = null)
-    {
+    {   
+        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $request = $this->request->getData();
+        // echo "<pre>";
+        // print_r($request);
+        // die('a');
         $data = explode('=', $data);
-        $attribute_id = $data[1];
+        $data_id = $data[1];
+        $data_name = $data[0];
         $attributes = $this->attributes->selectAll();
         $this->paginate = [
             'maxLimit' => 8
@@ -139,9 +141,8 @@ class ProductsController extends AppController
                 ]
             ])
             ->where(['products.status'=>1]);
-        
-        if ($data !== null) {
-            $products = $products->where(['productattributes.attribute_id' => $attribute_id]);
+        if ($data_id !== null && $data_name !== 'category') {
+            $products = $products->where(['productattributes.attribute_id' => $data_id]);
         }
         $keyword = $this->request->query('keyword');
         $price = $this->request->query('price');
@@ -156,11 +157,16 @@ class ProductsController extends AppController
                 $products = $products->order(['price' => 'DESC']);
             }
         }
-
+        if ($data_id !== null && $data_name == 'category') {
+            $array = [$data_id];
+            $descendants = $this->Categories->find('children', ['for' => $data_id]);
+            foreach ($descendants as $key => $value) {
+                array_push($array, $value->id);
+            }
+            $products = $products->where(['products.category_id IN' => $array])->group('products.id');
+        }
         $products = $this->paginate($products);
-        // echo "<pre>";
-        // print_r($products);
-        // die('a');
-        $this->set(compact('products', 'attributes'));    
+
+        $this->set(compact('products', 'attributes','categories'));    
     }
 }

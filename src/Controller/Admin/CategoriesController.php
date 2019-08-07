@@ -31,14 +31,20 @@ class CategoriesController extends AppController
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->viewBuilder()->layout("admin");    
         $this->connection = ConnectionManager::get('default');
+        $this->Categories->recover();
     }
 
     public function index()
     { 
-        $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
-        // $cateChilds = $this->categories->selectChild();
-
-        $this->set(compact('cateParents'));
+        $categories = $this->Categories->find()->toArray();
+        $data = $this->request->query();
+        if (!empty($data)) {
+            $category = $this->Categories->find('children', ['for' => $data['category']])->toArray();
+        }
+        // echo "<pre>";
+        // print_r($descendants->toArray());
+        // die('a');
+        $this->set(compact('categories','category'));
     }
 
     /**
@@ -48,7 +54,8 @@ class CategoriesController extends AppController
      */
     public function add()
     {
-        $cateParents = $this->Categories->find()->where(['parent_id' => 0])->toArray();
+        $cateParents = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
+        $categories = $this->Categories->find()->toArray();
         if ($this->request->is('post')) {
             $request = $this->request->getData();
             if(isset($request['parent_id'])){
@@ -66,7 +73,7 @@ class CategoriesController extends AppController
                     $this->Categories->query()->insert(['name', 'parent_id', 'status'])
                     ->values([
                         'name' => $request['name'],
-                        'parent_id' => 0,
+                        'parent_id' => null,
                         'status' => $request['status']
                     ])
                     ->execute();
@@ -85,7 +92,7 @@ class CategoriesController extends AppController
                 $this->Flash->error(__('The category could not be saved. Please, try again.'));
             }
         }
-        $this->set(compact('cateParents'));
+        $this->set(compact('cateParents','categories'));
     }
 
     public function edit($id = null)
@@ -96,7 +103,7 @@ class CategoriesController extends AppController
             $this->set(compact('category'));
         }else{
             $category = $this->Categories->find()->where(['id'=>$id])->first();
-            $cateParents = $this->Categories->find()->where(['parent_id'=>0])->toArray();
+            $cateParents = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
             $this->set(compact('category', 'cateParents'));
         }
         if ($this->request->is(['patch', 'post', 'put'])) {
@@ -113,7 +120,7 @@ class CategoriesController extends AppController
                 if($check == 1){  
                     $this->connection->begin();
                     $request['id'] = $id;
-                    $request['category'] = 0;
+                    $request['category'] = null;
                     $this->categories->update($request);
                             
                     $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();

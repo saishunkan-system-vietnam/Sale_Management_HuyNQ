@@ -45,10 +45,8 @@
 
         <div class="input text">
             <select name="parent_id" style="width: 50%">
-                    <option value selected hidden>---- Choose type category ----</option> 
-                <?php foreach ($cateParents as $cateParent): ?>
-                    <option value=<?= $cateParent['id'] ?>><?= $cateParent['name'] ?></option>
-                <?php endforeach ?>       
+                <option value selected hidden>-- Choose type category --</option> 
+                <?php $this->Select->showCategories($categories,0,'',0); ?>
             </select>
             <?php if (isset($errname) && isset($parent_id)): ?>
                 <p class="error" style="color: red;"><?= $errparent_id ?></p>
