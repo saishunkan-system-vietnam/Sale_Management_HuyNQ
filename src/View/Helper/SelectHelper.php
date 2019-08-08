@@ -43,18 +43,18 @@ class SelectHelper extends Helper
             $check = $categories->find()->where(['parent_id' => $cate['id']])->toArray();
             if ($check) {
                 echo '<li class="dropdown side-dropdown">';
-                echo '<a class="col-md-6" href="/search/category='.$cate['id'].'">'.$cate['name'].' </a><a class="dropdown-toggle col-md-6" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-angle-right"></i></a>';
+                echo '<a class="col-md-6" href="?category='.$cate['id'].'">'.$cate['name'].' </a><a class="dropdown-toggle col-md-6" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-angle-right"></i></a>';
                 echo '<div class="custom-menu">';
                 echo '<div class="row">';
                 $result = $categories->find()->where(['parent_id' => $cate['id']])->toArray();
                 foreach ($result as $value) {
                     echo '<div class="col-md-4">';
                     echo '<ul class="list-links">';
-                    echo '<li><a href="/search/category='.$value['id'].'" class="list-links-title"><b>'.$value['name'].'</b></a></li>';
+                    echo '<li><a href="?category='.$value['id'].'" class="list-links-title"><b>'.$value['name'].'</b></a></li>';
                     $descendants = $categories->find('children', ['for' => $value['id']]);
 
                     foreach ($descendants as $des) {
-                        echo '<li><a href="/search/category='.$des['id'].'">'.$des->name.'</a></li>'. "\n";
+                        echo '<li><a href="?category='.$des['id'].'">'.$des->name.'</a></li>'. "\n";
                     }
                     echo '</ul>';
                     echo '<hr class="hidden-md hidden-lg">';
@@ -64,7 +64,7 @@ class SelectHelper extends Helper
                 echo '</div>';
                 echo '</li>';
             }else {
-                echo '<li><a href="/search/category='.$cate['id'].'">'.$cate['name'].'</a></li>';
+                echo '<li><a href="?category='.$cate['id'].'">'.$cate['name'].'</a></li>';
             }
         }    
     }

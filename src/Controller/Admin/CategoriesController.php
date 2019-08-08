@@ -40,6 +40,8 @@ class CategoriesController extends AppController
         $data = $this->request->query();
         if (!empty($data)) {
             $category = $this->Categories->find('children', ['for' => $data['category']])->toArray();
+        } else {
+            $category = [];
         }
         // echo "<pre>";
         // print_r($descendants->toArray());

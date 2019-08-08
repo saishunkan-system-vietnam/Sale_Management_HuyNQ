@@ -43,6 +43,9 @@ class ProductsController extends AppController
     public function index()
     {   
         $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
+
+        $prods = $this->Products->find()->where(['status' => 1])->toArray();
+        $attributes = $this->attributes->selectAll();
         $this->paginate = [
             'maxLimit' => 8
             ];
@@ -57,11 +60,68 @@ class ProductsController extends AppController
                     'conditions' => 'products.id = images.product_id'
                 ]
             ])
-            ->group(['products.id'])->where(['products.status'=>1]);
-        $attributes = $this->attributes->selectAll();
+            ->where(['products.status'=>1]);
+        $data = $this->request->query();
+
+        $keyword = $this->request->query('keyword');
+        $price = $this->request->query('price');
+
+        if (!empty($keyword)) {
+            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']);    
+        }
+        
+        if (!empty($price)) {
+            if ($price == 'asc') {
+                $products = $products->order(['price' => 'ASC']); 
+            }else{
+                $products = $products->order(['price' => 'DESC']);
+            }
+        }
+
+        if (!empty($data['category'])) {
+            $array = [$data['category']];
+            $descendants = $this->Categories->find('children', ['for' => $data['category']]);
+            foreach ($descendants as $key => $value) {
+                array_push($array, $value->id);
+            }
+            $products = $products->where(['products.category_id IN' => $array])->group('products.id');
+        }
+
+        if (!empty($data)) {
+            $removeAttrs = array("keyword","price","category");
+            foreach($removeAttrs as $key) {
+                unset($data[$key]);
+            }
+            $check_products = [];
+            foreach ($prods as $pro) {
+                $check = 0;
+                $attribute = []; 
+                $result = $this->ProductAttributes->find()->where(['product_id' => $pro['id']])->toArray();
+                foreach ($result as $res) {
+                    array_push($attribute, $res['attribute_id']);
+                }
+                foreach ($data as $dt) {
+                    if (!in_array($dt, $attribute)) {
+                        $check++;
+                    }
+                }
+                if ($check == 0) {
+                    array_push($check_products, $pro['id']);
+                }
+            } 
+            if ($check_products !== []) {
+                $products = $products->where(['products.id IN' => $check_products]);
+            }else{
+                $products = $products->where(['products.id' => null]);
+            }  
+        }
+        
+        // echo "<pre>";
+        // print_r($data);
+        // die('a');
         $products = $this->paginate($products);
 
-        $this->set(compact('products','categories','attributes'));       
+        $this->set(compact('products', 'attributes','categories'));
     }
 
     public function view($id = null)
@@ -107,7 +167,7 @@ class ProductsController extends AppController
         $this->set(compact('product', 'moreProduct'));
     }
 
-    public function search($data = null)
+    public function search()
     {   
         $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $request = $this->request->getData();
@@ -167,6 +227,6 @@ class ProductsController extends AppController
         }
         $products = $this->paginate($products);
 
-        $this->set(compact('products', 'attributes','categories'));    
+        $this->set(compact('products', 'attributes','categories'));
     }
 }

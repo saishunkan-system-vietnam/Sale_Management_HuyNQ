@@ -8,7 +8,8 @@
 					<div class="form-group">
 						<label><?= $attribute['name'] ?></label>
 						<?php foreach ($attribute['options'] as $attr): ?>
-							<a href="/search/<?= strtolower(str_replace(' ','-',$attribute['name'])).'='.$attr['id'] ?>"><p><?= $attr['name'] ?></p></a>
+							<!-- <a href="/search/<?= strtolower(str_replace(' ','-',$attribute['name'])).'='.$attr['id'] ?>"><p><?= $attr['name'] ?></p></a> -->
+							<a type="submit" href="javascript:setParam('<?= strtolower(str_replace(' ','-',$attribute['name'])) ?>','<?= $attr['id'] ?>');"><p><?= $attr['name'] ?></p></a>
 						<?php endforeach ?> 
 						<hr>   
 					</div>
@@ -24,16 +25,15 @@
 					<div class="row">
 						<!-- Search -->
 						<div class="header-search">
-							<?= $this->Form->create("",["type" => 'get']) ?>
-							<input class="input search-input" id="keyword" name="keyword" type="text" placeholder="Enter your keyword">
-							<button class="search-btn"><i class="fa fa-search"></i></button>
-							<select class="form-control" name="price">
+							<form id="keyword_form">
+								<input class="input search-input" id="keyword" name="keyword" type="text" placeholder="Enter your keyword">
+								<button class="search-btn"><i class="fa fa-search"></i></button>
+							</form>
+							<select class="form-control" id="price" name="price">
 								<option value="" selected disabled hidden>--Choose price--</option>
 								<option value="asc">Low to High</option>
 								<option value="desc">High to Low</option>
 							</select>
-							<button type="submit" class="btn btn-primary">Submit</button>
-							<?= $this->Form->end() ?>
 						</div>
 						<!-- /Search -->
 
