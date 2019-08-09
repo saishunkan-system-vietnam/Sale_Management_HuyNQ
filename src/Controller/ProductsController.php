@@ -42,8 +42,14 @@ class ProductsController extends AppController
 
     public function index()
     {   
+        $session = $this->getRequest()->getSession();
+        // $session->delete('Compare');
+        // echo "<pre>";
+        // print_r($session->read('Compare'));
+        // echo "</pre>";
+        // die('a');
+        $compare = $session->read('Compare');
         $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
-
         $prods = $this->Products->find()->where(['status' => 1])->toArray();
         $attributes = $this->attributes->selectAll();
         $this->paginate = [
@@ -62,12 +68,12 @@ class ProductsController extends AppController
             ])
             ->where(['products.status'=>1]);
         $data = $this->request->query();
-
         $keyword = $this->request->query('keyword');
         $price = $this->request->query('price');
 
         if (!empty($keyword)) {
-            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']);    
+            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']); 
+            $this->set(compact('keyword'));   
         }
         
         if (!empty($price)) {
@@ -76,9 +82,15 @@ class ProductsController extends AppController
             }else{
                 $products = $products->order(['price' => 'DESC']);
             }
+            $this->set(compact('price'));
         }
 
         if (!empty($data['category'])) {
+            foreach ($attributes as $key => $attribute) {
+                if($attribute['id'] == 6) {
+                    unset($attributes[$key]);
+                }
+            }
             $array = [$data['category']];
             $descendants = $this->Categories->find('children', ['for' => $data['category']]);
             foreach ($descendants as $key => $value) {
@@ -92,6 +104,8 @@ class ProductsController extends AppController
             foreach($removeAttrs as $key) {
                 unset($data[$key]);
             }
+            $options = $data;
+            $this->set(compact('options'));
             $check_products = [];
             foreach ($prods as $pro) {
                 $check = 0;
@@ -115,13 +129,10 @@ class ProductsController extends AppController
                 $products = $products->where(['products.id' => null]);
             }  
         }
-        
-        // echo "<pre>";
-        // print_r($data);
-        // die('a');
+
         $products = $this->paginate($products);
 
-        $this->set(compact('products', 'attributes','categories'));
+        $this->set(compact('products', 'attributes', 'categories', 'compare'));
     }
 
     public function view($id = null)
@@ -167,66 +178,50 @@ class ProductsController extends AppController
         $this->set(compact('product', 'moreProduct'));
     }
 
-    public function search()
-    {   
-        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
+    public function compare()
+    {
         $request = $this->request->getData();
-        // echo "<pre>";
-        // print_r($request);
-        // die('a');
-        $data = explode('=', $data);
-        $data_id = $data[1];
-        $data_name = $data[0];
-        $attributes = $this->attributes->selectAll();
-        $this->paginate = [
-            'maxLimit' => 8
-            ];
-
-            $products = $this->Products->find('all')
-            ->select($this->Products)
-            ->select($this->Images)
-            ->select($this->ProductAttributes)
-            ->join([
-                'images' => [
-                    'table' => 'images',
-                    'type' => 'LEFT',
-                    'conditions' => 'products.id = images.product_id'
-                ]
-            ])
-            ->join([
-                'productattributes' => [
-                    'table' => 'product_attributes',
-                    'type' => 'RIGHT',
-                    'conditions' => 'products.id = productattributes.product_id'
-                ]
-            ])
-            ->where(['products.status'=>1]);
-        if ($data_id !== null && $data_name !== 'category') {
-            $products = $products->where(['productattributes.attribute_id' => $data_id]);
-        }
-        $keyword = $this->request->query('keyword');
-        $price = $this->request->query('price');
-
-        if (!empty($keyword)) {
-            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']);    
-        }
-        if (!empty($price)) {
-            if ($price == 'asc') {
-                $products = $products->order(['price' => 'ASC']); 
-            }else{
-                $products = $products->order(['price' => 'DESC']);
+        $product = $this->Products->find()->where(['id' => $request['id']])->first();
+        $product['attributes'] = array();
+        $attributes = $this->ProductAttributes->find()->where(['product_id' => $product['id']])->toArray();
+        foreach ($attributes as $attribute) {
+            if($attribute->attribute_id !== null){
+                $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
+                array_push($product['attributes'], $attr);
             }
         }
-        if ($data_id !== null && $data_name == 'category') {
-            $array = [$data_id];
-            $descendants = $this->Categories->find('children', ['for' => $data_id]);
-            foreach ($descendants as $key => $value) {
-                array_push($array, $value->id);
+        foreach ($product['attributes'] as $attribute) {
+            if($attribute !== null){
+                $attrParent = $this->Attributes->find('all')->where(['id'=> $attribute->parent_id])->first()->name;
+                $attribute['parentName'] = $attrParent;
             }
-            $products = $products->where(['products.category_id IN' => $array])->group('products.id');
         }
-        $products = $this->paginate($products);
 
-        $this->set(compact('products', 'attributes','categories'));
+        $session = $this->getRequest()->getSession();
+        $compare = $session->read('Compare');
+        $check = 0;
+        $count = 0;
+        if ($compare == null) {
+            $compare = [];
+        } 
+        foreach ($compare as $value) {
+            if ($value['id'] == $product['id']) {
+                $check ++;
+            }
+            $count++;
+        }
+        if ($check == 0 && $count < 2) {
+            array_push($compare, $product);
+            $session->write('Compare',$compare);
+            $message = 0; 
+        } elseif ($count >= 2) {
+            $message = 1;
+        } else {
+            $message = 2;
+        }
+        
+        return $this->response
+            ->withType('application/json')
+            ->withStringBody(json_encode($message));  
     }
 }

@@ -121,9 +121,11 @@ Router::prefix('admin', function ($routes) {
     $routes->connect('/signin', ['controller' => 'Users', 'action' => 'login']);
     $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
     $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+    $routes->connect('/profile', ['controller' => 'Users', 'action' => 'profile']);
     $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
     $routes->connect('/order', ['controller' => 'Orders', 'action' => 'order']);
     $routes->connect('/search/*', ['controller' => 'Products', 'action' => 'search']);
+    $routes->connect('/compare', ['controller' => 'Products', 'action' => 'compare']);
 
     $routes->connect('/add2cart', ['controller' => 'Carts', 'action' => 'add2cart']);
     $routes->connect('/del2cart', ['controller' => 'Carts', 'action' => 'del2cart']);

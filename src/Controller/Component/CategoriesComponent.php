@@ -56,19 +56,9 @@ class CategoriesComponent extends Component {
         return $cateChilds;
     }
 
-    public function checkParent($id = null){
-        $parent_id = $this->Categories->find()->where(['id' => $id])->first()->parent_id;
-        if($parent_id == null){
-            return 1;
-        }else{
-            return 0;
-        }
-    }
-
     public function update($reqCategory){
         $result = $this->Categories->query()->update()
         ->set(['name' => $reqCategory['name'],
-               'parent_id' => $reqCategory['category'],
                'status' => $reqCategory['status']
               ])
         ->where(['id' => $reqCategory['id']])

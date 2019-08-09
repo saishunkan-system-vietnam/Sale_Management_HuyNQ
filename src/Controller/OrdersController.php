@@ -49,6 +49,7 @@ class OrdersController extends AppController
     }
 
     public function order(){
+        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $session = $this->getRequest()->getSession();
         $user = $session->read("Auth.User");
 
@@ -61,6 +62,7 @@ class OrdersController extends AppController
                         $this->set('err' . $key . '', $error);
                     }
                 }
+                $this->set(compact('request'));
             } else {
                 $session = $this->getRequest()->getSession();
                 $cart = $session->read('Cart');
@@ -97,6 +99,6 @@ class OrdersController extends AppController
                 }
             }
         }
-        $this->set(compact('user'));
+        $this->set(compact('user', 'categories'));
     }
 }

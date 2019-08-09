@@ -359,22 +359,22 @@ textarea.input {
   max-width: 400px;
 }
 
-.header-search>form {
+.header-search>div {
   position: relative;
 }
 
-.header-search>form .search-input {
+.header-search>div .search-input {
   padding-right: 45px;
 }
 
-.header-search>form .search-categories {
+.header-search>div .search-categories {
   position: absolute;
   left: 0px;
   top: 0px;
   width: 135px;
 }
 
-.header-search>form .search-btn {
+.header-search>div .search-btn {
   position: absolute;
   top: 0px;
   right: 0px;

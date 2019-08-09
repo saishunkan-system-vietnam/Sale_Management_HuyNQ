@@ -330,6 +330,32 @@ class UsersTable extends Table
 
         return $validator;
     }
+
+    public function validationProfile(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->scalar('name')
+            ->maxLength('name', 100)
+            ->requirePresence('name','create',"Field is not isset")
+            ->allowEmptyString('name', false, "Name cannot be empty");
+
+        $validator
+            ->integer('phone')
+            ->requirePresence('phone','create',"Field is not isset")
+            ->allowEmptyString('phone', false, "Phone cannot be empty");
+
+        $validator
+            ->scalar('address')
+            ->maxLength('address', 100)
+            ->requirePresence('address','create',"Field is not isset")
+            ->allowEmptyString('address', false, "Address cannot be empty");
+
+        return $validator;
+    }
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.

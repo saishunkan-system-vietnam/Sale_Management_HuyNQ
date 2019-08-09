@@ -84,9 +84,45 @@
 										<div class="header-btns-icon">
 											<i class="fa fa-user-o"></i>
 										</div>
-										<strong class="text-uppercase"><?= $auth['User']['email'] ?></i></strong>
+										<strong class="text-uppercase" data-toggle="modal" data-target="#profile"><?= $auth['User']['email'] ?></i></strong>
 									</div>
 									<a href="/logout" class="text-uppercase">Logout</a>
+									<div id="profile" class="modal fade" role="dialog">
+										<div class="modal-dialog">
+											<!-- Modal content-->
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+													<h4 class="modal-title">Profile</h4>
+												</div>
+												<div class="modal-body">
+
+													<div>
+														<div class="form-group form">
+															<label>Name</label>
+															<input type="text" class="form-control" name="name1" placeholder="Name" value="<?= $auth['User']['name'] ?>">
+															<p id="errname1" class="error" style="color: red;"></p>
+														</div>
+														<div class="form-group form">
+															<label>Phone</label>
+															<input type="number" class="form-control" name="phone1" placeholder="Phone" value="0<?= $auth['User']['phone'] ?>">
+															<p id="errphone1" class="error" style="color: red;"></p>
+														</div>
+														<div class="form-group form">
+															<label>Address</label>
+															<input type="text" class="form-control" name="address1" placeholder="Address" value="<?= $auth['User']['address'] ?>">
+															<p id="erraddress1" class="error" style="color: red;"></p>
+														</div>
+														<button id="btn_profile" type="submit" class="btn btn-primary">Submit</button>
+													</div>	
+
+												</div>
+												<div class="modal-footer">
+												</div>
+											</div>
+
+										</div>
+									</div>
 								<?php }else{ ?>
 									<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
 										<div class="header-btns-icon">
@@ -179,6 +215,53 @@
 								<?php } ?>
 							</li>
 							<!-- /Account -->
+
+							<!-- Compare -->
+							<li class="header-cart dropdown default-dropdown">
+								<a style="cursor: pointer;" data-toggle="modal" data-target="#compare">
+									<div class="header-btns-icon">
+										<i class="fa fa-balance-scale"></i>
+									</div>
+									<strong class="text-uppercase">Compare</strong>
+									<br>
+									<span>Check</span>
+								</a>
+							</li>
+							<div id="compare" class="modal fade" role="dialog">
+								<div class="modal-dialog">
+									<!-- Modal content-->
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+											<h4 class="modal-title">Compare</h4>
+										</div>
+										<div class="modal-body">
+											<div class="row">
+												<?php if ($compare !== null) { ?>
+												<?php foreach ($compare as $key => $product): ?>
+													<div class="col-md-6">
+														<table class="shopping-cart-table table">
+													        <?php foreach ($product['attributes'] as $attribute): ?>
+													            <tr>
+													                <th scope="row"><?= $attribute->parentName ?></th>
+													                <td><?= $attribute->name ?></td>
+													            </tr>
+													        <?php endforeach ?>
+													    </table>
+													</div>
+												<?php endforeach ?>
+											<?php }else{ ?>
+												<h3>Not product to compare</h3>
+											<?php } ?>
+											</div>	
+										</div>
+										<div class="modal-footer">
+										</div>
+									</div>
+
+								</div>
+							</div>
+							<!-- /Compare -->
 
 							<!-- Cart -->
 							<li class="header-cart dropdown default-dropdown">
@@ -291,6 +374,43 @@
 
 	</body>
 	<script>
+		$("#btn_profile").click(function(){
+			var name = $("input[name=name1]").val();
+			var phone = $("input[name=phone1]").val();
+			var address = $("input[name=address1]").val();
+
+			$.ajax({        
+				url: '/profile',
+				method: 'POST',
+				data: {
+					name : name,
+					phone: phone,
+					address: address
+				}
+			}).done(function(rep){
+				console.log(rep);
+				if (typeof(rep[0]['name']) != "undefined" && rep[0]['name'] !== "") {
+					$("#errname1").css({"display": "block"});
+					document.getElementById("errname1").innerHTML = rep[0]['name'];
+					$('input[name="name1"]').val(rep[2]['name']);
+				}
+				if (typeof(rep[0]['phone']) != "undefined" && rep[0]['phone'] !== "") {
+					$("#errphone1").css({"display": "block"});
+					document.getElementById("errphone1").innerHTML = rep[0]['phone'];
+					$('input[name="phone1"]').val(rep[2]['phone']);
+				}
+				if (typeof(rep[0]['address']) != "undefined" && rep[0]['address'] !== "") {
+					$("#erraddress1").css({"display": "block"});
+					document.getElementById("erraddress1").innerHTML = rep[0]['address'];
+					$('input[name="address1"]').val(rep[2]['address']);
+				}
+				if (rep[0] == "") {
+					toastr.success(rep[1]);
+				}else {
+					toastr.warning(rep[1]);
+				}	
+			});
+		});
 
 		$("#btn_login").click(function(){
 			var email = $("input[name=email]").val();
@@ -398,37 +518,6 @@
 	        	$("#product_list").html("Not data");
 	        } 
 	    });
-		});	
-
-		function setParam(name, value) {
-		    var l = window.location;
-		    /* build params */
-		    var params = {};        
-		    var x = /(?:\??)([^=&?]+)=?([^&?]*)/g;        
-		    var s = l.search;
-		    for(var r = x.exec(s); r; r = x.exec(s))
-		    {
-		        r[1] = decodeURIComponent(r[1]);
-		        if (!r[2]) r[2] = '%%';
-		        params[r[1]] = r[2];
-		    }
-
-		    /* set param */
-		    params[name] = encodeURIComponent(value);
-
-		    /* build search */
-		    var search = [];
-		    for(var i in params)
-		    {
-		        var p = encodeURIComponent(i);
-		        var v = params[i];
-		        if (v != '%%') p += '=' + v;
-		        search.push(p);
-		    }
-		    search = search.join('&');
-
-		    /* execute search */
-		    l.search = search;
-		}	
+		});		
 	</script>
 	</html>

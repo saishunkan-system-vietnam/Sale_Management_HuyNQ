@@ -32,24 +32,6 @@
                 <label class="radio-inline"><input type="radio" name="status" value="0" checked>Private</label>
             <?php } ?>
         </div>
-    
-        <?php if (isset($cateParents)): ?>
-            <label>Category</label>
-            <select name="category">
-                <?php foreach ($cateParents as $cateParent){ 
-                    if($cateParent['id'] == $category['parent_id']){
-                ?>
-                    <option selected value=<?= $cateParent['id'] ?>><?= $cateParent['name'] ?></option>
-                <?php
-                    }else{
-                        ?>
-                        <option value=<?= $cateParent['id'] ?>><?= $cateParent['name'] ?></option>
-                        <?php
-                    }
-                 } 
-                ?>        
-            </select>
-        <?php endif ?>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>

@@ -9,7 +9,7 @@
 						<label><?= $attribute['name'] ?></label>
 						<?php foreach ($attribute['options'] as $attr): ?>
 							<!-- <a href="/search/<?= strtolower(str_replace(' ','-',$attribute['name'])).'='.$attr['id'] ?>"><p><?= $attr['name'] ?></p></a> -->
-							<a type="submit" href="javascript:setParam('<?= strtolower(str_replace(' ','-',$attribute['name'])) ?>','<?= $attr['id'] ?>');"><p><?= $attr['name'] ?></p></a>
+							<a type="submit" href="javascript:setParam('<?= strtolower(str_replace(' ','-',$attribute['name'])) ?>','<?= $attr['id'] ?>');"><p <?php if(isset($options) && in_array($attr['id'], $options)) { ?> style="color: red;" <?php } ?>><?= $attr['name'] ?></p></a>
 						<?php endforeach ?> 
 						<hr>   
 					</div>
@@ -25,14 +25,16 @@
 					<div class="row">
 						<!-- Search -->
 						<div class="header-search">
-							<form id="keyword_form">
-								<input class="input search-input" id="keyword" name="keyword" type="text" placeholder="Enter your keyword">
+							<div>
+							<!-- <form id="keyword_form"> -->
+								<input class="input search-input" id="keyword" name="keyword" type="text" placeholder="Enter your keyword" <?php if (isset($keyword)) { ?> value="<?= $keyword ?>" <?php } ?>>
 								<button class="search-btn"><i class="fa fa-search"></i></button>
-							</form>
+							<!-- </form> -->
+							</div>
 							<select class="form-control" id="price" name="price">
 								<option value="" selected disabled hidden>--Choose price--</option>
-								<option value="asc">Low to High</option>
-								<option value="desc">High to Low</option>
+								<option <?php if (isset($price) && $price == 'asc') { ?> selected <?php } ?> value="asc">Low to High</option>
+								<option <?php if (isset($price) && $price == 'desc') { ?> selected <?php } ?> value="desc">High to Low</option>
 							</select>
 						</div>
 						<!-- /Search -->
@@ -63,7 +65,7 @@
 											<h2 class="product-name"><a href="/products/<?= $product->id ?>"><?= h($product->name) ?></a></h2>
 											<div class="product-btns">
 												<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
-												<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+												<button product_id="<?= h($product->id) ?>" class="main-btn icon-btn compare"><i class="fa fa-exchange"></i></button>
 												<input type="hidden" name="quantity" value=1>
 												<button product_id="<?= h($product->id) ?>" class="primary-btn add2cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
 											</div>

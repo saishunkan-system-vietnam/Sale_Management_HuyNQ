@@ -38,13 +38,14 @@ class CartsController extends AppController
 
     public function checkout()
     {
+        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $cart = [];
         $session = $this->getRequest()->getSession();
         $total = $session->read('Total');
         if($session->read('Cart') !== null){
             $cart = $session->read('Cart');
         }
-        $this->set(compact('cart','total'));
+        $this->set(compact('cart', 'total', 'categories'));
     }
 
     public function add2cart(){

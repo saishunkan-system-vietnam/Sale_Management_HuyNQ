@@ -42,28 +42,6 @@ class UsersController extends AppController
         $this->set(compact('users'));
     }
 
-    /**
-     * View method
-     *
-     * @param string|null $id User id.
-     * @return \Cake\Http\Response|null
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-     */
-
-    public function profile($id = null)
-    {
-        $user = $this->Users->get($id, [
-            'contain' => ['Products']
-        ]);
-
-        $this->set('user', $user);
-    }
-
-    /**
-     * Add method
-     *
-     * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
-     */
     public function add()
     {   
         $product = $this->Products->newEntity();
@@ -262,5 +240,37 @@ class UsersController extends AppController
         return $this->response
         ->withType('application/json')
         ->withStringBody(json_encode($err)); 
+    }
+
+    public function profile()
+    {
+        $session = $this->getRequest()->getSession();
+        $user = $session->read('Auth.User');
+        $request = $this->request->getData();
+        $validation = $this->Users->newEntity($request, ['validate' => 'profile']);
+        $err = [];
+        if($validation->getErrors()){
+            foreach ($validation->getErrors() as $key => $errors) {
+                foreach ($errors as $error) {
+                    $err[$key] = $error;
+                }
+            }
+            $message = "Edit fail !";
+        }else{
+            $id = $user->id;
+            $result = $this->Users->query()->update()
+            ->set(['name' => $request['name'],'phone' => $request['phone'],'address' => $request['address'],'modified' => new DateTime('now')])
+            ->where(['id' => $id])
+            ->execute();
+            if ($result) {
+                $message = "Edit successfull !";
+            }else {
+                $message = "Edit fail !";
+            }                
+        }
+        $data = [$err, $message, $user]; 
+        return $this->response
+        ->withType('application/json')
+        ->withStringBody(json_encode($data));
     }
 }

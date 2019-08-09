@@ -40,6 +40,8 @@ class CategoriesController extends AppController
         $data = $this->request->query();
         if (!empty($data)) {
             $category = $this->Categories->find('children', ['for' => $data['category']])->toArray();
+            $cate_parent = $this->Categories->find()->where(['id' => $data['category']])->first();
+            array_unshift($category, $cate_parent);
         } else {
             $category = [];
         }
@@ -99,15 +101,9 @@ class CategoriesController extends AppController
 
     public function edit($id = null)
     {
-        $check = $this->categories->checkParent($id);
-        if($check == 1){
-            $category = $this->Categories->find()->where(['id'=>$id])->first();
-            $this->set(compact('category'));
-        }else{
-            $category = $this->Categories->find()->where(['id'=>$id])->first();
-            $cateParents = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
-            $this->set(compact('category', 'cateParents'));
-        }
+        $category = $this->Categories->find()->where(['id'=>$id])->first();
+        $this->set(compact('category'));
+
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
 
@@ -119,27 +115,9 @@ class CategoriesController extends AppController
                     }
                 }
             }else{
-                if($check == 1){  
-                    $this->connection->begin();
-                    $request['id'] = $id;
-                    $request['category'] = null;
-                    $this->categories->update($request);
-                            
-                    $cateChilds = $this->Categories->find()->where(['parent_id'=>$id])->toArray();
-                    foreach ($cateChilds as $cateChild) {
-                        $request['id'] = $cateChild['id'];
-                        $request['name'] = $cateChild['name'];
-                        $request['category'] = $id;
-                        $this->categories->update($request);
-                    }
+                $request['id'] = $id;  
+                $result = $this->categories->update($request);
 
-                    $result = $this->connection->commit();
-                }else{
-                    $this->connection->begin();
-                    $request['id'] = $id;
-                    $this->categories->update($request);
-                    $result = $this->connection->commit();
-                }
                 if($result){
                     $this->Flash->success(__('The category updated.'));
                     return $this->redirect(['action' => 'index']);

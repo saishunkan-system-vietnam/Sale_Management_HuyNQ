@@ -23,25 +23,25 @@
 									<h3 class="title">Billing Details</h3>
 								</div>
 								<div class="form-group form">
-									<input class="input" id="name" type="text" name="name" placeholder="Your Name">
+									<input class="input" id="name" type="text" name="name" placeholder="Your Name" <?php if (!empty($request['name'])) { ?> value="<?= $request['name'] ?>" <?php } ?>>
 									<?php if (isset($errname)): ?>
 					                    <p class="error" style="color: red;"><?= $errname ?></p>
 					                <?php endif ?>
 								</div>
 								<div class="form-group form">
-									<input class="input" id="email" type="email" name="email" placeholder="Email">
+									<input class="input" id="email" type="email" name="email" placeholder="Email" <?php if (!empty($request['email'])) { ?> value="<?= $request['email'] ?>" <?php } ?>>
 									<?php if (isset($erremail)): ?>
 					                    <p class="error" style="color: red;"><?= $erremail ?></p>
 					                <?php endif ?>
 								</div>
 								<div class="form-group form">
-									<input class="input" id="address" type="text" name="address" placeholder="Address">
+									<input class="input" id="address" type="text" name="address" placeholder="Address" <?php if (!empty($request['address'])) { ?> value="<?= $request['address'] ?>" <?php } ?>>
 									<?php if (isset($erraddress)): ?>
 					                    <p class="error" style="color: red;"><?= $erraddress ?></p>
 					                <?php endif ?>
 								</div>
 								<div class="form-group form">
-									<input class="input" id="phone" type="number" name="phone" placeholder="Telephone">
+									<input class="input" id="phone" type="number" name="phone" placeholder="Telephone" <?php if (!empty($request['phone'])) { ?> value="<?= $request['phone'] ?>" <?php } ?>>
 									<?php if (isset($errphone)): ?>
 					                    <p class="error" style="color: red;"><?= $errphone ?></p>
 					                <?php endif ?>

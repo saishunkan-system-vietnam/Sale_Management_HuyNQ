@@ -50,7 +50,7 @@
 								<table class="shopping-cart-table table">
 							        <?php foreach ($product['attributes'] as $attribute): ?>
 							            <tr>
-							                <th scope="row"><?= $attribute->parentName ?></th>
+							                <!-- <th scope="row"><?= $attribute->parentName ?></th> -->
 							                <td><?= $attribute->name ?></td>
 							            </tr>
 							        <?php endforeach ?>
