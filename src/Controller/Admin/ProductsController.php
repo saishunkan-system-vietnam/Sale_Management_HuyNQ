@@ -147,7 +147,7 @@ class ProductsController extends AppController
         if ($this->request->is(['patch', 'post', 'put'])) {
             $request = $this->request->getData();
             // echo "<pre>";
-            // print_r($request['file'][0]);
+            // print_r($request['file']);
             // die('a');
             $request['user_id'] = $this->Auth->user('id');
             $request['id'] = $id;
@@ -168,15 +168,17 @@ class ProductsController extends AppController
                 
                 $this->products->update($request);
 
-                foreach ($request['file'] as $value) {
-                    $name = explode('.', $value["name"]);
-                    $newName = $name[0].'_'.rand(000000, 999999).'.'.$name[1];
+                if ($request['file'][0]['type'] != "") {
+                    foreach ($request['file'] as $value) {
+                        $name = explode('.', $value["name"]);
+                        $newName = $name[0].'_'.rand(000000, 999999).'.'.$name[1];
 
-                    $reqImage = array('name'=>$newName,'product_id'=>$id);
-                    $this->products->addImage($reqImage);
-                    move_uploaded_file($value["tmp_name"], "img/".$newName);
+                        $reqImage = array('name'=>$newName,'product_id'=>$id);
+                        $this->products->addImage($reqImage);
+                        move_uploaded_file($value["tmp_name"], "img/".$newName);
+                    }
                 }
-
+                
                 $removeAttrs = array("id","user_id","name","quantity","price","description","status","category_id","file");
 
                 foreach($removeAttrs as $key) {

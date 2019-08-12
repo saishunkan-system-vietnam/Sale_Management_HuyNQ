@@ -26,6 +26,20 @@ $(".compare").click(function(){
     });
 });
 
+$(".btn_del").click(function(){
+    var product_id = $(this).attr("product_id");
+    $.ajax({        
+        url: '/delcompare',
+        method: 'POST',
+        data: {
+            id : product_id
+        }
+    }).done(function(rep){
+        console.log(rep);
+        location.reload();
+    });
+});
+
 $(".add2cart").click(function(){
 	var product_id = $(this).attr("product_id");
     var quantity = $("input[name=quantity]").val();

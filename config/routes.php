@@ -126,6 +126,7 @@ Router::prefix('admin', function ($routes) {
     $routes->connect('/order', ['controller' => 'Orders', 'action' => 'order']);
     $routes->connect('/search/*', ['controller' => 'Products', 'action' => 'search']);
     $routes->connect('/compare', ['controller' => 'Products', 'action' => 'compare']);
+    $routes->connect('/delcompare', ['controller' => 'Products', 'action' => 'delcompare']);
 
     $routes->connect('/add2cart', ['controller' => 'Carts', 'action' => 'add2cart']);
     $routes->connect('/del2cart', ['controller' => 'Carts', 'action' => 'del2cart']);

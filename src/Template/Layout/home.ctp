@@ -218,7 +218,7 @@
 
 							<!-- Compare -->
 							<li class="header-cart dropdown default-dropdown">
-								<a style="cursor: pointer;" data-toggle="modal" data-target="#compare">
+								<a style="cursor: pointer;" href="/compare">
 									<div class="header-btns-icon">
 										<i class="fa fa-balance-scale"></i>
 									</div>
@@ -227,40 +227,6 @@
 									<span>Check</span>
 								</a>
 							</li>
-							<div id="compare" class="modal fade" role="dialog">
-								<div class="modal-dialog">
-									<!-- Modal content-->
-									<div class="modal-content">
-										<div class="modal-header">
-											<button type="button" class="close" data-dismiss="modal">&times;</button>
-											<h4 class="modal-title">Compare</h4>
-										</div>
-										<div class="modal-body">
-											<div class="row">
-												<?php if ($compare !== null) { ?>
-												<?php foreach ($compare as $key => $product): ?>
-													<div class="col-md-6">
-														<table class="shopping-cart-table table">
-													        <?php foreach ($product['attributes'] as $attribute): ?>
-													            <tr>
-													                <th scope="row"><?= $attribute->parentName ?></th>
-													                <td><?= $attribute->name ?></td>
-													            </tr>
-													        <?php endforeach ?>
-													    </table>
-													</div>
-												<?php endforeach ?>
-											<?php }else{ ?>
-												<h3>Not product to compare</h3>
-											<?php } ?>
-											</div>	
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-							</div>
 							<!-- /Compare -->
 
 							<!-- Cart -->

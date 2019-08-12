@@ -89,7 +89,7 @@ class ProductsComponent extends Component {
                 $uploadOK = 0;
             }
 
-            if($value["type"] != "image/jpeg" && $value["type"] != "image/png" && $value["type"] != "image/jpg") {
+            if($value["type"] != "image/jpeg" && $value["type"] != "image/png" && $value["type"] != "image/jpg" && $value["type"] != "") {
                 $name = $value["name"];
                 $message = $message."Sorry, ".$name." files are not allowed. only JPG, JPEG, PNG & GIF.<br>";
                 $uploadOK = 0;

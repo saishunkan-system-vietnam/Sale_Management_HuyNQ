@@ -44,10 +44,6 @@ class ProductsController extends AppController
     {   
         $session = $this->getRequest()->getSession();
         // $session->delete('Compare');
-        // echo "<pre>";
-        // print_r($session->read('Compare'));
-        // echo "</pre>";
-        // die('a');
         $compare = $session->read('Compare');
         $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
         $prods = $this->Products->find()->where(['status' => 1])->toArray();
@@ -66,7 +62,11 @@ class ProductsController extends AppController
                     'conditions' => 'products.id = images.product_id'
                 ]
             ])
-            ->where(['products.status'=>1]);
+            ->group(['products.id'])->where(['products.status'=>1]);
+        // echo "<pre>";
+        // print_r($products->toArray());
+        // echo "</pre>";
+        // die('a');
         $data = $this->request->query();
         $keyword = $this->request->query('keyword');
         $price = $this->request->query('price');
@@ -180,48 +180,75 @@ class ProductsController extends AppController
 
     public function compare()
     {
-        $request = $this->request->getData();
-        $product = $this->Products->find()->where(['id' => $request['id']])->first();
-        $product['attributes'] = array();
-        $attributes = $this->ProductAttributes->find()->where(['product_id' => $product['id']])->toArray();
-        foreach ($attributes as $attribute) {
-            if($attribute->attribute_id !== null){
-                $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
-                array_push($product['attributes'], $attr);
-            }
-        }
-        foreach ($product['attributes'] as $attribute) {
-            if($attribute !== null){
-                $attrParent = $this->Attributes->find('all')->where(['id'=> $attribute->parent_id])->first()->name;
-                $attribute['parentName'] = $attrParent;
-            }
-        }
-
         $session = $this->getRequest()->getSession();
-        $compare = $session->read('Compare');
-        $check = 0;
-        $count = 0;
-        if ($compare == null) {
-            $compare = [];
-        } 
-        foreach ($compare as $value) {
-            if ($value['id'] == $product['id']) {
-                $check ++;
-            }
-            $count++;
-        }
-        if ($check == 0 && $count < 2) {
-            array_push($compare, $product);
-            $session->write('Compare',$compare);
-            $message = 0; 
-        } elseif ($count >= 2) {
-            $message = 1;
-        } else {
-            $message = 2;
-        }
+        $compare = $session->read('Compare'); 
         
-        return $this->response
-            ->withType('application/json')
-            ->withStringBody(json_encode($message));  
+        if ($this->request->is(array('ajax'))) 
+        {
+            $request = $this->request->getData();
+            $product = $this->Products->find()->where(['id' => $request['id']])->first();
+            $product['attributes'] = array();
+            $attributes = $this->ProductAttributes->find()->where(['product_id' => $product['id']])->toArray();
+            foreach ($attributes as $attribute) {
+                if($attribute->attribute_id !== null){
+                    $attr = $this->Attributes->find('all')->where(['id'=> $attribute->attribute_id])->first();    
+                    array_push($product['attributes'], $attr);
+                }
+            }
+            foreach ($product['attributes'] as $attribute) {
+                if($attribute !== null){
+                    $attrParent = $this->Attributes->find('all')->where(['id'=> $attribute->parent_id])->first()->name;
+                    $attribute['parentName'] = $attrParent;
+                }
+            }
+
+            $check = 0;
+            $count = 0;
+            if ($compare == null) {
+                $compare = [];
+            } 
+            foreach ($compare as $value) {
+                if ($value['id'] == $product['id']) {
+                    $check ++;
+                }
+                $count++;
+            }
+            if ($check == 0 && $count < 2) {
+                array_push($compare, $product);
+                $session->write('Compare',$compare);
+                $message = 0; 
+            } elseif ($count >= 2) {
+                $message = 1;
+            } else {
+                $message = 2;
+            }
+            
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode($message));  
+        }
+        $this->set(compact('compare'));
+    }
+
+    public function delcompare()
+    {
+        if ($this->request->is(array('ajax'))) 
+        {
+            $session = $this->getRequest()->getSession();
+            $request = $this->request->getData();
+            $compare = $session->read('Compare');
+            $session->delete('Compare');
+            foreach ($compare as $key => $value) {
+                if ($value['id'] == $request['id']) {
+                    unset($compare[$key]);
+                }    
+            }
+            if(!empty($compare)){
+               $session->write('Compare',$compare); 
+            }
+            return $this->response
+                ->withType('application/json')
+                ->withStringBody(json_encode($session->read('Compare')));   
+        }
     }
 }
