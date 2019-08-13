@@ -36,15 +36,25 @@ class CategoriesController extends AppController
 
     public function index()
     { 
+        $this->paginate = [
+            'maxLimit' => 8
+            ];
         $categories = $this->Categories->find()->toArray();
         $data = $this->request->query();
-        if (!empty($data)) {
-            $category = $this->Categories->find('children', ['for' => $data['category']])->toArray();
-            $cate_parent = $this->Categories->find()->where(['id' => $data['category']])->first();
-            array_unshift($category, $cate_parent);
-        } else {
-            $category = [];
+        $category = $this->Categories;
+        if (!isset($data['page'])) {
+            if (!empty($data)) {
+                $category = $this->Categories->find('children', ['for' => $data['category']])->toArray();
+                $cate_parent = $this->Categories->find()->where(['id' => $data['category']])->first();
+                array_unshift($category, $cate_parent);
+                $ids = [];
+                foreach ($category as $key => $value) {
+                    array_push($ids, $value['id']);
+                }
+                $category = $this->Categories->find()->where(['id IN' => $ids]);
+            }
         }
+        $category = $this->paginate($category);
         // echo "<pre>";
         // print_r($descendants->toArray());
         // die('a');
@@ -115,9 +125,20 @@ class CategoriesController extends AppController
                     }
                 }
             }else{
-                $request['id'] = $id;  
-                $result = $this->categories->update($request);
-
+                $request['id'] = $id;
+                $descendants = $this->Categories->find('children', ['for' => $request['id']])->toArray();
+                $this->connection->begin();
+                $this->categories->update($request);
+                if (!empty($descendants)) {
+                    foreach ($descendants as $key => $value) {
+                        $this->Categories->query()->update()
+                        ->set(['status' => $request['status']])
+                        ->where(['id' => $value['id']])
+                        ->execute();
+                    }
+                }
+                
+                $result = $this->connection->commit();
                 if($result){
                     $this->Flash->success(__('The category updated.'));
                     return $this->redirect(['action' => 'index']);

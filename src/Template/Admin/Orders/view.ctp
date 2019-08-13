@@ -58,10 +58,10 @@
         <form action="/admin/orders/edit/<?= $order->id ?>" method="post" accept-charset="utf-8">
             <b>Status</b>
             <div>
-                <label class="radio-inline"><input type="radio" name="status" value="0" <?php if($order->status == 0){ echo "checked"; } ?>>No Processing</label>
-                <label class="radio-inline"><input type="radio" name="status" value="1" <?php if($order->status == 1){ echo "checked"; } ?>>Processing</label>
-                <label class="radio-inline"><input type="radio" name="status" value="2" <?php if($order->status == 2){ echo "checked"; } ?>>Successfull</label>
-                <label class="radio-inline"><input type="radio" name="status" value="3" <?php if($order->status == 3){ echo "checked"; } ?>>Cancel</label>
+                <label class="radio-inline"><input type="radio" name="status" value="1" <?php if($order->status == 1){ echo "checked"; } ?>>No Processing</label>
+                <label class="radio-inline"><input type="radio" name="status" value="2" <?php if($order->status == 2){ echo "checked"; } ?>>Processing</label>
+                <label class="radio-inline"><input type="radio" name="status" value="3" <?php if($order->status == 3){ echo "checked"; } ?>>Successfull</label>
+                <label class="radio-inline"><input type="radio" name="status" value="4" <?php if($order->status == 4){ echo "checked"; } ?>>Cancel</label>
             </div>
             <b>Note</b>
             <textarea name="note" style="height: 200px;"></textarea>

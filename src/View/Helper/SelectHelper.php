@@ -46,12 +46,12 @@ class SelectHelper extends Helper
                 echo '<a class="col-md-6" href="/?category='.$cate['id'].'">'.$cate['name'].' </a><a class="dropdown-toggle col-md-6" data-toggle="dropdown" aria-expanded="true"><i class="fa fa-angle-right"></i></a>';
                 echo '<div class="custom-menu">';
                 echo '<div class="row">';
-                $result = $categories->find()->where(['parent_id' => $cate['id']])->toArray();
+                $result = $categories->find()->where(['parent_id' => $cate['id']])->where(['status'=>1])->toArray();
                 foreach ($result as $value) {
                     echo '<div class="col-md-4">';
                     echo '<ul class="list-links">';
                     echo '<li><a href="/?category='.$value['id'].'" class="list-links-title"><b>'.$value['name'].'</b></a></li>';
-                    $descendants = $categories->find('children', ['for' => $value['id']]);
+                    $descendants = $categories->find('children', ['for' => $value['id']])->where(['status'=>1]);
 
                     foreach ($descendants as $des) {
                         echo '<li><a href="/?category='.$des['id'].'">'.$des->name.'</a></li>'. "\n";

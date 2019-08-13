@@ -6,6 +6,7 @@ use Cake\Validation\Validator;
 use Cake\ORM\TableRegistry;
 use Cake\Datasource\ConnectionManager;
 use Cake\Mailer\Email;
+use Cake\I18n\Time;
 
 /**
  * Products Controller
@@ -45,7 +46,7 @@ class ProductsController extends AppController
         $session = $this->getRequest()->getSession();
         // $session->delete('Compare');
         $compare = $session->read('Compare');
-        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->toArray();
+        $categories = $this->Categories->find()->where(['parent_id IS NULL'])->where(['status'=>1])->toArray();
         $prods = $this->Products->find()->where(['status' => 1])->toArray();
         $attributes = $this->attributes->selectAll();
         $this->paginate = [
@@ -55,6 +56,7 @@ class ProductsController extends AppController
             $products = $this->Products->find('all')
             ->select($this->Products)
             ->select($this->Images)
+            ->select($this->Sales)
             ->join([
                 'images' => [
                     'table' => 'images',
@@ -62,72 +64,87 @@ class ProductsController extends AppController
                     'conditions' => 'products.id = images.product_id'
                 ]
             ])
-            ->group(['products.id'])->where(['products.status'=>1]);
+            ->group(['products.id'])->where(['products.status' => 1]);
+
+        $data = $this->request->query();
         // echo "<pre>";
         // print_r($products->toArray());
-        // echo "</pre>";
         // die('a');
-        $data = $this->request->query();
-        $keyword = $this->request->query('keyword');
-        $price = $this->request->query('price');
-
-        if (!empty($keyword)) {
-            $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']); 
-            $this->set(compact('keyword'));   
-        }
-        
-        if (!empty($price)) {
-            if ($price == 'asc') {
-                $products = $products->order(['price' => 'ASC']); 
-            }else{
-                $products = $products->order(['price' => 'DESC']);
-            }
-            $this->set(compact('price'));
-        }
-
-        if (!empty($data['category'])) {
-            foreach ($attributes as $key => $attribute) {
-                if($attribute['id'] == 6) {
-                    unset($attributes[$key]);
-                }
-            }
-            $array = [$data['category']];
-            $descendants = $this->Categories->find('children', ['for' => $data['category']]);
-            foreach ($descendants as $key => $value) {
-                array_push($array, $value->id);
-            }
-            $products = $products->where(['products.category_id IN' => $array])->group('products.id');
-        }
-
-        if (!empty($data)) {
-            $removeAttrs = array("keyword","price","category");
-            foreach($removeAttrs as $key) {
-                unset($data[$key]);
-            }
-            $options = $data;
-            $this->set(compact('options'));
-            $check_products = [];
-            foreach ($prods as $pro) {
+        if (!isset($data['page'])) {
+            foreach ($products as $key => $value) {
+                $descendants = $this->Categories->find('path', ['for' => $value['category_id']]);
                 $check = 0;
-                $attribute = []; 
-                $result = $this->ProductAttributes->find()->where(['product_id' => $pro['id']])->toArray();
-                foreach ($result as $res) {
-                    array_push($attribute, $res['attribute_id']);
-                }
-                foreach ($data as $dt) {
-                    if (!in_array($dt, $attribute)) {
-                        $check++;
+                foreach ($descendants as $key => $category) {
+                    if ($category['status'] == 0) {
+                        $check = 1;
                     }
                 }
-                if ($check == 0) {
-                    array_push($check_products, $pro['id']);
+                if ($check == 1) {
+                    $products = $products->where(['products.category_id !=' => $value['category_id']]);
                 }
-            } 
-            if ($check_products !== []) {
-                $products = $products->where(['products.id IN' => $check_products]);
-            }else{
-                $products = $products->where(['products.id' => null]);
-            }  
+            }
+
+            $keyword = $this->request->query('keyword');
+            $price = $this->request->query('price');
+
+            if (!empty($keyword)) {
+                $products =$products->where(['products.name LIKE' => '%' . $keyword . '%']); 
+                $this->set(compact('keyword'));   
+            }
+            
+            if (!empty($price)) {
+                if ($price == 'asc') {
+                    $products = $products->order(['price' => 'ASC']); 
+                }else{
+                    $products = $products->order(['price' => 'DESC']);
+                }
+                $this->set(compact('price'));
+            }
+
+            if (!empty($data['category'])) {
+                foreach ($attributes as $key => $attribute) {
+                    if($attribute['id'] == 6) {
+                        unset($attributes[$key]);
+                    }
+                }
+                $array = [$data['category']];
+                $descendants = $this->Categories->find('children', ['for' => $data['category']]);
+                foreach ($descendants as $key => $value) {
+                    array_push($array, $value->id);
+                }
+                $products = $products->where(['products.category_id IN' => $array])->group('products.id');
+            }
+
+            if (!empty($data)) {
+                $removeAttrs = array("keyword","price","category");
+                foreach($removeAttrs as $key) {
+                    unset($data[$key]);
+                }
+                $options = $data;
+                $this->set(compact('options'));
+                $check_products = [];
+                foreach ($prods as $pro) {
+                    $check = 0;
+                    $attribute = []; 
+                    $result = $this->ProductAttributes->find()->where(['product_id' => $pro['id']])->toArray();
+                    foreach ($result as $res) {
+                        array_push($attribute, $res['attribute_id']);
+                    }
+                    foreach ($data as $dt) {
+                        if (!in_array($dt, $attribute)) {
+                            $check++;
+                        }
+                    }
+                    if ($check == 0) {
+                        array_push($check_products, $pro['id']);
+                    }
+                } 
+                if ($check_products !== []) {
+                    $products = $products->where(['products.id IN' => $check_products]);
+                }else{
+                    $products = $products->where(['products.id' => null]);
+                }  
+            }
         }
 
         $products = $this->paginate($products);

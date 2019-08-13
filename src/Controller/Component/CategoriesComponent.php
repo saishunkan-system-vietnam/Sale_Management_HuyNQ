@@ -22,7 +22,7 @@ class CategoriesComponent extends Component {
     }
 
     public function selectAll(){
-        $categories = $this->Categories->find('all')->where(['parent_id IS NULL'])->toArray();
+        $categories = $this->Categories->find('all')->where(['parent_id IS NULL'])->where(['status'=>1])->toArray();
         foreach ($categories as $category) {
             $cate = $this->Categories->find('all')->where(['parent_id'=> $category['id']])->toArray();
             $category['options'] = $cate;

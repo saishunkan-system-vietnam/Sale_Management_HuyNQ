@@ -22,15 +22,17 @@ class ProductsController extends AppController
     private $Images;
     private $ProductAttributes;
     private $Categories;
+    private $Sales;
 
     public function initialize()
     {   
         parent::initialize();  
         $this->Products = TableRegistry::getTableLocator()->get('Products');
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
-        $this->ProductAttributes=TableRegistry::getTableLocator()->get('ProductAttributes');
-        $this->Images=TableRegistry::getTableLocator()->get('Images');
-        $this->Categories=TableRegistry::getTableLocator()->get('Categories');
+        $this->ProductAttributes = TableRegistry::getTableLocator()->get('ProductAttributes');
+        $this->Images = TableRegistry::getTableLocator()->get('Images');
+        $this->Categories = TableRegistry::getTableLocator()->get('Categories');
+        $this->Sales = TableRegistry::getTableLocator()->get('Sales');
         $this->loadComponent('products');
         $this->loadComponent('attributes');
         $this->loadComponent('categories');
@@ -40,6 +42,9 @@ class ProductsController extends AppController
 
     public function index()
     {      
+        $this->paginate = [
+            'maxLimit' => 10
+            ];
         $categories = $this->Categories->find()->toArray();
         
         $products = $this->paginate($this->products->selectCategories());
@@ -313,5 +318,35 @@ class ProductsController extends AppController
         }
       }
       return $data;
+    }
+
+    public function sale($id = null)
+    {
+        $sale = $this->Sales->newEntity();
+        $request = $this->request->getData();
+        $check = $this->Sales->find()->where(['product_id' => $id])->first();
+        // echo "<pre>";
+        // print_r($check);
+        // die('a');
+        if ($this->request->is('post')) {
+            $request['product_id'] = $id;
+            $sale = $this->Sales->patchEntity($sale, $request);
+            $validation = $this->Sales->newEntity($request);
+            if($validation->getErrors()){  
+                foreach ($validation->getErrors() as $key => $errors) {
+                    foreach ($errors as $error) {
+                        $this->Flash->error($error);
+                    }
+                }
+            }else{
+                if ($this->Sales->save($sale)) {
+                    $this->Flash->success(__('The sale has been saved.'));
+
+                    return $this->redirect(['action' => 'index']);
+                }
+                $this->Flash->error(__('The sale could not be saved. Please, try again.'));
+            }
+        }
+        $this->set(compact('sale', 'check'));
     }
 }

@@ -16,7 +16,6 @@ $("#category").change(function(){
     }).done(function(rep){
         console.log(rep);
         $("#product_table tbody tr").remove();
-        rep = rep.replace(/\s/g,'');
         if(rep !== ""){
             $("#product_table tbody").html(rep);
         }else{
@@ -39,7 +38,6 @@ $("#btn_search").click(function(){
         }).done(function(rep){
             console.log(rep);
             $("#product_table tbody tr").remove();
-            rep = rep.replace(/\s/g,'');
             if(rep !== ""){
                 $("#product_table tbody").html(rep);
             }else{

@@ -10,10 +10,10 @@
         <div class="row">
             <select name="status" id="status" class="form-control" style="width: 200px; float:left; margin-right: 10px;">
                 <option selected disabled hidden>-- Choose type status --</option>
-                <option value="0">Not Processing</option>
-                <option value="1">Processing</option>
-                <option value="2">Successfull</option>
-                <option value="3">Cancel</option>
+                <option value="1">Not Processing</option>
+                <option value="2">Processing</option>
+                <option value="3">Successfull</option>
+                <option value="4">Cancel</option>
             </select>
             <input type="text" name="data" style="width: 250px; float: left; margin-right: 10px;" placeholder="Enter something ...">
             <button type="button" id="btn_search" class="btn btn-primary">Search</button>

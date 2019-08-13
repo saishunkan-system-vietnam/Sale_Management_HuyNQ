@@ -36,7 +36,8 @@ class OrdersController extends AppController
     public function index()
     {
         $this->paginate = [
-            'contain' => ['Users']
+            'contain' => ['Users'],
+            'maxLimit' => 10
         ];
         $orders = $this->paginate($this->Orders->find());
 
@@ -68,7 +69,7 @@ class OrdersController extends AppController
             ->where(['id' => $id])
             ->execute();
 
-            if ($request['status'] == 2) {
+            if ($request['status'] == 3) {
                 $products = $this->OrderDetails->find()->where(['order_id' => $id])->toArray();
                 foreach ($products as $value) {
                     $old_quantity = $this->Products->find()->where(['id' => $value['product_id']])->first()['quantity'];

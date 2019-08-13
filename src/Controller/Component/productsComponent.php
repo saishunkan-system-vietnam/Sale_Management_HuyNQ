@@ -33,7 +33,8 @@ class ProductsComponent extends Component {
                             'type' => 'INNER',
                             'conditions' => 'categories.id = products.category_id'
                         ]
-                    ]);
+                    ])
+                    ->order(['products.id' => 'DESC']);
         return $products;                    
     }
 
@@ -100,8 +101,12 @@ class ProductsComponent extends Component {
             return $uploadOK;
         }else{
             return $message;
-        }
-        
+        }    
+    }
+
+    public function checkDate($request)
+    {
+
     }
 }
 ?>
