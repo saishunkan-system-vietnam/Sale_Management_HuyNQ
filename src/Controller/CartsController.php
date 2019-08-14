@@ -21,6 +21,7 @@ class CartsController extends AppController
     private $Attributes;
     private $ProductAttributes;
     private $Categories;
+    private $Sales;
 
     public function initialize()
     {
@@ -29,6 +30,7 @@ class CartsController extends AppController
         $this->Images = TableRegistry::getTableLocator()->get('Images');
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
+        $this->Sales = TableRegistry::getTableLocator()->get('Sales');
         $this->ProductAttributes = TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->Categories = TableRegistry::getTableLocator()->get('Categories');
         $this->connection = ConnectionManager::get('default');
@@ -51,7 +53,13 @@ class CartsController extends AppController
     public function add2cart(){
         $session = $this->getRequest()->getSession();  
         $request = $this->request->getData();
+        $sales = $this->Sales->find()->toArray();
         $product = $this->Products->find()->where(['id'=>$request['id']])->first();
+        foreach ($sales as $key => $sale) {
+            if ($sale['product_id'] == $request['id']) {
+                $product['price'] = $product['price'] - $product['price']*$sale['value']/100;
+            }
+        }
         $image_name = $this->Images->find()->where(['product_id'=>$request['id']])->first()['name'];
         if(!empty($image_name)){
             $product['image'] = $image_name;

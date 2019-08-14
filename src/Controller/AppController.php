@@ -100,7 +100,8 @@ class AppController extends Controller
                 'key' => 'Auth.User',               
             ],
         ]);
-        $this->Auth->allow(['index','add2cart','checkout','view','deleteCart','del2cart','order','compare','delcompare']);
+        $this->Auth->allow(['index','add2cart','checkout','view','deleteCart','del2cart','order','compare','delcompare','search']);
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
     }
 
         // Allow the display action so our PagesController

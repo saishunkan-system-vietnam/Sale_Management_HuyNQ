@@ -14,7 +14,7 @@ $(".delete_cart").click(function(){
             id : product_id
         }
     }).done(function(rep){
-        console.log(rep);
+        // console.log(rep);
         toastr.success("Product deleted successfull !");
         location.reload();
     });
@@ -31,7 +31,7 @@ $('.add').click(function () {
                     quantity: 1
                 }
             }).done(function(rep){
-                console.log(rep);
+                // console.log(rep);
                 location.reload();
             });
         }else{
@@ -51,7 +51,7 @@ $('.sub').click(function () {
                     id : product_id
                 }
             }).done(function(rep){
-                console.log(rep);
+                // console.log(rep);
                 location.reload();
             });
         } 

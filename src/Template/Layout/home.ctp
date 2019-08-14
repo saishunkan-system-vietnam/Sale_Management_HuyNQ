@@ -14,20 +14,20 @@
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
 
 	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/bootstrap.min.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/bootstrap.min.css" />
 
 	<!-- Slick -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/slick.css" />
-	<link type="text/css" rel="stylesheet" href="../Home/css/slick-theme.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/slick.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/slick-theme.css" />
 
 	<!-- nouislider -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/nouislider.min.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/nouislider.min.css" />
 
 	<!-- Font Awesome Icon -->
-	<link rel="stylesheet" href="../Home/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/Home/css/font-awesome.min.css">
 
 	<!-- Custom stlylesheet -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/style.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/style.css" />
 
 	<?= $this->Html->script('jquery-3.4.1.min.js') ?>
 	<?= $this->Html->script('toastr.min.js') ?>

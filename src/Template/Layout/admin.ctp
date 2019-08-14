@@ -17,6 +17,7 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="/Admin/dist/css/skins/_all-skins.min.css">
+  
     <?= $this->Html->script('jquery-3.4.1.min.js') ?>
     <?= $this->Html->script('toastr.min.js') ?>
 
@@ -27,7 +28,6 @@
     <?= $this->fetch('meta') ?>
     <?= $this->fetch('css') ?>
     <?= $this->fetch('script') ?>
-
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>

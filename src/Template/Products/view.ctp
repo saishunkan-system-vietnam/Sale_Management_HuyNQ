@@ -42,7 +42,11 @@
 								<span class="sale">-20%</span>
 							</div> -->
 							<h2 class="product-name"><?= $product['name'] ?></h2>
-							<h3 class="product-price"><?= $this->number->format($product['price']) ?> VNĐ</h3>
+							<?php if (empty($product['Sales']['id'])) { ?>
+								<h3 class="product-price"><?= $this->number->format($product['price']) ?> đ</h3>
+							<?php } else { ?>
+								<h3 class="product-price"><?= $this->Number->format($product['price'] - $product['price']*$product['Sales']['value']/100) ?> đ <del class="product-old-price"><?= $this->Number->format($product->price) ?> đ</del></h3>
+							<?php } ?>
 							<p><strong>Quantity:</strong> <?= $this->number->format($product['quantity']) ?></p>
 							<p><strong>Availability:</strong> In Stock</p>
 							<p><strong>Brand:</strong> <?= $product['category']['parentName'] ?></p>
@@ -82,45 +86,5 @@
 		<!-- /container -->
 	</div>
 	<!-- /section -->
-
-	<!-- section -->
-	<div class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-				<!-- section title -->
-				<div class="col-md-12">
-					<div class="section-title">
-						<h2 class="title">Picked For You</h2>
-					</div>
-				</div>
-				<!-- section title -->
-				<?php foreach ($moreProduct as $value): ?>
-				<!-- Product Single -->
-				<div class="col-md-3 col-sm-6 col-xs-6">
-					<div class="product product-single">
-						<div class="product-thumb">
-							<img style="width: 262px; height: 250px;" src="/img/<?= $value['image'] ?>" alt="">
-						</div>
-
-						<div class="product-body">
-							<h3 class="product-price"><?= $this->number->format($value['price']) ?> VNĐ</h3>
-							<h2 class="product-name"><a href="/products/<?= $value->id ?>"><?= $value['name'] ?></a></h2>
-							<div class="product-btns">
-								<button class="main-btn icon-btn"><i class="fa fa-heart"></i></button>
-								<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
-								<button product_id="<?= h($value->id) ?>" class="primary-btn add2cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- /Product Single -->
-				<?php endforeach ?>
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
 
 <?= $this->Html->script('home.js') ?>

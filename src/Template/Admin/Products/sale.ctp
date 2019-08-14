@@ -14,11 +14,7 @@
 			echo $this->Form->control('startday', ['empty' => true]);
 			echo $this->Form->control('endday', ['empty' => true]);
 			?>
-			<div class="row">
-				<label>Status</label>
-				<label class="radio-inline"><input type="radio" name="status" value="1" checked>Public</label>
-				<label class="radio-inline"><input type="radio" name="status" value="0">Private</label>
-			</div>
+			<!-- <input type="datetime-local" name="time" id="input" class="form-control" value="" required="required" title=""> -->
 		</fieldset>
 		<?= $this->Form->button(__('Submit')) ?>
 		<?= $this->Form->end() ?>
@@ -26,3 +22,4 @@
 		<h3>Product availability. Click Sales to check !</h3>
 	<?php } ?>
 </div>
+<?= $this->Html->script('product.js') ?>

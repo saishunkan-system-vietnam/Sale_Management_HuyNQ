@@ -47,28 +47,9 @@ $("#btn_search").click(function(){
     }
 });
 
-// $("input[name=file]").change(function() {
-//     var files = document.getElementById("file").files;
-//     var formData = new FormData();
 
-//     for (var i = 0; i < files.length; i++)
-//     {
-//         formData.append('name[]', files[i].name);
-//         formData.append('size[]', files[i].size);
-//         formData.append('type[]', files[i].type);
-//     }
 
-//     $.ajax({
-//         url: '/admin/products/uploadImage',
-//         method: 'POST',
-//         data: formData,
-//         contentType: false,
-//         processData: false
-//     }).done(function(rep){
-//         console.log(typeof rep);
-//         for(var i=0;i<rep.length;i++)
-//         {
-//           $('#image_preview').append("<img name='"+rep[i]+"' src='"+URL.createObjectURL(event.target.files[i])+"'><br>");
-//         }
-//     });
-// });
+
+
+
+

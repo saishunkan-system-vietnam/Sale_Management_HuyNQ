@@ -23,6 +23,7 @@ class ProductsController extends AppController
     private $ProductAttributes;
     private $Categories;
     private $Orders;
+    private $Sales;
     public function initialize()
     {
         parent::initialize();  
@@ -31,6 +32,7 @@ class ProductsController extends AppController
         $this->Images = TableRegistry::getTableLocator()->get('Images');
         $this->Users = TableRegistry::getTableLocator()->get('Users');
         $this->Attributes = TableRegistry::getTableLocator()->get('Attributes');
+        $this->Sales = TableRegistry::getTableLocator()->get('Sales');
         $this->ProductAttributes = TableRegistry::getTableLocator()->get('ProductAttributes');
         $this->Categories = TableRegistry::getTableLocator()->get('Categories');
         $this->connection = ConnectionManager::get('default');
@@ -39,6 +41,7 @@ class ProductsController extends AppController
         $this->loadComponent('attributes'); 
         $this->loadComponent('home'); 
         $this->Categories->recover();
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
     }
 
     public function index()
@@ -62,6 +65,13 @@ class ProductsController extends AppController
                     'table' => 'images',
                     'type' => 'LEFT',
                     'conditions' => 'products.id = images.product_id'
+                ]
+            ])
+            ->join([
+                'sales' => [
+                    'table' => 'sales',
+                    'type' => 'LEFT',
+                    'conditions' => 'products.id = sales.product_id'
                 ]
             ])
             ->group(['products.id'])->where(['products.status' => 1]);
@@ -146,15 +156,15 @@ class ProductsController extends AppController
                 }  
             }
         }
-
         $products = $this->paginate($products);
-
+        
         $this->set(compact('products', 'attributes', 'categories', 'compare'));
     }
 
     public function view($id = null)
     {
         $product = $this->Products->get($id);
+        $sales = $this->Sales->find()->toArray();
         $attributes = $this->ProductAttributes->find('all')->where(['product_id'=>$id])->toArray();
         $product['attributes'] = array();
 
@@ -172,6 +182,12 @@ class ProductsController extends AppController
             }
         }
 
+        foreach ($sales as $key => $sale) {
+            if ($sale['product_id'] == $id) {
+                $product['Sales'] = $this->Sales->find()->where(['status' => 1, 'product_id' => $id])->first();
+            }
+        }
+
         $images = $this->Images->find()->where(['product_id'=>$id])->toArray();
         if($images == null){
             $images[0]['name'] = "default.png";
@@ -183,16 +199,7 @@ class ProductsController extends AppController
         $category['parentName'] = $cateParent;
         $product['category'] = $category;
 
-        //picked for you
-        $moreProduct = $this->Products->find()->where(['id !=' => $id])->limit(4)->toArray();
-        foreach ($moreProduct as $value) {
-            $value['image'] = $this->Images->find()->where(['product_id'=>$value['id']])->first()['name'];
-            if($value['image'] == null){
-                $value['image'] = "default.png";
-            }
-        }
-
-        $this->set(compact('product', 'moreProduct'));
+        $this->set(compact('product'));
     }
 
     public function compare()

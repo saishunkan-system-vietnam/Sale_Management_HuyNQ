@@ -38,5 +38,6 @@ class AppView extends View
     {
         $this->loadHelper('Select');
         $this->loadHelper('Status');
+        $this->loadHelper('Sale');
     }
 }

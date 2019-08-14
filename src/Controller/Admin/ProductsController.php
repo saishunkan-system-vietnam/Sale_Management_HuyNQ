@@ -324,12 +324,13 @@ class ProductsController extends AppController
     {
         $sale = $this->Sales->newEntity();
         $request = $this->request->getData();
-        $check = $this->Sales->find()->where(['product_id' => $id])->first();
-        // echo "<pre>";
-        // print_r($check);
-        // die('a');
+        $check = $this->Sales->find()->where(['product_id' => $id])->where(['status' => 1])->first();
         if ($this->request->is('post')) {
+            // echo "<pre>";
+            // print_r($request);
+            // die('a');
             $request['product_id'] = $id;
+            $request['status'] = 1;
             $sale = $this->Sales->patchEntity($sale, $request);
             $validation = $this->Sales->newEntity($request);
             if($validation->getErrors()){  
