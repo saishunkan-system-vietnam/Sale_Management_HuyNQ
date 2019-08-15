@@ -52,6 +52,7 @@ class ProductsController extends AppController
         $categories = $this->Categories->find()->where(['parent_id IS NULL'])->where(['status'=>1])->toArray();
         $prods = $this->Products->find()->where(['status' => 1])->toArray();
         $attributes = $this->attributes->selectAll();
+        
         $this->paginate = [
             'maxLimit' => 8
             ];
@@ -59,19 +60,11 @@ class ProductsController extends AppController
             $products = $this->Products->find('all')
             ->select($this->Products)
             ->select($this->Images)
-            ->select($this->Sales)
             ->join([
                 'images' => [
                     'table' => 'images',
                     'type' => 'LEFT',
                     'conditions' => 'products.id = images.product_id'
-                ]
-            ])
-            ->join([
-                'sales' => [
-                    'table' => 'sales',
-                    'type' => 'LEFT',
-                    'conditions' => 'products.id = sales.product_id'
                 ]
             ])
             ->group(['products.id'])->where(['products.status' => 1]);

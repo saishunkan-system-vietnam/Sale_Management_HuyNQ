@@ -38,6 +38,7 @@ class ProductsController extends AppController
         $this->loadComponent('categories');
         $this->connection = ConnectionManager::get('default');
         $this->viewBuilder()->layout("admin");
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
     }
 
     public function index()
@@ -48,7 +49,7 @@ class ProductsController extends AppController
         $categories = $this->Categories->find()->toArray();
         
         $products = $this->paginate($this->products->selectCategories());
-        
+
         $this->set(compact('products','categories'));
     }
 
@@ -225,13 +226,7 @@ class ProductsController extends AppController
             ->set(['status' => 0,'modified' => new DateTime('now')])
             ->where(['id' => $id])
             ->execute();
-            // $images = $this->Images->find()->where(['product_id'=>$id])->toArray();
-            // foreach ($images as $image) {
-            //     unlink('img/'.$image['name']);
-            // }
-            // $this->Images->query()->delete()->where(['product_id' => $id])->execute();
-            // $this->ProductAttributes->query()->delete()->where(['product_id' => $id])->execute();
-            // $this->Products->query()->delete()->where(['id' => $id])->execute();
+
         $result = $this->connection->commit();
         if ($result) {
             $this->Flash->success(__('The product has been deleted.'));
@@ -326,20 +321,19 @@ class ProductsController extends AppController
         $request = $this->request->getData();
         $check = $this->Sales->find()->where(['product_id' => $id])->where(['status' => 1])->first();
         if ($this->request->is('post')) {
-            // echo "<pre>";
-            // print_r($request);
-            // die('a');
             $request['product_id'] = $id;
-            $request['status'] = 1;
             $sale = $this->Sales->patchEntity($sale, $request);
-            $validation = $this->Sales->newEntity($request);
+            $validation = $this->Sales->newEntity($request, ['validate' => 'add']);
             if($validation->getErrors()){  
                 foreach ($validation->getErrors() as $key => $errors) {
                     foreach ($errors as $error) {
-                        $this->Flash->error($error);
+                        $this->set('err'.$key.'',$error);
                     }
                 }
+                $this->set('request', $request);
             }else{
+                $request['startday'] = strtotime(str_replace( 'T', ' ', $request['startday']));
+                $endday['endday'] = strtotime(str_replace( 'T', ' ', $request['endday']));
                 if ($this->Sales->save($sale)) {
                     $this->Flash->success(__('The sale has been saved.'));
 

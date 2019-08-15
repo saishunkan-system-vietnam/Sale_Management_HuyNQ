@@ -79,6 +79,90 @@ class SalesTable extends Table
         return $validator;
     }
 
+    public function validationAdd(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->integer('value')
+            ->allowEmptyString('value')
+            ->requirePresence('value','create',"Field is not isset")
+            ->allowEmptyString('value', false, "Value cannot be empty");
+        $validator
+            ->dateTime('startday')
+            ->allowEmptyDateTime('startday')
+            ->requirePresence('startday','create',"Field is not isset")
+            ->allowEmptyString('startday', false, "Startday cannot be empty")
+            ->add('startday','custom',[
+                'rule'=>  function($value, $context){
+                    $startday = strtotime(str_replace( 'T', ' ', $context['data']['startday']));
+                    $endday = strtotime(str_replace( 'T', ' ', $context['data']['endday']));
+                    if ($startday > $endday) {
+                        return false;
+                    } else {
+                        return true;     
+                    }  
+                },
+                'message'=>'Start Day must be before End Day!',
+            ]);
+
+        $validator
+            ->dateTime('endday')
+            ->allowEmptyDateTime('endday')
+            ->requirePresence('endday','create',"Field is not isset")
+            ->allowEmptyString('endday', false, "Endday cannot be empty");
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
+        return $validator;
+    }
+
+    public function validationEdit(Validator $validator)
+    {
+        $validator
+            ->integer('id')
+            ->allowEmptyString('id', 'create');
+
+        $validator
+            ->integer('value')
+            ->allowEmptyString('value')
+            ->requirePresence('value','create',"Field is not isset")
+            ->allowEmptyString('value', false, "Value cannot be empty");
+        $validator
+            ->dateTime('startday')
+            ->allowEmptyDateTime('startday')
+            ->requirePresence('startday','create',"Field is not isset")
+            ->allowEmptyString('startday', false, "Startday cannot be empty")
+            ->add('startday','custom',[
+                'rule'=>  function($value, $context){
+                    $startday = strtotime(str_replace( 'T', ' ', $context['data']['startday']));
+                    $endday = strtotime(str_replace( 'T', ' ', $context['data']['endday']));
+                    if ($startday > $endday) {
+                        return false;
+                    } else {
+                        return true;     
+                    }  
+                },
+                'message'=>'Start Day must be before End Day!',
+            ]);
+
+        $validator
+            ->dateTime('endday')
+            ->allowEmptyDateTime('endday')
+            ->requirePresence('endday','create',"Field is not isset")
+            ->allowEmptyString('endday', false, "Endday cannot be empty");
+
+        $validator
+            ->integer('status')
+            ->allowEmptyString('status');
+
+        return $validator;
+    }
+
     /**
      * Returns a rules checker object that will be used for validating
      * application integrity.

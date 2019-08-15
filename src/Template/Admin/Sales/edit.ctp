@@ -1,32 +1,36 @@
-<?php
-/**
- * @var \App\View\AppView $this
- * @var \Cake\Datasource\EntityInterface $sale
- */
-?>
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
+<nav class="large-2 medium-2 columns" id="actions-sidebar">
     <ul class="side-nav">
         <li class="heading"><?= __('Actions') ?></li>
-        <li><?= $this->Form->postLink(
-                __('Delete'),
-                ['action' => 'delete', $sale->id],
-                ['confirm' => __('Are you sure you want to delete # {0}?', $sale->id)]
-            )
-        ?></li>
-        <li><?= $this->Html->link(__('List Sales'), ['action' => 'index']) ?></li>
+        <li><?= $this->Html->link(__('Return'), ['action' => 'index']) ?></li>
     </ul>
 </nav>
-<div class="sales form large-9 medium-8 columns content">
+<div class="sales form large-10 medium-10 columns content">
     <?= $this->Form->create($sale) ?>
     <fieldset>
         <legend><?= __('Edit Sale') ?></legend>
-        <?php
-            echo $this->Form->control('value');
-            echo $this->Form->control('product_id');
-            echo $this->Form->control('startday', ['empty' => true]);
-            echo $this->Form->control('endday', ['empty' => true]);
-        ?>
+        <div class="form-group input">
+                <label>Value:</label>
+                <input type="number" name="value" min="0" max="100" value="<?= $sale['value'] ?>" placeholder="Sale Value" />
+                <?php if (isset($errvalue)): ?>
+                    <p class="error" style="color: red;"><?= $errvalue ?></p>
+                <?php endif ?>
+            </div>
+            <div class="form-group input">
+                <label>Start Day:</label>
+                <input type="datetime-local" name="startday" id="startday" value="<?= $sale->startday ?>" class="form-control" value="" title="">
+                <?php if (isset($errstartday)): ?>
+                    <p class="error" style="color: red;"><?= $errstartday ?></p>
+                <?php endif ?>
+            </div>
+            <div class="form-group input">
+                <label>End Day:</label>
+                <input type="datetime-local" name="endday" id="endday" value="<?= $sale->endday ?>" class="form-control" value="" title="">
+                <?php if (isset($errendday)): ?>
+                    <p class="error" style="color: red;"><?= $errendday ?></p>
+                <?php endif ?>
+            </div>
     </fieldset>
     <?= $this->Form->button(__('Submit')) ?>
     <?= $this->Form->end() ?>
 </div>
+<?= $this->Html->script('product.js') ?>

@@ -37,8 +37,12 @@
                         <?php } ?>
                     </td>
                     <td class="actions">
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $sale->id]) ?>
-                        <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $sale->id], ['confirm' => __('Are you sure you want to delete # {0}?', $sale->id)]) ?>
+                        <?php if($sale->status == 1){ ?>
+                            <?= $this->Html->link(__('Edit'), ['action' => 'edit', $sale->id]) ?>
+                            <?= $this->Form->postLink(__('Delete'), ['action' => 'delete', $sale->id], ['confirm' => __('Are you sure you want to delete # {0}?', $sale->id)]) ?>
+                        <?php }else{ ?> 
+                            <?= $this->Html->link(__('Restore'), ['action' => 'restore', $sale->id], ['confirm' => __('Are you sure you want to restore # {0}?', $sale->id)]) ?>
+                        <?php } ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
