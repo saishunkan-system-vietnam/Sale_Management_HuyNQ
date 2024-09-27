@@ -42,7 +42,7 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
         </ul>
         <div class="top-bar-section">
             <ul class="right">
-                <?php if($auth){ ?>
+                <?php if(isset($auth['User'])){ ?>
                     <li><?= $this->Html->link($auth['User']['email'], ['controller' => 'Users','action' => 'profile', $auth['User']['id']]) ?></li>
                     <li><?= $this->Html->link(__('Logout'), ['controller' => 'Users','action' => 'logout']) ?></li>
                 </li>
@@ -57,5 +57,4 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 <footer>
 </footer>
 </body>
-    <?= $this->Html->script('profile.js') ?>
 </html>

@@ -27,7 +27,7 @@ use Cake\Routing\Middleware\RoutingMiddleware;
  * This defines the bootstrapping logic and middleware layers you
  * want to use in your application.
  */
-class Application extends BaseApplication
+class Application extends BaseApplication 
 {
     /**
      * {@inheritDoc}
@@ -60,6 +60,7 @@ class Application extends BaseApplication
      */
     public function middleware($middlewareQueue)
     {
+
         $middlewareQueue
             // Catch any exceptions in the lower layers,
             // and make an error page/response

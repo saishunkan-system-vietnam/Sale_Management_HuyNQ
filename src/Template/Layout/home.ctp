@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="csrfToken" content="<?php echo $this->Token->getToken(); ?>"> 
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
 	<title>Internship-Shop</title>
@@ -13,20 +14,29 @@
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
 
 	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/bootstrap.min.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/bootstrap.min.css" />
 
 	<!-- Slick -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/slick.css" />
-	<link type="text/css" rel="stylesheet" href="../Home/css/slick-theme.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/slick.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/slick-theme.css" />
 
 	<!-- nouislider -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/nouislider.min.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/nouislider.min.css" />
 
 	<!-- Font Awesome Icon -->
-	<link rel="stylesheet" href="../Home/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/Home/css/font-awesome.min.css">
 
 	<!-- Custom stlylesheet -->
-	<link type="text/css" rel="stylesheet" href="../Home/css/style.css" />
+	<link type="text/css" rel="stylesheet" href="/Home/css/style.css" />
+
+	<?= $this->Html->script('jquery-3.4.1.min.js') ?>
+	<?= $this->Html->script('toastr.min.js') ?>
+	<?= $this->Html->css('toastr.min.css') ?>
+	<?= $this->Html->css('tab.css') ?>
+	<?= $this->Html->css('product.css') ?>
+	<?= $this->fetch('script') ?>
+	<?= $this->fetch('css') ?>
+
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -35,308 +45,445 @@
 		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 		<![endif]-->
 
-</head>
+	</head>
 
-<body>
-	<!-- HEADER -->
-	<header>
-		<!-- top Header -->
-		<div id="top-header">
-			<div class="container">
-				<div class="pull-left">
-					<span>Welcome to E-shop!</span>
-				</div>
-				<div class="pull-right">
-
-				</div>
-			</div>
-		</div>
-		<!-- /top Header -->
-
-		<!-- header -->
-		<div id="header">
-			<div class="container">
-				<div class="pull-left">
-					<!-- Logo -->
-					<div class="header-logo">
-						<a class="logo" href="#">
-							<img src="../Home/img/logo.png" alt="">
-						</a>
+	<body>
+		<!-- HEADER -->
+		<header>
+			<!-- top Header -->
+			<div id="top-header">
+				<div class="container">
+					<div class="pull-left">
+						<span>Welcome to E-shop!</span>
 					</div>
-					<!-- /Logo -->
-				</div>
-				<div class="pull-right">
-					<ul class="header-btns">
-						<!-- Account -->
-						<li class="header-account dropdown default-dropdown">
-							<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
-								<div class="header-btns-icon">
-									<i class="fa fa-user-o"></i>
-								</div>
-								<strong class="text-uppercase">My Account <i class="fa fa-caret-down"></i></strong>
-							</div>
-							<a href="#" class="text-uppercase">Login</a> / <a href="#" class="text-uppercase">Join</a>
-							<ul class="custom-menu">
-								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
-								<li><a href="#"><i class="fa fa-heart-o"></i> My Wishlist</a></li>
-								<li><a href="#"><i class="fa fa-exchange"></i> Compare</a></li>
-								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-								<li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
-							</ul>
-						</li>
-						<!-- /Account -->
+					<div class="pull-right">
 
-						<!-- Cart -->
-						<li class="header-cart dropdown default-dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-								<div class="header-btns-icon">
-									<i class="fa fa-shopping-cart"></i>
-									<span class="qty">3</span>
-								</div>
-								<strong class="text-uppercase">My Cart:</strong>
-								<br>
-								<span>35.20$</span>
-							</a>
-							<div class="custom-menu">
-								<div id="shopping-cart">
-									<div class="shopping-cart-list">
-										<div class="product product-widget">
-											<div class="product-thumb">
-												<img src="../Home/img/thumb-product01.jpg" alt="">
-											</div>
-											<div class="product-body">
-												<h3 class="product-price">$32.50 <span class="qty">x3</span></h3>
-												<h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
-											</div>
-											<button class="cancel-btn"><i class="fa fa-trash"></i></button>
-										</div>
-										<div class="product product-widget">
-											<div class="product-thumb">
-												<img src="../Home/img/thumb-product01.jpg" alt="">
-											</div>
-											<div class="product-body">
-												<h3 class="product-price">$32.50 <span class="qty">x3</span></h3>
-												<h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
-											</div>
-											<button class="cancel-btn"><i class="fa fa-trash"></i></button>
-										</div>
-									</div>
-									<div class="shopping-cart-btns">
-										<button class="main-btn">View Cart</button>
-										<button class="primary-btn">Checkout <i class="fa fa-arrow-circle-right"></i></button>
-									</div>
-								</div>
-							</div>
-						</li>
-						<!-- /Cart -->
-
-						<!-- Mobile nav toggle-->
-						<li class="nav-toggle">
-							<button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
-						</li>
-						<!-- / Mobile nav toggle -->
-					</ul>
+					</div>
 				</div>
 			</div>
+			<!-- /top Header -->
+
 			<!-- header -->
-		</div>
-		<!-- container -->
-	</header>
-	<!-- /HEADER -->
-
-	<!-- NAVIGATION -->
-	<div id="navigation">
-		<!-- container -->
-		<div class="container">
-			<div id="responsive-nav">
-				<!-- category nav -->
-				<div class="category-nav show-on-click">
-					<span class="category-header">Categories <i class="fa fa-list"></i></span>
-					<ul class="category-list">
-						<li class="dropdown side-dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Women’s Clothing <i class="fa fa-angle-right"></i></a>
-							<div class="custom-menu">
-								<div class="row">
-									<div class="col-md-4">
-										<ul class="list-links">
-											<li>
-												<h3 class="list-links-title">Categories</h3></li>
-											<li><a href="#">Women’s Clothing</a></li>
-											<li><a href="#">Men’s Clothing</a></li>
-											<li><a href="#">Phones & Accessories</a></li>
-											<li><a href="#">Jewelry & Watches</a></li>
-											<li><a href="#">Bags & Shoes</a></li>
-										</ul>
-										<hr class="hidden-md hidden-lg">
-									</div>
-									<div class="col-md-4">
-										<ul class="list-links">
-											<li>
-												<h3 class="list-links-title">Categories</h3></li>
-											<li><a href="#">Women’s Clothing</a></li>
-											<li><a href="#">Men’s Clothing</a></li>
-											<li><a href="#">Phones & Accessories</a></li>
-											<li><a href="#">Jewelry & Watches</a></li>
-											<li><a href="#">Bags & Shoes</a></li>
-										</ul>
-										<hr class="hidden-md hidden-lg">
-									</div>
-									<div class="col-md-4">
-										<ul class="list-links">
-											<li>
-												<h3 class="list-links-title">Categories</h3></li>
-											<li><a href="#">Women’s Clothing</a></li>
-											<li><a href="#">Men’s Clothing</a></li>
-											<li><a href="#">Phones & Accessories</a></li>
-											<li><a href="#">Jewelry & Watches</a></li>
-											<li><a href="#">Bags & Shoes</a></li>
-										</ul>
-									</div>
-								</div>
-								<div class="row hidden-sm hidden-xs">
-									<div class="col-md-12">
-										<hr>
-										<a class="banner banner-1" href="#">
-											<img src="../Home/img/banner05.jpg" alt="">
-											<div class="banner-caption text-center">
-												<h2 class="white-color">NEW COLLECTION</h2>
-												<h3 class="white-color font-weak">HOT DEAL</h3>
-											</div>
-										</a>
-									</div>
-								</div>
-							</div>
-						</li>
-						<li><a href="#">Men’s Clothing</a></li>
-					</ul>
-				</div>
-				<!-- /category nav -->
-
-				<!-- menu nav -->
-				<div class="menu-nav">
-					<span class="menu-header">Menu <i class="fa fa-bars"></i></span>
-					<ul class="menu-list">
-
-					</ul>
-				</div>
-				<!-- menu nav -->
-			</div>
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /NAVIGATION -->
-
-    <div class="container clearfix">
-        <?= $this->fetch('content') ?>
-    </div>
-
-    <!-- FOOTER -->
-	<footer id="footer" class="section section-grey">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-				<!-- footer widget -->
-				<div class="col-md-3 col-sm-6 col-xs-6">
-					<div class="footer">
-						<!-- footer logo -->
-						<div class="footer-logo">
-							<a class="logo" href="#">
-		            <img src="../Home/img/logo.png" alt="">
-		          </a>
+			<div id="header">
+				<div class="container">
+					<div class="pull-left">
+						<!-- Logo -->
+						<div class="header-logo">
+							<a class="logo" href="/">
+								<img src="../Home/img/logo.png" alt="">
+							</a>
 						</div>
-						<!-- /footer logo -->
+						<!-- /Logo -->
+					</div>
+					<div class="pull-right">
+						<ul class="header-btns">
+							<!-- Account -->
+							<li class="header-account dropdown default-dropdown">
+								<?php if(isset($auth['User'])){ ?>
+									<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+										<div class="header-btns-icon">
+											<i class="fa fa-user-o"></i>
+										</div>
+										<strong class="text-uppercase" data-toggle="modal" data-target="#profile"><?= $auth['User']['email'] ?></i></strong>
+									</div>
+									<a href="/logout" class="text-uppercase">Logout</a>
+									<div id="profile" class="modal fade" role="dialog">
+										<div class="modal-dialog">
+											<!-- Modal content-->
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal">&times;</button>
+													<h4 class="modal-title">Profile</h4>
+												</div>
+												<div class="modal-body">
 
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
+													<div>
+														<div class="form-group form">
+															<label>Name</label>
+															<input type="text" class="form-control" name="name1" placeholder="Name" value="<?= $auth['User']['name'] ?>">
+															<p id="errname1" class="error" style="color: red;"></p>
+														</div>
+														<div class="form-group form">
+															<label>Phone</label>
+															<input type="number" class="form-control" name="phone1" placeholder="Phone" value="0<?= $auth['User']['phone'] ?>">
+															<p id="errphone1" class="error" style="color: red;"></p>
+														</div>
+														<div class="form-group form">
+															<label>Address</label>
+															<input type="text" class="form-control" name="address1" placeholder="Address" value="<?= $auth['User']['address'] ?>">
+															<p id="erraddress1" class="error" style="color: red;"></p>
+														</div>
+														<button id="btn_profile" type="submit" class="btn btn-primary">Submit</button>
+													</div>	
 
-						<!-- footer social -->
-						<ul class="footer-social">
-							<li><a href="#"><i class="fa fa-facebook"></i></a></li>
-							<li><a href="#"><i class="fa fa-twitter"></i></a></li>
-							<li><a href="#"><i class="fa fa-instagram"></i></a></li>
-							<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-							<li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+												</div>
+												<div class="modal-footer">
+												</div>
+											</div>
+
+										</div>
+									</div>
+								<?php }else{ ?>
+									<div class="dropdown-toggle" role="button" data-toggle="dropdown" aria-expanded="true">
+										<div class="header-btns-icon">
+											<i class="fa fa-user-o"></i>
+										</div>
+										<strong class="text-uppercase">My Account</i></strong>
+									</div>
+									<a style="cursor: pointer;" class="text-uppercase" data-toggle="modal" data-target="#exampleModal">Login</a>
+									<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>							
+												</div>
+												<div class="modal-body">
+													<div class="card">
+														<article class="card-body">
+															<div class="tab">
+																<button class="tablinks" onclick="openCity(event, 'Signin')">Sign in</button>
+																<button class="tablinks" onclick="openCity(event, 'Signup')">Sign up</button>
+															</div>
+
+															<div id="Signin" class="tabcontent">
+																<form>
+																	<div class="form-group form">
+																		<label>Your email</label>
+																		<input name="email" class="form-control" placeholder="Email" type="email">
+																		<p id="erremail" class="error" style="color: red;"></p>
+																	</div> 
+																	<div class="form-group form">
+																		<a class="float-right" href="#">Forgot?</a>
+																		<label>Your password</label>
+																		<input class="form-control" name="password" placeholder="******" type="password">
+																		<p id="errpassword" class="error" style="color: red;"></p>
+																	</div> 
+																	<div class="form-group"> 
+																		<div class="checkbox">
+																			<label> <input type="checkbox"> Save password </label>
+																		</div> 
+																	</div>   
+																	<div class="form-group">
+																		<button id="btn_login" type="button" class="btn btn-primary btn-block"> Login  </button>
+																	</div>                             
+																</form>
+															</div>
+
+															<div id="Signup" class="tabcontent">
+																<form>
+																	<div class="form-group form">
+																		<label>Name</label>
+																		<input name="name" class="form-control" placeholder="Name" type="text">
+																		<p id="errname" class="error" style="color: red;"></p>
+																	</div> 
+																	<div class="form-group form">
+																		<label>Phone</label>
+																		<input name="phone" class="form-control" placeholder="Phone" type="number">
+																		<p id="errphone" class="error" style="color: red;"></p>
+																	</div>
+																	<div class="form-group form">
+																		<label>Address</label>
+																		<input name="address" class="form-control" placeholder="Address" type="text">
+																		<p id="erraddress" class="error" style="color: red;"></p>
+																	</div>  
+																	<div class="form-group form">
+																		<label>Email</label>
+																		<input name="email1" class="form-control" placeholder="Email" type="email">
+																		<p id="erremail1" class="error" style="color: red;"></p>
+																	</div> 
+																	<div class="form-group form">
+																		<label>Password</label>
+																		<input class="form-control" name="password1" placeholder="******" type="password">
+																		<p id="errpassword1" class="error" style="color: red;"></p>
+																	</div>  
+																	<div class="form-group">
+																		<button id="btn_register" type="button" class="btn btn-primary btn-block"> Register  </button>
+																	</div>                             
+																</form>
+															</div>
+														</article>
+													</div> <!-- card.// -->
+
+												</div>
+												<div class="modal-footer">
+												</div>
+											</div>
+										</div>
+									</div>
+								<?php } ?>
+							</li>
+							<!-- /Account -->
+
+							<!-- Compare -->
+							<li class="header-cart dropdown default-dropdown">
+								<a style="cursor: pointer;" href="/compare">
+									<div class="header-btns-icon">
+										<i class="fa fa-balance-scale"></i>
+									</div>
+									<strong class="text-uppercase">Compare</strong>
+									<br>
+									<span>Check</span>
+								</a>
+							</li>
+							<!-- /Compare -->
+
+							<!-- Cart -->
+							<li class="header-cart dropdown default-dropdown">
+								<a href="/checkout">
+									<div class="header-btns-icon">
+										<i class="fa fa-shopping-cart"></i>
+									</div>
+									<strong class="text-uppercase">My Cart:</strong>
+									<br>
+									<span>Check Out</span>
+								</a>
+							</li>
+							<!-- /Cart -->
+
+							<!-- Mobile nav toggle-->
+							<li class="nav-toggle">
+								<button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
+							</li>
+							<!-- / Mobile nav toggle -->
 						</ul>
-						<!-- /footer social -->
 					</div>
 				</div>
-				<!-- /footer widget -->
-
-				<!-- footer widget -->
-				<div class="col-md-3 col-sm-6 col-xs-6">
-					<div class="footer">
-						<h3 class="footer-header">My Account</h3>
-						<ul class="list-links">
-							<li><a href="#">My Account</a></li>
-							<li><a href="#">My Wishlist</a></li>
-							<li><a href="#">Compare</a></li>
-							<li><a href="#">Checkout</a></li>
-							<li><a href="#">Login</a></li>
-						</ul>
-					</div>
-				</div>
-				<!-- /footer widget -->
-
-				<div class="clearfix visible-sm visible-xs"></div>
-
-				<!-- footer widget -->
-				<div class="col-md-3 col-sm-6 col-xs-6">
-					<div class="footer">
-						<h3 class="footer-header">Customer Service</h3>
-						<ul class="list-links">
-							<li><a href="#">About Us</a></li>
-							<li><a href="#">Shiping & Return</a></li>
-							<li><a href="#">Shiping Guide</a></li>
-							<li><a href="#">FAQ</a></li>
-						</ul>
-					</div>
-				</div>
-				<!-- /footer widget -->
-
-				<!-- footer subscribe -->
-				<div class="col-md-3 col-sm-6 col-xs-6">
-					<div class="footer">
-						<h3 class="footer-header">Stay Connected</h3>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor.</p>
-						<form>
-							<div class="form-group">
-								<input class="input" placeholder="Enter Email Address">
-							</div>
-							<button class="primary-btn">Join Newslatter</button>
-						</form>
-					</div>
-				</div>
-				<!-- /footer subscribe -->
+				<!-- header -->
 			</div>
-			<!-- /row -->
-			<hr>
-			<!-- row -->
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2 text-center">
-					<!-- footer copyright -->
-					<div class="footer-copyright">
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+			<!-- container -->
+		</header>
+		<!-- /HEADER -->
+
+		<!-- NAVIGATION -->
+		<div id="navigation">
+			<!-- container -->
+			<div class="container">
+				<div id="responsive-nav">
+					<!-- category nav -->
+					<div class="category-nav show-on-click">
+						<span class="category-header">Categories <i class="fa fa-list"></i></span>
+						<ul class="category-list">
+							<?php $this->Select->getCategories($categories); ?>
+						</ul>
 					</div>
-					<!-- /footer copyright -->
+					<!-- /category nav -->
+
+					<!-- menu nav -->
+					<div class="menu-nav">
+						<span class="menu-header">Menu <i class="fa fa-bars"></i></span>
+						<ul class="menu-list">
+
+						</ul>
+					</div>
+					<!-- menu nav -->
 				</div>
 			</div>
-			<!-- /row -->
+			<!-- /container -->
 		</div>
-		<!-- /container -->
-	</footer>
-	<!-- /FOOTER -->
+		<!-- /NAVIGATION -->
+		<div class="container clearfix">
+			<br>
+			<h1><?= $this->Flash->render() ?></h1>
+			<?= $this->fetch('content') ?>
+		</div>
 
-	<!-- jQuery Plugins -->
-	<script src="../Home/js/jquery.min.js"></script>
-	<script src="../Home/js/bootstrap.min.js"></script>
-	<script src="../Home/js/slick.min.js"></script>
-	<script src="../Home/js/nouislider.min.js"></script>
-	<script src="../Home/js/jquery.zoom.min.js"></script>
-	<script src="../Home/js/main.js"></script>
+		<!-- FOOTER -->
+		<footer id="footer" class="section section-grey">
+			<!-- container -->
+			<div class="container">
+				<!-- row -->
+				<div class="row">
+					<!-- footer widget -->
+					<div class="col-md-3 col-sm-6 col-xs-6">
+						<div class="footer">
+							<!-- footer logo -->
+							<div class="footer-logo">
+								<a class="logo" href="#">
+									<img src="../Home/img/logo.png" alt="">
+								</a>
+							</div>
+							<!-- /footer logo -->
 
-</body>
+							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</p>
 
-</html>
+							<!-- footer social -->
+							<ul class="footer-social">
+								<li><a href="#"><i class="fa fa-facebook"></i></a></li>
+								<li><a href="#"><i class="fa fa-twitter"></i></a></li>
+								<li><a href="#"><i class="fa fa-instagram"></i></a></li>
+								<li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+								<li><a href="#"><i class="fa fa-pinterest"></i></a></li>
+							</ul>
+							<!-- /footer social -->
+						</div>
+					</div>
+					<!-- /footer widget -->
+					<div class="clearfix visible-sm visible-xs"></div>
+				</div>
+				<!-- /row -->
+				<hr>
+
+			</div>
+			<!-- /container -->
+		</footer>
+		<!-- /FOOTER -->
+
+		<!-- jQuery Plugins -->
+		<script src="../Home/js/jquery.min.js"></script>
+		<script src="../Home/js/bootstrap.min.js"></script>
+		<script src="../Home/js/slick.min.js"></script>
+		<script src="../Home/js/nouislider.min.js"></script>
+		<script src="../Home/js/jquery.zoom.min.js"></script>
+		<script src="../Home/js/main.js"></script>
+
+	</body>
+	<script>
+		$("#btn_profile").click(function(){
+			var name = $("input[name=name1]").val();
+			var phone = $("input[name=phone1]").val();
+			var address = $("input[name=address1]").val();
+
+			$.ajax({        
+				url: '/profile',
+				method: 'POST',
+				data: {
+					name : name,
+					phone: phone,
+					address: address
+				}
+			}).done(function(rep){
+				console.log(rep);
+				if (typeof(rep[0]['name']) != "undefined" && rep[0]['name'] !== "") {
+					$("#errname1").css({"display": "block"});
+					document.getElementById("errname1").innerHTML = rep[0]['name'];
+					$('input[name="name1"]').val(rep[2]['name']);
+				}
+				if (typeof(rep[0]['phone']) != "undefined" && rep[0]['phone'] !== "") {
+					$("#errphone1").css({"display": "block"});
+					document.getElementById("errphone1").innerHTML = rep[0]['phone'];
+					$('input[name="phone1"]').val(rep[2]['phone']);
+				}
+				if (typeof(rep[0]['address']) != "undefined" && rep[0]['address'] !== "") {
+					$("#erraddress1").css({"display": "block"});
+					document.getElementById("erraddress1").innerHTML = rep[0]['address'];
+					$('input[name="address1"]').val(rep[2]['address']);
+				}
+				if (rep[0] == "") {
+					toastr.success(rep[1]);
+				}else {
+					toastr.warning(rep[1]);
+				}	
+			});
+		});
+
+		$("#btn_login").click(function(){
+			var email = $("input[name=email]").val();
+			var password = $("input[name=password]").val();
+
+			$.ajax({        
+				url: '/signin',
+				method: 'POST',
+				data: {
+					email : email,
+					password: password
+				}
+			}).done(function(rep){
+				console.log(rep);
+				if (typeof(rep['email']) != "undefined" && rep['email'] !== "") {
+					$("#erremail").css({"display": "block"});
+					document.getElementById("erremail").innerHTML = rep['email'];
+				}
+				if (typeof(rep['password']) != "undefined" && rep['password'] !== "") {
+					$("#errpassword").css({"display": "block"});
+					document.getElementById("errpassword").innerHTML = rep['password'];
+				}
+				if (rep == "") {
+					location.reload();
+				}	
+			});
+		});	
+
+		$("#btn_register").click(function(){
+			var email = $("input[name=email1]").val();
+			var password = $("input[name=password1]").val();
+			var name = $("input[name=name]").val();
+			var phone = $("input[name=phone]").val();
+			var address = $("input[name=address]").val();
+
+			$.ajax({        
+				url: '/signup',
+				method: 'POST',
+				data: {
+					email : email,
+					password: password,
+					name: name,
+					phone: phone,
+					address: address
+				}
+			}).done(function(rep){
+				console.log(rep);
+				if (typeof(rep['email']) != "undefined" && rep['email'] !== "") {
+					$("#erremail1").css({"display": "block"});
+					document.getElementById("erremail1").innerHTML = rep['email'];
+				}
+				if (typeof(rep['password']) != "undefined" && rep['password'] !== "") {
+					$("#errpassword1").css({"display": "block"});
+					document.getElementById("errpassword1").innerHTML = rep['password'];
+				}
+				if (typeof(rep['name']) != "undefined" && rep['name'] !== "") {
+					$("#errname").css({"display": "block"});
+					document.getElementById("errname").innerHTML = rep['name'];
+				}
+				if (typeof(rep['phone']) != "undefined" && rep['phone'] !== "") {
+					$("#errphone").css({"display": "block"});
+					document.getElementById("errphone").innerHTML = rep['phone'];
+				}
+				if (typeof(rep['address']) != "undefined" && rep['address'] !== "") {
+					$("#erraddress").css({"display": "block"});
+					document.getElementById("erraddress").innerHTML = rep['address'];
+				}
+				if (rep == "") {
+					location.reload();
+				}	
+			});
+		});	
+
+		function openCity(evt, cityName) {
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+			tablinks = document.getElementsByClassName("tablinks");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			document.getElementById(cityName).style.display = "block";
+			evt.currentTarget.className += " active";
+		}	
+
+		$(".form").click(function(){
+			$(this).find(".error").css({"display": "none"});
+		});	
+
+		$(".search_cate").click(function(){
+			var category_id = $(this).attr('category_id');
+			$.ajax({
+				url: '/search',
+				method: 'POST',
+				data: {category_id: category_id}
+			}).done(function(rep){
+				console.log(rep);
+				$("#product_list").remove(".product");
+	        // rep = rep.replace(/\s/g,'');
+	        if(rep !== ""){
+	        	$("#product_list").html(rep);
+	        }else{
+	        	$("#product_list").html("Not data");
+	        } 
+	    });
+		});		
+	</script>
+	</html>

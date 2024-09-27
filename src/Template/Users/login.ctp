@@ -1,12 +1,4 @@
-
-<nav class="large-3 medium-4 columns" id="actions-sidebar">
-	<ul class="side-nav">
-		<li class="heading"><?= __('Users') ?></li>
-		<li><?= $this->Html->link(__('Login'), ['action' => 'login']) ?></li>
-		<li><?= $this->Html->link(__('Sign Up'), ['action' => 'signup']) ?></li>
-	</ul>
-</nav>
-<div class="products view large-9 medium-8 columns content">
+<div class=" products view large-9 medium-8 columns content">
 	<h1>Login</h1>
 	<?= $this->Form->create() ?>
 	<div class="form-group">

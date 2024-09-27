@@ -355,27 +355,25 @@ textarea.input {
 
 .header-search {
   display: inline-block;
-  padding: 15px 0px;
   max-width: 400px;
 }
 
-.header-search>form {
+.header-search>div {
   position: relative;
 }
 
-.header-search>form .search-input {
-  padding-left: 150px;
+.header-search>div .search-input {
   padding-right: 45px;
 }
 
-.header-search>form .search-categories {
+.header-search>div .search-categories {
   position: absolute;
   left: 0px;
   top: 0px;
   width: 135px;
 }
 
-.header-search>form .search-btn {
+.header-search>div .search-btn {
   position: absolute;
   top: 0px;
   right: 0px;

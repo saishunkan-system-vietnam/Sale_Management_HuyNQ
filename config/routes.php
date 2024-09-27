@@ -62,12 +62,12 @@ Router::scope('/', function (RouteBuilder $routes) {
      * its action called 'display', and we pass a param to select the view file
      * to use (in this case, src/Template/Pages/home.ctp)...
      */
-    $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
+    // $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
 
     /**
      * ...and connect the rest of 'Pages' controller's URLs.
      */
-    $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
+    // $routes->connect('/pages/*', ['controller' => 'Pages', 'action' => 'display']);
 
     /**
      * Connect catchall routes for all controllers.
@@ -109,8 +109,26 @@ Router::prefix('admin', function ($routes) {
         $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
         $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
     $routes->resources('Products');
+    $routes->connect('/products/getcateChild/*', ['controller' => 'Products', 'action' => 'getcateChild']);
+    $routes->connect('/products/upload_image', ['controller' => 'Products', 'action' => 'upload_image']);
     $routes->extensions(['json', 'xml']);
     // All routes here will be prefixed with `/admin`
     // And have the prefix => admin route element added.
     $routes->fallbacks('DashedRoute');
 });
+
+    $routes->connect('/', ['controller' => 'Products', 'action' => 'index']);
+    $routes->connect('/signin', ['controller' => 'Users', 'action' => 'login']);
+    $routes->connect('/signup', ['controller' => 'Users', 'action' => 'signup']);
+    $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout']);
+    $routes->connect('/profile', ['controller' => 'Users', 'action' => 'profile']);
+    $routes->connect('/products/*', ['controller' => 'Products', 'action' => 'view']);
+    $routes->connect('/order', ['controller' => 'Orders', 'action' => 'order']);
+    $routes->connect('/search/*', ['controller' => 'Products', 'action' => 'search']);
+    $routes->connect('/compare', ['controller' => 'Products', 'action' => 'compare']);
+    $routes->connect('/delcompare', ['controller' => 'Products', 'action' => 'delcompare']);
+
+    $routes->connect('/add2cart', ['controller' => 'Carts', 'action' => 'add2cart']);
+    $routes->connect('/del2cart', ['controller' => 'Carts', 'action' => 'del2cart']);
+    $routes->connect('/checkout', ['controller' => 'Carts', 'action' => 'checkout']);
+    $routes->connect('/deleteCart', ['controller' => 'Carts', 'action' => 'deleteCart']);

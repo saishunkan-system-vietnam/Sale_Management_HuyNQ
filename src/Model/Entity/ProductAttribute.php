@@ -9,7 +9,6 @@ use Cake\ORM\Entity;
  * @property int $id
  * @property int|null $attribute_id
  * @property int|null $product_id
- * @property string|null $value
  *
  * @property \App\Model\Entity\Attribute $attribute
  * @property \App\Model\Entity\Product $product
@@ -28,7 +27,6 @@ class ProductAttribute extends Entity
     protected $_accessible = [
         'attribute_id' => true,
         'product_id' => true,
-        'value' => true,
         'attribute' => true,
         'product' => true
     ];
